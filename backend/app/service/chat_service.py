@@ -195,10 +195,15 @@ async def step_solve(options: Chat, request: Request):
             else:
                 logger.warning(f"Unknown action: {item.action}")
         except ModelProcessingError as e:
-            logger.error(f"Error processing action {item.action}: {e}")
-            yield sse_json("error", {"message": str(e)})
-            if workforce._running:
-                workforce.stop()
+            if "Budget has been exceeded" in str(e):
+                # workforce decompose task don't use ListenAgent, this need return sse
+                workforce.pause()
+                yield sse_json(Action.budget_not_enough, {"message": "budget not enouth"})
+            else:
+                logger.error(f"Error processing action {item.action}: {e}")
+                yield sse_json("error", {"message": str(e)})
+                if workforce._running:
+                    workforce.stop()
         except Exception as e:
             logger.error(f"Error processing action {item.action}: {e}")
             raise e
