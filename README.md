@@ -107,7 +107,6 @@ For users who prefer local control, data privacy, or customization, this option 
 
 #### 1. Prerequisites
 
-- Node.js and npm
 - Python 3.10+ and uv
 
 #### 2. Quick Start
