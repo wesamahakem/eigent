@@ -89,10 +89,10 @@
 
 <br/>
 
-![public-beta][image-public-beta]
+[![image-public-beta]][eigent-download]
 
 <div align="right">
-<a src:www.eigent.ai>访问 Eigent.ai 开始 →</a>
+<a href="https://www.eigent.ai">Get started at Eigent.ai →</a>
 </div>
 
 ### 🏠 自托管（社区版）
