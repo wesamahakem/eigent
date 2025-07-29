@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { ProgressInstall } from "@/components/ui/progress-install";
-import { RotateCcw } from "lucide-react";
+import { RefreshCcw, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Permissions } from "@/components/InstallStep/Permissions";
 import { CarouselStep } from "@/components/InstallStep/Carousel";
@@ -90,7 +90,10 @@ export const InstallDependencies: React.FC<{
 					await window.electronAPI.frontendReady();
 				}
 			} catch (error) {
-				console.log("frontend ready notification failed, maybe manual install mode:", error);
+				console.log(
+					"frontend ready notification failed, maybe manual install mode:",
+					error
+				);
 			}
 		};
 
@@ -117,7 +120,11 @@ export const InstallDependencies: React.FC<{
 			if (!result.success) {
 				setStatus("error");
 				setIsInstalling(false);
+				return 
 			}
+			setStatus("success");
+			setProgress(100);
+			setIsInstalling(false);
 		} catch (error) {
 			console.error("install start failed:", error);
 			setStatus("error");
@@ -151,8 +158,13 @@ export const InstallDependencies: React.FC<{
 							value={isInstalling ? progress : 100}
 							className="w-full"
 						/>
-						<div className="text-text-label text-xs font-normal leading-tight">
-							{isInstalling ? "System Installing ..." : ""}
+						<div className="flex items-center gap-2 justify-between">
+							<div className="text-text-label text-xs font-normal leading-tight">
+								{isInstalling ? "System Installing ..." : ""}
+							</div>
+							<Button size="icon" variant="outline" className="mt-1" onClick={handleInstall}>
+								<RefreshCcw className="w-4 h-4" />
+							</Button>
 						</div>
 					</div>
 				</div>

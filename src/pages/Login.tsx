@@ -252,6 +252,9 @@ export default function Login() {
 							or
 						</div>
 						<div className="w-full">
+						{generalError && (
+								<p className="text-red-500 text-sm mt-0.5 mb-4">{generalError}</p>
+							)}
 							<div className="w-full mb-4 relative">
 								<Label
 									htmlFor="email"
@@ -267,7 +270,7 @@ export default function Login() {
 										required
 										value={formData.email}
 										onChange={(e) => handleInputChange("email", e.target.value)}
-										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-[#CCC] font-normal ${
+										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-input-text-focus font-normal ${
 											errors.email ? "border-red-500" : ""
 										}`}
 									/>
@@ -280,7 +283,7 @@ export default function Login() {
 								<div className="flex items-center">
 									<Label
 										htmlFor="password"
-										className="inline-block text-[#222] font-inter text-[13px] font-normal font-bold leading-5 h-5 mb-1.5"
+										className="inline-block text-[#222] font-inter text-[13px] font-bold leading-5 h-5 mb-1.5"
 									>
 										Password
 									</Label>
@@ -304,7 +307,7 @@ export default function Login() {
 										onChange={(e) =>
 											handleInputChange("password", e.target.value)
 										}
-										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-[#CCC] font-normal pr-9 ${
+										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-input-text-focus font-normal pr-9 ${
 											errors.password ? "border-red-500" : ""
 										}`}
 									/>

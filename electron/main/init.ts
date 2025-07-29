@@ -96,8 +96,13 @@ export async function installDependencies() {
         // touch installing lock file
         const installingLockPath = path.join(backendPath, 'uv_installing.lock')
         fs.writeFileSync(installingLockPath, '')
-
-        const node_process = spawn(uv_path, ['sync', '--no-dev'], { cwd: backendPath })
+        const proxy = ['--default-index', 'https://pypi.tuna.tsinghua.edu.cn/simple']
+        function isInChinaTimezone() {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            return timezone === 'Asia/Shanghai';
+        }
+        console.log('isInChinaTimezone', isInChinaTimezone())
+        const node_process = spawn(uv_path, ['sync', '--no-dev', ...(isInChinaTimezone() ? proxy : [])], { cwd: backendPath })
         node_process.stdout.on('data', (data) => {
             log.info(`Script output: ${data}`)
             // notify frontend install log
@@ -168,7 +173,7 @@ export async function startBackend(setPort?: (port: number) => void): Promise<an
             ["run", "uvicorn", "main:api", "--port", port.toString(), "--loop", "asyncio"],
             { cwd: backendPath, env: env, detached: false }
         );
-        
+
 
         let started = false;
 
@@ -229,7 +234,7 @@ function checkPortAvailable(port: number): Promise<boolean> {
             if (err.code === 'EADDRINUSE') {
                 resolve(false); // port occupied
             } else {
-                resolve(false); 
+                resolve(false);
             }
         });
 
