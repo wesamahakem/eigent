@@ -22,7 +22,7 @@
 <hr/>
 <div align="center">
 
-**English** · [简体中文](./README.CN.md) · [Official Site][eigent-site] · [Documents][docs-site] · [Feedback][github-issue-link]
+**English** · [简体中文](./README_CN.md) · [Official Site][eigent-site] · [Documents][docs-site] · [Feedback][github-issue-link]
 
 </div>
 <br/>
@@ -107,7 +107,7 @@ For users who prefer local control, data privacy, or customization, this option 
 
 #### 1. Prerequisites
 
-- Python 3.10+ and uv
+- Node.js and npm
 
 #### 2. Quick Start
 
