@@ -22,7 +22,7 @@
 <hr/>
 <div align="center">
 
-**English** · [简体中文](./README.CN.md) · [官方网站][eigent-site] · [文档][docs-site] · [反馈][github-issue-link]
+**English** · [简体中文](./README_CN.md) · [官方网站][eigent-site] · [文档][docs-site] · [反馈][github-issue-link]
 
 </div>
 <br/>
@@ -30,6 +30,8 @@
 **Eigent** 是全球首个 **多智能体工作流** 桌面应用程序，帮助您构建、管理和部署定制化的 AI 工作团队，将最复杂的工作流程转化为自动化任务。
 
 基于 [CAMEL-AI][camel-site] 广受赞誉的开源项目，我们的系统引入了 **多智能体工作流**，通过并行执行、定制化和隐私保护 **提升生产力**。
+
+### ⭐ 100% 开源 - 🥇 本地部署 - 🏆 MCP 集成
 
 - ✅ **零配置** - 无需技术设置  
 - ✅ **多智能体协作** - 处理复杂的多智能体工作流  
@@ -106,7 +108,6 @@
 #### 1. 前提条件
 
 - Node.js 和 npm  
-- Python 3.10+ 和 uv  
 
 #### 2. 快速开始
 
