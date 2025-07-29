@@ -6,27 +6,32 @@
 
 ### Eigent: The World's First Multi-agent Workforce to Unlock Your Exceptional Productivity
 
-**English** · [简体中文](./README_CN.md) · [Official Site][eigent-site] · [Documents][docs-site] · [Feedback][github-issue-link]
-
 <!-- SHIELD GROUP -->
 
-[![][discord-shield]][discord-link]
+[![][download-shield]][eigent-download]
 [![][github-star]][eigent-github]
 [![][social-x-shield]][social-x-link]
-[![][share-linkedin-shield]][share-linkedin-link]
-[![][share-reddit-shield]][share-reddit-link]
+[![][discord-image]][discord-url]<br>
+[![Reddit][reddit-image]][reddit-url]
+[![Wechat][wechat-image]][wechat-url]
 [![][sponsor-shield]][sponsor-link]
+[![][built-with-camel]][camel-github]
 
 </div>
 
 <hr/>
+<div align="center">
+
+**English** · [简体中文](./README.CN.md) · [Official Site][eigent-site] · [Documents][docs-site] · [Feedback][github-issue-link]
+
+</div>
 <br/>
 
 **Eigent** is the world’s first **Multi-agent Workforce** desktop application, empowering you to build, manage, and deploy a custom AI workforce that can turn your most complex workflows into automated tasks. 
 
 Built on [CAMEL-AI][camel-site]'s acclaimed open-source project, our system introduces a **Multi-Agent Workforce** that **boosts productivity** through parallel execution, customization, and privacy protection.
 
-### ⭐ 13k GitHub Stars - 🥇 #1 GitHub Daily Trending - 🏆 #1 on GAIA
+### ⭐ 13k GitHub Stars  🥇 #1 GitHub Daily Trending  🏆 #1 on GAIA
 
 - ✅ **Zero Setup** - No technical configuration required
 - ✅ **Multi-Agent Coordination** - Handle complex multi-agent workflows
@@ -88,7 +93,9 @@ The fastest way to experience Eigent's multi-agent AI capabilities is through ou
 
 ![public-beta][image-public-beta]
 
-[**Get started at Eigent.ai →**][eigent-site]
+<div align="right">
+<a src:www.eigent.ai>Get started at Eigent.ai →</a>
+</div>
 
 ### 🏠 Self-Hosting (Community Edition)
 
@@ -136,91 +143,168 @@ Eigent pre-defined the following agent workers:
 - **Document Agent:** Creates and manages documents.
 - **Multi-Modal Agent:** Processes images and audio.
 
-<br/>
+![Workforce](/public/images/feature_dynamic_workforce.gif)
 
-![Workforce][image-workforce]
-
-[![Try it Now]](https://www.eigent.ai/download)
+[![][download-shield]][eigent-download]
 
 <br/>
 
 ### 🧠 Comprehensive Model Support
 Deploy Eigent locally with your preferred models. 
 
-<br/>
+![Model](/public/images/feature_local_model.gif)
 
-![Model][image-local-model]
-
-[![Try it Now]](https://www.eigent.ai/download)
+[![][download-shield]][eigent-download]
 
 <br/>
 
 ### 🔌 MCP Tools Integration (MCP)
 Eigent comes with massive built-in **Model Context Protocol (MCP)** tools (for web browsing, code execution, Notion, Google suite, Slack etc.), and also lets you **install your own tools**. Equip agents with exactly the right tools for your scenarios – even integrate internal APIs or custom functions – to enhance their capabilities.
 
-<br/>
+![MCP](/public/images/feature_add_mcps.gif)
 
-![MCP][image-mcp]
-
-[![Try it Now]](https://www.eigent.ai/download)
+[![][download-shield]][eigent-download]
 
 <br/>
 
 ### ✋ Human-in-the-Loop
 If a task gets stuck or encounters uncertainty, Eigent will automatically request human input. 
 
-<br/>
+![Human-in-the-loop](/public/images/feature_human_in_the_loop.gif)
 
-![Human-in-the-loop][image-human-in-the-loop]
-
-[![Try it Now]](https://www.eigent.ai/download)
+[![][download-shield]][eigent-download]
 
 <br/>
 
 ### 👐 100% Open Source
 Eigent is completely open-sourced. You can download, inspect, and modify the code, ensuring transparency and fostering a community-driven ecosystem for multi-agent innovation.
 
-<br/>
-
 ![Opensource][image-opensource]
 
-[![Try it Now]](https://www.eigent.ai/download)
+[![][download-shield]][eigent-download]
 
 <br/>
 
 ## 🧩 Use Cases
 
-### 1. CAMEL GitHub Newsletter [Replay ▶️]()
-Please review the latest updates from the CAMEL GitHub repository over the past month, craft a polished newsletter summarising the key changes, and email it to my client list.
+### 1. Palm Springs Tennis Trip Itinerary with Slack Summary [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM0MzUxNTEzMzctNzExMyI.aIeysw.MUeG6ZcBxI1GqvPDvn4dcv-CDWw__1753435151337-7113)
 
-Video
+<details>
+<summary><strong>Prompt:</strong> <kbd>We are two tennis fans and want to go see the tennis tournament ... <kbd></summary>
+<br>
+We are two tennis fans and want to go see the tennis tournament in Palm Springs 2026. I live in SF - please prepare a detailed itinerary with flights, hotels, things to do for 3 days - around the time semifinal/finals are happening. We like hiking, vegan food and spas. Our budget is $5K. The itinerary should be a detailed timeline of time, activity, cost, other details and if applicable a link to buy tickets/make reservations etc. for the item. Some preferences .Spa access would be nice but not necessary. When you finish this task, please generate a html report about this trip; write a summary of this plan and send text summary and report html link to slack #tennis-trip-sf channel.
+</details>
 
-### 2. Palm Springs Tennis Trip [Replay ▶️]()
-I am a tennis fan and want to go see the tennis tournament in palm springs. I live in SF - please prepare a detailed itinerary with flights, hotels, things to do for 3 days - around the time semifinal/finals are happening. I like hiking, vegan food and spas. My budget is $3K. The itinerary should be a detailed timeline of time, activity, cost, other details and if applicable a link to buy tickets/make reservations etc. for the item.
+<br>
 
-### 3. AI Customer Form & Dashboard [Replay ▶️]()
-We are a tech consulting firm with in-depth research on technologies in the multi-agent general intelligence field. Please create a potential customer form for us. The target companies are: – B2B American companies – In the development stage before Series B – Require AI technology empowerment – And demonstrate a progressive attitude toward adopting modern productivity software (e.g., Slack, Google Workspace, Notion, etc.) Please list at least 15 companies, clearly stating their contact information, company business introductions, addresses and other specific details. Also, create a dashboard.
+<video width="100%" controls>
+  <source src="public/images/palm_springs_tennis_trip_itinerary_with_slack_summary.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
-### 4. Website SEO Audit Report [Replay ▶️]()
+<br>
+
+[![][download-shield]][eigent-download]
+
+### 2. Generate Q2 Report from CSV Bank Data [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM1MjY4OTE4MDgtODczOSI.aIjJmQ.WTdoX9mATwrcBr_w53BmGEHPo8U__1753526891808-8739)
+
+<details>
+<summary><strong>Prompt:</strong> <kbd>Please help me prepare a Q2 financial statement based on my bank ... <kbd></summary>
+<br>
+Please help me prepare a Q2 financial statement based on my bank transfer record file bank_transacation.csv in my desktop to a html report with chart to investors how much we have spent.
+</details>
+
+<br>
+
+<video width="100%" controls>
+  <source src="public/images/generate_q2_report_from_csv_bank_data.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<br>
+
+[![][download-shield]][eigent-download]
+
+### 3. UK Healthcare Market Research Report Automation [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTMzOTM1NTg3OTctODcwNyI.aIey-Q.Jh9QXzYrRYarY0kz_qsgoj3ewX0__1753393558797-8707)
+
+<details>
+<summary><strong>Prompt:</strong> <kbd>We are a company that produces high-end electric skateboards ... <kbd></summary>
+<br>
+We are a company that produces high-end electric skateboards, and we are considering entering the German market. Please prepare a detailed market entry feasibility report for me. The report needs to cover the following aspects: 1. Market Size & Regulations: Research the market size, annual growth rate, key players, and market share for Personal Light Electric Vehicles (PLEVs) in Germany. Simultaneously, provide a detailed breakdown and summary of German laws and regulations concerning the use of electric skateboards on public roads, including certification requirements (such as ABE certification) and insurance policies. 2. Consumer Profile: Analyze the profile of potential German consumers, including their age, income level, primary usage scenarios (commuting, recreation), key purchasing decision drivers (price, performance, brand, design), and the channels they typically use to gather information (forums, social media, offline retail stores). 3. Channels & Distribution: Investigate Germany’s mainstream online electronics sales platforms (e.g., Amazon.de, MediaMarkt.de) and high-end sporting goods offline retail chains. List the top 5 potential online and offline distribution partners and find the contact information for their purchasing departments, if possible. 4. Costing & Pricing: Based on the product cost structure in my Product_Cost.csv file on my desktop, and taking into account German customs duties, Value Added Tax (VAT), logistics and warehousing costs, and potential marketing expenses, estimate a Manufacturer’s Suggested Retail Price (MSRP) and analyze its competitiveness in the market. 5. Comprehensive Report & Presentation: Summarize all research findings into an HTML report file. The content should include data charts, key findings, and a final market entry strategy recommendation (Recommended / Not Recommended / Recommended with Conditions).
+</details>
+
+<br>
+
+<video width="100%" controls>
+  <source src="public/images/uk_healthcare_market_research_report_automation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<br>
+
+[![][download-shield]][eigent-download]
+
+### 4. German Electric Skateboard Market Feasibility [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM2NTI4MjY3ODctNjk2Ig.aIjGiA.t-qIXxk_BZ4ENqa-yVIm0wMVyXU__1753652826787-696)
+
+<details>
+<summary><strong>Prompt:</strong> <kbd>We are a company that produces high-end electric skateboards ... <kbd></summary>
+<br>
+We are a company that produces high-end electric skateboards, and we are considering entering the German market. Please prepare a detailed market entry feasibility report for me. The report needs to cover the following aspects:
+1. Market Size & Regulations: Research the market size, annual growth rate, key players, and market share for Personal Light Electric Vehicles (PLEVs) in Germany. Simultaneously, provide a detailed breakdown and summary of German laws and regulations concerning the use of electric skateboards on public roads, including certification requirements (such as ABE certification) and insurance policies.
+2. Consumer Profile: Analyze the profile of potential German consumers, including their age, income level, primary usage scenarios (commuting, recreation), key purchasing decision drivers (price, performance, brand, design), and the channels they typically use to gather information (forums, social media, offline retail stores).
+3. Channels & Distribution: Investigate Germany’s mainstream online electronics sales platforms (e.g., Amazon.de, MediaMarkt.de) and high-end sporting goods offline retail chains. List the top 5 potential online and offline distribution partners and find the contact information for their purchasing departments, if possible.
+4. Costing & Pricing: Based on the product cost structure in my Product_Cost.csv file on my desktop, and taking into account German customs duties, Value Added Tax (VAT), logistics and warehousing costs, and potential marketing expenses, estimate a Manufacturer’s Suggested Retail Price (MSRP) and analyze its competitiveness in the market.
+5. Comprehensive Report & Presentation: Summarize all research findings into an HTML report file. The content should include data charts, key findings, and a final market entry strategy recommendation (Recommended / Not Recommended / Recommended with Conditions).
+</details>
+
+<br>
+
+<video width="100%" controls>
+  <source src="public/images/german_electric_skateboard_market_feasibility.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<br>
+
+[![][download-shield]][eigent-download]
+
+### 5. SEO Audit for Workforce Multiagent Launch [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM2OTk5NzExNDQtNTY5NiI.aIex0w.jc_NIPmfIf9e3zGt-oG9fbMi3K4__1753699971144-5696)
+
+<details>
+<summary><strong>Prompt:</strong> <kbd>To support the launch of our new Workforce Multiagent product ... <kbd></summary>
+<br>
 To support the launch of our new Workforce Multiagent product, please run a thorough SEO audit on our official website (https://www.camel-ai.org/) and deliver a detailed optimization report with actionable recommendations.
+</details>
 
-### 5. Q2 Financial Statement Prep [Replay ▶️]()
-Please help me prepare a Q2 financial statement based on this bank transfer record, to report to investors how much we have spent.
+<br>
 
-### 6. RL Engineer Candidate Summary with Notion MCP [Replay ▶️]()
-I am an HR professional looking to hire a Reinforcement Learning Algorithm Engineer. I prefer someone with relevant RL experience. Please help me organize candidate information from this notion page Applicant Tracker into a complete Excel summary table including basic information and concise summary of project experiences (focusing on key highlights and achievements). Please rank candidates based on their RL expertise and provide me with an Excel file that includes all this information in an organized format. I hope you can carefully read through each candidate's resume pdf attachments in the table in notion page Applicant Tracker one by one.
+<video width="100%" controls>
+  <source src="public/images/seo_audit_for_workforce_multiagent_launch.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
-### 7. PDF to Conference Slides [Replay ▶️]()
-Convert this PDF into presentation slides suitable for an academic conference. The presentation should be approximately 15 minutes long and must include all key points.
+<br>
 
-### 8. OWL Webpage Creation with Figma MCP [Replay ▶️]()
-Please create a new webpage styled after (https://www.camel-ai.org/) to introduce OWL (https://github.com/camel-ai/owl). Start by generating a Figma-editable file and replace its content to showcase our product. Then, develop and deploy the webpage based on this design.
+[![][download-shield]][eigent-download]
 
-### 9. Blender 3D Modeling with Blender MCP [Replay ▶️]()
-Based on this image, help me model in Blender.
+### 6. Identify Duplicate Files in Downloads [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM3NjAzODgxNzEtMjQ4Ig.aIhKLQ.epOG--0Nj0o4Bqjtdqm9OZdaqRQ__1753760388171-248)
 
-### 10. H1B1 Visa Application with local files [Replay ▶️]()
-I'm currently applying for a U.S. H1B1 visa. Please help me locate the necessary application documents on my computer, organize them into a single folder, and finally assist me in filling out the H1B1 visa application form.
+<details>
+<summary><strong>Prompt:</strong> <kbd>I have a folder named mydocs inside my Documents directory ... <kbd></summary>
+<br>
+I have a folder named mydocs inside my Documents directory. Please scan it and identify all files that are exact or near duplicates — including those with identical content, file size, or format (even if file names or extensions differ). List them clearly, grouped by similarity.
+</details>
+
+<br>
+
+<video width="100%" controls>
+  <source src="public/images/identify_duplicate_files_in_downloads.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<br>
+
+[![][download-shield]][eigent-download]
 
 ## 🛠️ Tech Stack
 
@@ -248,155 +332,93 @@ I'm currently applying for a U.S. H1B1 visa. Please help me locate the necessary
 
 ![][image-star-us]
 
-### 🗺️ Roadmap
+## 🗺️ Roadmap
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-**Context Engineering** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C097Q1QL98C]
-
-- prompt caching
-- system prompt optimize
-- toolkit docstring optimize
-- context compression
-
-**Multi-modal Enhancement** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C097Q7RT0EQ]
-
-- more accurate image understanding when using browser
-- advanced video generation
-
-**Multi-agent system** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C098BJV0KR6]
-
-- workforce support fixed workflow
-- workforce support multi-round conversion
-
-</td>
-<td width="50%" valign="top">
-
-**Browser Toolkit** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C0977N3C87R]
-
-- forbid repeated page visiting
-- automatic cache button clicking
-
-**Document Toolkit** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C0983CP7AHX]
-
-- support dynamic file editing
-
-**Terminal Toolkit** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C097L9D7LDU]
-
-- Terminal Bench integration
-
-**Environment & RL** [**Join our slack channel →**: https://camel-ai.slack.com/archives/C097Q91K1EG]
-
-- Verl integration
-
-</td>
-</tr>
-</table>
-
-## 📖 Contributing
-
-We welcome contributions! For those who’d like to contribute code, Please see our Contributing Guide for details.
-
-### Main Contributors
-| Name             | GitHub Profile                                   |
-| ---------------- | ------------------------------------------------ |
-| Wendong Fan      | [Wendong-Fan](https://github.com/Wendong-Fan)     |
-| Puzhen Zhang     | [nitpicker55555](https://github.com/nitpicker55555) |
-| Wei Li           | [luoyou](https://github.com/luoyou)       |
-| Wei Sun          | [FooFindBar](https://github.com/FooFindBar)               |
-| Tao Sun          | [fengju0213](https://github.com/fengju0213)       |
-| Chuan He         | [weer0026](https://github.com/weer0026)           |
-| Xiaotian Jin     | [MuggleJinx](https://github.com/MuggleJinx)       |
-| Yifeng Wang      | [zjrwtx](https://github.com/zjrwtx)               |
-| Weijie Bai <span style="color:#888888">(product manager)</span>       | [Pakchoioioi](https://github.com/Pakchoioioi)     |
-| Douglas Lai <span style="color:#888888">(product designer)</span>      | [Douglasymlai](https://github.com/Douglasymlai)   |
+| Topics                   | Issues   | Discord Channel |
+| ------------------------ | -- |-- |
+| **Context Engineering** | - Prompt caching<br> - System prompt optimize<br> - Toolkit docstring optimize<br> - Context compression | [**Join Discord →**](https://discord.gg/D2e3rBWD) |
+| **Multi-modal Enhancement** | - More accurate image understanding when using browser<br> - Advanced video generation | [**Join Discord →**](https://discord.gg/kyapNCeJ) |
+| **Multi-agent system** | - Workforce support fixed workflow<br> - Workforce support multi-round conversion | [**Join Discord →**](https://discord.gg/bFRmPuDB) |
+| **Browser Toolkit** | - BrowseCamp integration<br> - Benchmark improvement<br> - Forbid repeated page visiting<br> - Automatic cache button clicking | [**Join Discord →**](https://discord.gg/NF73ze5v) |
+| **Document Toolkit** | - Support dynamic file editing | [**Join Discord →**](https://discord.gg/4yAWJxYr) |
+| **Terminal Toolkit** | - Benchmark improvement<br> - Terminal-Bench integration | [**Join Discord →**](https://discord.gg/FjQfnsrV) |
+| **Environment & RL** | - Environment design<br> - Data-generation<br> - RL framework integration (VERL, TRL, OpenRLHF) | [**Join Discord →**](https://discord.gg/MaVZXEn8) |
 
 
+## [🤝 Contributing][contribution-link]
 
-At the same time, please consider supporting Eigent by sharing it on social media and at events and conferences. See our ambassador program. [Join our Ambassador Program: Finding the Scaling Laws of Agents][ambassador-link]
+We believe in building trust and embracing all forms of open-source collaborations. Your creative contributions help drive the innovation of `Eigent`. Explore our GitHub issues and projects to dive in and show us what you’ve got 🤝❤️ [Contribution Guideline][contribution-link]
 
-[![][image-ambassador]][ambassador-link]
+## [❤️ Sponsor][sponsor-link]
 
-### Distinguished amabssador
-
-| Name             | GitHub Profile                                   |
-| ---------------- | ------------------------------------------------ |
-| Parth Sharma     | [parthshr370](https://github.com/parthshr370)     |
-| Jino Rohit       | [jino-rohit](https://github.com/jino-rohit)       |
-| Bipul Sharma     | [Bipul70701](https://github.com/Bipul70701)       |
-| Tushar Singh     | [tushar80rt](https://github.com/tushar80rt)       |
-| Harshit Sharma   | [Harsh1tSh](https://github.com/Harsh1tSh)         |
-| Divyansh Goyal   | [divital-coder](https://github.com/divital-coder) |
-
-## Ecosystem
-
-
-[![Sglang](https://img.shields.io/badge/SGLang-FF6B6B?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMjIgMjJIMkwxMiAyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+)](https://github.com/sgl-project/sglang)
-[![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![Qwen](https://img.shields.io/badge/Qwen-FF6B35?style=for-the-badge&logo=alibaba-cloud&logoColor=white)](https://qwenlm.github.io/)
-[![Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://gemini.google.com/)
-[![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?style=for-the-badge&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
-
+Eigent is built on top of [CAMEL-AI.org][camel-ai-org-github]'s research and infrastructures. [Sponsoring CAMEL-AI.org][sponsor-link] will make `Eigent` better.
 
 ## **📄 Open Source License**
 
 This repository is licensed under the [**Eigent Open Source License**](LICENSE), based on Apache 2.0 with additional conditions.
 
-## 🌐 Community & contact
+## 🌐 Community & Contact
+For more information please contact info@eigent.ai
 
-- GitHub Discussion | [Explreo More →](https://github.com/eigent-ai/Eigent-desktop/discussions)
-- GitHub Issues | [Contribute →][github-issue-link]
-- X (Twitter) | [Follow Us →][social-x-link]
-- Discord | [Seek Support →][discord-link]
-- Wechat <br/>
-![Wechat][image-wechat]
+- **GitHub Issues:** Report bugs, request features, and track development. [Submit an issue][github-issue-link]
+
+- **Discord:** Get real-time support, chat with the community, and stay updated. [Join us](https://discord.camel-ai.org/)
+
+- **X (Twitter):** Follow for updates, AI insights, and key announcements. [Follow us][social-x-link]
+
+- **WeChat Community:** Scan the QR code below to join our WeChat community.
+
+![wechat](https://eigent-ai.github.io/.github/assets/wechat.jpg)
+
 
 
 <!-- LINK GROUP -->
+<!-- Social -->
+[discord-url]: https://discord.camel-ai.org/
+[discord-image]: https://img.shields.io/discord/1082486657678311454?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb
 
-[discord-link]: https://discord.camel-ai.org
-[discord-shield]: https://img.shields.io/discord/1127171173982154893?color=5865F2&label=discord&labelColor=gray&logo=discord&logoColor=white&style=plastic
+[built-with-camel]:https://img.shields.io/badge/-Built--with--CAMEL-4C19E8.svg?logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQ4IiBoZWlnaHQ9IjI3MiIgdmlld0JveD0iMCAwIDI0OCAyNzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik04LjgzMTE3IDE4LjU4NjVMMCAzMC44MjY3QzUuNDY2OTIgMzUuMDQzMiAxNS4xMzkxIDM4LjgyNTggMjQuODExNCAzNi4yOTU5QzMwLjY5ODggNDAuOTM0MSAzOS42NzAyIDQwLjIzMTMgNDQuMTU1OSA0MC4wOTA4QzQzLjQ1NSA0Ny4zOTk0IDQyLjQ3MzcgNzAuOTU1OCA0NC4xNTU5IDEwNi43MTJDNDUuODM4IDE0Mi40NjggNzEuNzcwOCAxNjYuODY4IDg0LjUyNjkgMTc0LjU5OEw3Ni4wMDAyIDIyMEw4NC41MjY5IDI3MkgxMDguOTE4TDk4LjAwMDIgMjIwTDEwOC45MTggMTc0LjU5OEwxMjkuOTQ0IDI3MkgxNTQuNzU2TDEzNC4xNSAxNzQuNTk4SDE4Ny4xMzdMMTY2LjUzMSAyNzJIMTkxLjc2M0wyMTIuMzY5IDE3NC41OThMMjI2IDIyMEwyMTIuMzY5IDI3MkgyMzcuNjAxTDI0OC4wMDEgMjIwTDIzNy4xOCAxNzQuNTk4QzIzOS4yODMgMTY5LjExNyAyNDAuNDAxIDE2Ni45NzYgMjQxLjgwNiAxNjEuMTA1QzI0OS4zNzUgMTI5LjQ4MSAyMzUuMDc3IDEwMy45MDEgMjI2LjY2NyA5NC40ODRMMjA2LjQ4MSA3My44MjNDMTk3LjY1IDY0Ljk2ODMgMTgyLjUxMSA2NC41NDY3IDE3Mi44MzkgNzIuNTU4MUMxNjUuNzI4IDc4LjQ0NzcgMTYxLjcwMSA3OC43NzI3IDE1NC43NTYgNzIuNTU4MUMxNTEuODEyIDcwLjAyODEgMTQ0LjUzNSA2MS40ODg5IDEzNC45OTEgNTMuNTgzN0MxMjUuMzE5IDQ1LjU3MjMgMTA4LjQ5NyA0OC45NDU1IDEwMi4xODkgNTUuNjkxOUw3My41OTMxIDg0LjM2NDRWNy42MjM0OUw3OS4xMjczIDBDNjAuOTA0MiAzLjY1NDMzIDIzLjgwMjEgOS41NjMwOSAxOS43NjUgMTAuNTc1MUMxNS43Mjc5IDExLjU4NyAxMC43OTM3IDE2LjMzNzcgOC44MzExNyAxOC41ODY1WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTQzLjIwMzggMTguNzE4N0w0OS4wOTEyIDEzLjA0OTNMNTQuOTc4NyAxOC43MTg3TDQ5LjA5MTIgMjQuODI0Mkw0My4yMDM4IDE4LjcxODdaIiBmaWxsPSIjNEMxOUU4Ii8+Cjwvc3ZnPgo=
 
-
-[eigent-github]: https://github.com/eigent-ai/Eigent-desktop
+[eigent-github]: https://github.com/eigent-ai/eigent
 [github-star]: https://img.shields.io/github/stars/eigent-ai?color=F5F4F0&labelColor=gray&style=plastic&logo=github
+[camel-ai-org-github]: https://github.com/camel-ai
 
-[social-x-link]: https://x.com/Eigent-AI
+[camel-github]: https://github.com/camel-ai/camel
+[eigent-github]: https://github.com/eigent-ai/eigent
+[contribution-link]: https:/github.com/eigent-ai/eigent/blob/master/CONTRIBUTING.md
+
+[social-x-link]: https://x.com/Eigent_AI
 [social-x-shield]: https://img.shields.io/badge/-%40Eigent_AI-white?labelColor=gray&logo=x&logoColor=white&style=plastic
 
-[sponsor-link]: https://github.com/sponsors/eigent-ai
-[sponsor-shield]: https://img.shields.io/badge/-Sponsor%20Eigent-1d1d1d?logo=github&logoColor=white&style=plastic
+[reddit-url]: https://www.reddit.com/r/CamelAI/
+[reddit-image]: https://img.shields.io/reddit/subreddit-subscribers/CamelAI?style=plastic&logo=reddit&label=r%2FCAMEL&labelColor=white
 
-[share-linkedin-link]: https://www.linkedin.com/company/eigent-ai/
-[share-linkedin-shield]: https://img.shields.io/badge/-Share%20on%20linkedin-blue?labelColor=gray&logo=linkedin&logoColor=white&style=plastic
+[wechat-url]: https://ghli.org/camel/wechat.png
+[wechat-image]: https://img.shields.io/badge/WeChat-CamelAIOrg-brightgreen?logo=wechat&logoColor=white
 
-[share-reddit-link]: https://www.reddit.com/r/CamelAI/comments/1m7oa2n/launch_countdown_of_our_first_ever_agent_product/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-[share-reddit-shield]: https://img.shields.io/badge/-Share%20on%20reddit-red?labelColor=gray&logo=reddit&logoColor=white&style=flat-plastic
+[sponsor-link]: https://github.com/sponsors/camel-ai
+[sponsor-shield]: https://img.shields.io/badge/-Sponsor%20CAMEL--AI-1d1d1d?logo=github&logoColor=white&style=plastic
 
+[eigent-download]: https://www.eigent.ai/download
+[download-shield]: https://img.shields.io/badge/Download%20Eigent-363AF5?style=plastic
 
+<!-- camel & eigent -->
 [camel-site]: https://www.camel-ai.org
 [eigent-site]: https://www.eigent.ai
 [docs-site]: https://docs.eigent.ai
-[github-issue-link]: https://github.com/eigent-ai/Eigent-desktop/issues
-[ambassador-link]:https://www.camel-ai.org/ambassador 
+[github-issue-link]: https://github.com/eigent-ai/eigent/issues
 
-
-[Try it Now]: https://img.shields.io/badge/-TRY_IT_NOW-363AF5?style=plastic
-
+<!-- marketing -->
 [image-seperator]: https://eigent-ai.github.io/.github/assets/seperator.png 
 [image-head]: https://eigent-ai.github.io/.github/assets/head.png 
-[image-overview]: https://eigent-ai.github.io/.github/assets/overview.png
 [image-public-beta]: https://eigent-ai.github.io/.github/assets/banner.png
-[image-ecosystem]: https://eigent-ai.github.io/.github/assets/ecosystem.png
 [image-star-us]: https://eigent-ai.github.io/.github/assets/star-us.gif
-
-[image-workforce]: https://eigent-ai.github.io/.github/assets/feature_dynamic_workforce.gif
-[image-human-in-the-loop]: https://eigent-ai.github.io/.github/assets/feature_human_in_the_loop.gif
-[image-add-worker]: https://eigent-ai.github.io/.github/assets/feature_add_worker.gif
-[image-mcp]: https://eigent-ai.github.io/.github/assets/feature_add_mcp.gif
-[image-local-model]: https://eigent-ai.github.io/.github/assets/feature_local_model.gif
 [image-opensource]: https://eigent-ai.github.io/.github/assets/opensource.png
 [image-wechat]: https://eigent-ai.github.io/.github/assets/wechat.png
-[image-ambassador]: https://eigent-ai.github.io/.github/assets/ambassador-program.png
+
+<!-- feature -->
+[image-workforce]: https://eigent-ai.github.io/.github/assets/feature_dynamic_workforce.gif
+[image-human-in-the-loop]: https://eigent-ai.github.io/.github/assets/feature_human_in_the_loop.gif
+[image-customise-workers]: https://eigent-ai.github.io/.github/assets/feature_customise_workers.gif
+[image-add-mcps]: https://eigent-ai.github.io/.github/assets/feature_add_mcps.gif
+[image-local-model]: https://eigent-ai.github.io/.github/assets/feature_local_model.gif

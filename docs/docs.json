@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "name": "Eigent Documentation",
   "theme": "aspen",
+  "defaultPage": "/get_started/welcome",
   "logo": {
     "light": "images/logo-light.png",
     "dark": "images/logo-dark.png",
@@ -30,7 +31,7 @@
       {
         "icon": "github",
         "label": "GitHub",
-        "href": "https://github.com/eigent-ai/Eigent-desktop"
+        "href": "https://github.com/eigent-ai/eigent"
       }
     ],
     "primary": {
@@ -45,21 +46,27 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Get Started",
             "pages": [
               "/get_started/welcome",
-              "/get_started/installation",
+              "/get_started/installation", 
               "/get_started/quick_start"
             ]
           },
           {
-            "group": "Features",
+            "group": "Core",
             "pages": [
-              "/features/dynamic_workforce",
-              "/features/customised_workers",
-              "/features/human-in-the-loop",
-              "/features/local_models",
-              "/features/add_mcps"
+              "/core/concepts",
+              "/core/workforce",
+              "/core/models",
+              "/core/tools"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "/troubleshooting/support",
+              "/troubleshooting/bug"
             ]
           }
         ]
@@ -77,7 +84,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/eigent-ai/Eigent-desktop",
+      "github": "https://github.com/eigent-ai/eigent",
       "twitter": "https://x.com/Eigent-AI",
       "linkedin": "https://www.linkedin.com/company/eigent-ai/"
     }

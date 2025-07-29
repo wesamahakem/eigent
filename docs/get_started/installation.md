@@ -31,19 +31,19 @@ You're all set! Now that Eigent is installed, here are a few places you can go t
   <Card
     title="Quick Start"
     icon="rocket"
-    href="/quickstart">
+    href="/get_started/quick_start">
     Jump right in and learn how to launch your first task.
   </Card>
   <Card
     title="Key Concepts"
     icon="key"
-    href="/concepts">
+    href="/core/concepts">
     Understand the core terms and features that make Eigent unique.
   </Card>
   <Card
     title="Support"
     icon="question-circle"
-    href="/support">
+    href="/troubleshooting/support">
     Find answers to frequently asked questions.
   </Card>
 </CardGroup>
