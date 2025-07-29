@@ -101,7 +101,7 @@ export async function installDependencies() {
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             return timezone === 'Asia/Shanghai';
         }
-        console.log('isInChinaTimezone@@@@@', isInChinaTimezone())
+        console.log('isInChinaTimezone', isInChinaTimezone())
         const node_process = spawn(uv_path, ['sync', '--no-dev', ...(isInChinaTimezone() ? proxy : [])], { cwd: backendPath })
         node_process.stdout.on('data', (data) => {
             log.info(`Script output: ${data}`)
