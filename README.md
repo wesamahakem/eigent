@@ -31,6 +31,8 @@
 
 Built on [CAMEL-AI][camel-site]'s acclaimed open-source project, our system introduces a **Multi-Agent Workforce** that **boosts productivity** through parallel execution, customization, and privacy protection.
 
+### ⭐ 100% Open Source - 🥇 Local Deploymen - 🏆 MCP Integration
+
 - ✅ **Zero Setup** - No technical configuration required
 - ✅ **Multi-Agent Coordination** - Handle complex multi-agent workflows
 - ✅ **Enterprise Feature** - SSO/Access control
