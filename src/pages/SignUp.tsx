@@ -287,7 +287,7 @@ export default function SignUp() {
 										required
 										value={formData.email}
 										onChange={(e) => handleInputChange("email", e.target.value)}
-										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-[#CCC] font-normal ${errors.email ? "border-red-500" : ""}`}
+										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-input-text-focus font-normal ${errors.email ? "border-red-500" : ""}`}
 									/>
 								</div>
 								{errors.email && (
@@ -319,7 +319,7 @@ export default function SignUp() {
 										onChange={(e) =>
 											handleInputChange("password", e.target.value)
 										}
-										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-[#CCC] font-normal pr-9 ${errors.password ? "border-red-500" : ""}`}
+										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-input-text-focus font-normal pr-9 ${errors.password ? "border-red-500" : ""}`}
 									/>
 								</div>
 								{errors.password && (
@@ -342,7 +342,7 @@ export default function SignUp() {
 										onChange={(e) =>
 											handleInputChange("invite_code", e.target.value)
 										}
-										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-[#CCC] font-normal ${errors.invite_code ? "border-red-500" : ""}`}
+										className={`rounded border border-[#CCC] bg-white shadow-none text-[13px] text-input-text-focus font-normal ${errors.invite_code ? "border-red-500" : ""}`}
 									/>
 								</div>
 								{errors.invite_code && (

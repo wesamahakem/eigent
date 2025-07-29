@@ -14,6 +14,9 @@ export function showStorageToast() {
 			</a>{" "}
 			your account or store your historical content locally. You've reached the
 			limit of your current plan.
-		</div>
+		</div>,
+		{
+			duration: Infinity,
+		}
 	);
 }

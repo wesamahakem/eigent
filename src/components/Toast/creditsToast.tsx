@@ -6,9 +6,7 @@ export function showCreditsToast() {
 			You've reached the limit of your current plan.
 			<a
 				className="underline cursor-pointer"
-				onClick={() =>
-					(window.location.href = "https://www.eigent.ai/pricing")
-				}
+				onClick={() => (window.location.href = "https://www.eigent.ai/pricing")}
 			>
 				Upgrade
 			</a>{" "}
@@ -20,6 +18,9 @@ export function showCreditsToast() {
 				Settings
 			</a>{" "}
 			.
-		</div>
+		</div>,
+		{
+			duration: Infinity,
+		}
 	);
 }
