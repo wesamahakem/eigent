@@ -91,10 +91,10 @@ The fastest way to experience Eigent's multi-agent AI capabilities is through ou
 
 <br/>
 
-![public-beta][image-public-beta]
+[![image-public-beta]][eigent-download]
 
 <div align="right">
-<a src:www.eigent.ai>Get started at Eigent.ai →</a>
+<a href="https://www.eigent.ai/download">Get started at Eigent.ai →</a>
 </div>
 
 ### 🏠 Self-Hosting (Community Edition)
