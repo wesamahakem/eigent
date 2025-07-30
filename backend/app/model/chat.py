@@ -49,6 +49,7 @@ class Chat(BaseModel):
         "Adopt a confident and professional tone."
     )
     new_agents: list["NewAgent"] = []
+    extra_params: dict | None = None  # For provider-specific parameters like Azure
 
     @field_validator("model_type")
     @classmethod

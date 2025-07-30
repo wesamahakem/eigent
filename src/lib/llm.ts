@@ -68,6 +68,11 @@ export const INIT_PROVODERS: Provider[] = [
         key: "api_version",
         name: "API Version",
         value: ""
+      },
+      {
+        key: "azure_deployment_name",
+        name: "Deployment Name",
+        value: ""
       }
     ],
     is_valid: false,
