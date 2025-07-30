@@ -5,7 +5,7 @@ import re
 from typing import Literal
 from loguru import logger
 from pydantic import BaseModel, field_validator
-from camel.types import ModelPlatformType, ModelType, RoleType
+from camel.types import ModelType, RoleType
 
 
 class Status(str, Enum):
@@ -28,7 +28,7 @@ class Chat(BaseModel):
     question: str
     email: str
     attaches: list[str] = []
-    model_platform: ModelPlatformType
+    model_platform: str
     model_type: str
     api_key: str
     api_url: str | None = None  # for cloud version, user don't need to set api_url
