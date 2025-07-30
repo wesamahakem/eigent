@@ -322,6 +322,7 @@ export default function SettingModels() {
 				api_key: "not-required",
 				endpoint_url: localEndpoint,
 				is_valid: true,
+				model_type: localType,
 				encrypted_config: {
 					model_platform: localPlatform,
 					model_type: localType,

@@ -209,7 +209,7 @@ const chatStore = create<ChatStore>()(
 				model_platform: '',
 				api_url: ''
 			}
-			if (modelType === 'custom') {
+			if (modelType === 'custom'||modelType==='local') {
 				const res = await proxyFetchGet('/api/providers', {
 					prefer: true
 				});
@@ -234,7 +234,7 @@ const chatStore = create<ChatStore>()(
 					model_platform: cloud_model_type.includes('gpt') ? 'openai' : 'gemini',
 					api_url: res.api_url
 				}
-			}
+			} 
 
 			// fetch installed mcp token
 			if (!type) {
