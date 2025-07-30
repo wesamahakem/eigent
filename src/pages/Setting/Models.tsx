@@ -312,7 +312,6 @@ export default function SettingModels() {
 			const resp = await fetch(localEndpoint, {
 				method: "GET",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ test: true }),
 			});
 			if (!resp.ok) {
 				throw new Error("Endpoint is not responding");
