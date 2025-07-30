@@ -86,7 +86,7 @@ export default function SettingModels() {
 	const [localEnabled, setLocalEnabled] = useState(true);
 	const [localPlatform, setLocalPlatform] = useState("ollama");
 	const [localEndpoint, setLocalEndpoint] = useState("");
-	const [localType, setLocalType] = useState("llama3.2");
+	const [localType, setLocalType] = useState("");
 	const [localVerifying, setLocalVerifying] = useState(false);
 	const [localError, setLocalError] = useState<string | null>(null);
 	const [localInputError, setLocalInputError] = useState(false);
@@ -859,7 +859,14 @@ export default function SettingModels() {
 						<label className="block text-sm font-bold mb-1 leading-tight">
 							Model Type
 						</label>
-						<Select
+						<Input
+							placeholder="Enter your local model type"
+							className="w-full"
+							value={localType}
+							onChange={(e) => setLocalType(e.target.value)}
+							disabled={!localEnabled}
+						/>
+						{/* <Select
 							value={localType}
 							onValueChange={(v) => setLocalType(v)}
 							disabled={!localEnabled}
@@ -872,7 +879,7 @@ export default function SettingModels() {
 								<SelectItem value="qwen3">qwen3</SelectItem>
 								<SelectItem value="deepseek-r1">deepseek r1</SelectItem>
 							</SelectContent>
-						</Select>
+						</Select> */}
 					</div>
 				</div>
 				<div className="flex justify-end mt-2 ">
