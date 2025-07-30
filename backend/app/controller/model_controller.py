@@ -25,12 +25,20 @@ class ValidateModelResponse(BaseModel):
 async def validate_model(request: ValidateModelRequest):
     try:
         extra = request.extra_params or {}
+
+        # Ensure the model config forces tool usage when supported (e.g., OpenAI tool_choice)
+        model_config = (
+            request.model_config_dict.copy() if request.model_config_dict else {}
+        )
+        # Always require tool call for the validation prompt
+        model_config.setdefault("tool_choice", "required")
+
         agent = create_agent(
             request.model_platform,
             request.model_type,
             api_key=request.api_key,
             url=request.url,
-            model_config_dict=request.model_config_dict,
+            model_config_dict=model_config,
             **extra,
         )
         response = agent.step(
