@@ -18,10 +18,10 @@ def get_website_content(url: str) -> str:
 def create_agent(
     model_platform: str, model_type: str, api_key: str = None, url: str = None, model_config_dict: dict = None, **kwargs
 ) -> ChatAgent:
-    platform = getattr(ModelPlatformType, model_platform.upper(), None)
-    mtype = getattr(ModelType, model_type.upper(), None)
+    platform = model_platform
+    mtype = model_type
     if mtype is None:
-        mtype = model_type
+        raise ValueError(f"Invalid model_type: {model_type}")
     if platform is None:
         raise ValueError(f"Invalid model_platform: {model_platform}")
     model = ModelFactory.create(

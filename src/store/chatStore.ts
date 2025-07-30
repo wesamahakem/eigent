@@ -220,7 +220,7 @@ const chatStore = create<ChatStore>()(
 					api_key: provider.api_key,
 					model_type: provider.model_type,
 					model_platform: provider.provider_name,
-					api_url: provider.api_url
+					api_url: provider.endpoint_url || provider.api_url
 				}
 			} else if (modelType === 'cloud') {
 				// get current model

@@ -1275,6 +1275,7 @@ async def mcp_agent(options: Chat):
             model_platform=options.model_platform,
             model_type=options.model_type,
             api_key=options.api_key,
+            url=options.api_url,
         ),
         # output_language=options.language,
         tools=tools,

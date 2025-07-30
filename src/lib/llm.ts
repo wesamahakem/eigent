@@ -74,7 +74,7 @@ export const INIT_PROVODERS: Provider[] = [
     model_type: ""
   },
   {
-    id: 'openai_compatible_model',
+    id: 'openai-compatible-model',
     name: 'OpenAI Compatible',
     apiKey: '',
     apiHost: '',
