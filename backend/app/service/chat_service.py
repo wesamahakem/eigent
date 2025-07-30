@@ -55,12 +55,11 @@ async def step_solve(options: Chat, request: Request):
     start_event_loop = True
     question_agent = question_confirm_agent(options)
     camel_task = None
+    workforce = None
     while True:
         if await request.is_disconnected():
-            try:
+            if workforce is not None:
                 workforce.stop()
-            except NameError:
-                pass
             break
         try:
             item = await task_lock.get_queue()
@@ -159,18 +158,22 @@ async def step_solve(options: Chat, request: Request):
                     {"output": item.data, "process_task_id": item.process_task_id},
                 )
             elif item.action == Action.pause:
-                workforce.pause()
+                if workforce is not None:
+                    workforce.pause()
             elif item.action == Action.resume:
-                workforce.resume()
+                if workforce is not None:
+                    workforce.resume()
             elif item.action == Action.new_agent:
-                workforce.pause()
-                workforce.add_single_agent_worker(format_agent_description(item), await new_agent_model(item, options))
-                workforce.resume()
+                if workforce is not None:
+                    workforce.pause()
+                    workforce.add_single_agent_worker(format_agent_description(item), await new_agent_model(item, options))
+                    workforce.resume()
             elif item.action == Action.end:
                 assert camel_task is not None
                 task_lock.status = Status.done
                 yield sse_json("end", str(camel_task.result))
-                workforce.stop_gracefully()
+                if workforce is not None:
+                    workforce.stop_gracefully()
                 break
             elif item.action == Action.supplement:
                 assert camel_task is not None
@@ -184,12 +187,14 @@ async def step_solve(options: Chat, request: Request):
                 task = asyncio.create_task(workforce.eigent_start(camel_task.subtasks))
                 task_lock.add_background_task(task)
             elif item.action == Action.budget_not_enough:
-                workforce.pause()
+                if workforce is not None:
+                    workforce.pause()
                 yield sse_json(Action.budget_not_enough, {"message": "budget not enouth"})
             elif item.action == Action.stop:
-                if workforce._running:
-                    workforce.stop()
-                workforce.stop_gracefully()
+                if workforce is not None:
+                    if workforce._running:
+                        workforce.stop()
+                    workforce.stop_gracefully()
                 await delete_task_lock(task_lock.id)
                 break
             else:
@@ -197,12 +202,13 @@ async def step_solve(options: Chat, request: Request):
         except ModelProcessingError as e:
             if "Budget has been exceeded" in str(e):
                 # workforce decompose task don't use ListenAgent, this need return sse
-                workforce.pause()
+                if 'workforce' in locals() and workforce is not None:
+                    workforce.pause()
                 yield sse_json(Action.budget_not_enough, {"message": "budget not enouth"})
             else:
                 logger.error(f"Error processing action {item.action}: {e}")
                 yield sse_json("error", {"message": str(e)})
-                if workforce._running:
+                if 'workforce' in locals() and workforce is not None and workforce._running:
                     workforce.stop()
         except Exception as e:
             logger.error(f"Error processing action {item.action}: {e}")
