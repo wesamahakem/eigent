@@ -541,9 +541,12 @@ export default function SettingModels() {
 							<SelectTrigger className="h-7 min-w-[160px]  px-3 py-1 text-xs">
 								<SelectValue placeholder="Select Model Type" />
 							</SelectTrigger>
-							<SelectContent>
+							<SelectContent className="bg-input-bg-default">
 								<SelectItem value="gemini/gemini-2.5-pro">
 									Gemini 2.5 Pro
+								</SelectItem>
+								<SelectItem value="gemini-2.5-flash">
+									Gemini 2.5 Flash
 								</SelectItem>
 								<SelectItem value="gpt-4.1-mini">GPT-4.1 mini</SelectItem>
 								<SelectItem value="gpt-4.1">GPT-4.1</SelectItem>
@@ -580,7 +583,7 @@ export default function SettingModels() {
 				</div>
 				{/*  model list */}
 				<div
-					className={`self-stretch inline-flex flex-col justify-start items-start gap-4 transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[2000px] opacity-100"
+					className={`self-stretch inline-flex flex-col justify-start items-start gap-4 transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[3000px] opacity-100"
 						}`}
 					style={{
 						transform: collapsed ? 'translateY(-10px)' : 'translateY(0)',
