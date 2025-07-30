@@ -66,7 +66,7 @@ const authStore = create<AuthState>()(
 			language: 'en',
 			isFirstLaunch: true,
 			modelType: 'cloud',
-			cloud_model_type: 'gpt-4.1-mini',
+			cloud_model_type: 'gpt-4.1',
 			initState: 'permissions',
 			share_token: null,
 			workerListData: {},

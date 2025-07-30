@@ -11,6 +11,7 @@ import {
 	EyeOff,
 	Info,
 	RotateCcw,
+	Loader2,
 } from "lucide-react";
 import { INIT_PROVODERS } from "@/lib/llm";
 import { Provider } from "@/types";
@@ -27,16 +28,13 @@ import {
 	SelectItem,
 	SelectValue,
 } from "@/components/ui/select";
-import React from "react";
 import { Switch } from "@/components/ui/switch";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Switch as ToggleSwitch } from "@/components/ui/switch";
 import { useAuthStore } from "@/store/authStore";
-import { extract } from "tar";
 import { toast } from "sonner";
 import {
 	Dialog,
@@ -439,13 +437,17 @@ export default function SettingModels() {
 		}
 	};
 	const [credits, setCredits] = useState<any>(0);
+	const [loadingCredits, setLoadingCredits] = useState(false);
 	const updateCredits = async () => {
 		try {
+			setLoadingCredits(true);
 			const res = await proxyFetchGet(`/api/user/current_credits`);
 			console.log(res?.credits);
 			setCredits(res?.credits);
 		} catch (error) {
 			console.error(error);
+		} finally {
+			setLoadingCredits(false);
 		}
 	};
 
@@ -501,12 +503,12 @@ export default function SettingModels() {
 						variant="primary"
 						size="sm"
 					>
-						{subscription?.plan_key?.charAt(0).toUpperCase() +
+						{loadingCredits ? <Loader2 className="w-4 h-4 animate-spin" /> : subscription?.plan_key?.charAt(0).toUpperCase() +
 							subscription?.plan_key?.slice(1)}
 						<Settings />
 					</Button>
 					<div className="text-text-body text-sm font-normal font-['Inter'] leading-tight">
-						Credits: {credits}
+						Credits: {loadingCredits ? <Loader2 className="w-4 h-4 animate-spin" /> : credits}
 					</div>
 				</div>
 				<div className="w-full flex items-center flex-1 justify-between pt-4 border-t border-border-secondary">
