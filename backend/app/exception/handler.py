@@ -1,7 +1,9 @@
+import traceback
 from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from loguru import logger
 from app import api
 from app.component import code
 from app.exception.exception import NoPermissionException, ProgramException, TokenException
@@ -44,4 +46,18 @@ async def program_exception(request: Request, exception: NoPermissionException):
     return JSONResponse(
         status_code=200,
         content={"code": code.program_error, "text": exception.text},
+    )
+
+
+@api.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error: {exc}")
+    traceback.print_exc()  # output to electron log
+
+    return JSONResponse(
+        status_code=500,
+        content={
+            "code": 500,
+            "message": str(exc),
+        },
     )
