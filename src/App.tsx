@@ -7,12 +7,16 @@ import { AnimationJson } from "@/components/AnimationJson";
 import animationData from "@/assets/animation/openning_animaiton.json";
 import { useAuthStore } from "./store/authStore";
 import { Toaster } from "sonner";
+import { hasStackKeys } from "./lib";
+
+const HAS_STACK_KEYS = hasStackKeys();
 
 function App() {
-
 	const navigate = useNavigate();
 	const { setInitState } = useAuthStore();
-	
+	const [animationFinished, setAnimationFinished] = useState(false);
+	const { isFirstLaunch } = useAuthStore();
+
 	useEffect(() => {
 		const handleShareCode = (event: any, share_token: string) => {
 			navigate({
@@ -21,19 +25,21 @@ function App() {
 			});
 		};
 
-		// 监听版本更新通知
-		const handleUpdateNotification = (data: { 
-			type: string; 
-			currentVersion: string; 
-			previousVersion: string; 
-			reason: string; 
+		//  listen version update notification
+		const handleUpdateNotification = (data: {
+			type: string;
+			currentVersion: string;
+			previousVersion: string;
+			reason: string;
 		}) => {
-			console.log("收到版本更新通知:", data);
-			
-			if (data.type === 'version-update') {
-				// 处理版本更新逻辑
-				console.log(`版本从 ${data.previousVersion} 更新到 ${data.currentVersion}`);
-				console.log(`更新原因: ${data.reason}`);
+			console.log("receive version update notification:", data);
+
+			if (data.type === "version-update") {
+				// handle version update logic
+				console.log(
+					`version from ${data.previousVersion} to ${data.currentVersion}`
+				);
+				console.log(`update reason: ${data.reason}`);
 				setInitState("carousel");
 			}
 		};
@@ -42,29 +48,43 @@ function App() {
 		window.electronAPI.onUpdateNotification(handleUpdateNotification);
 
 		return () => {
-			window.ipcRenderer.off("auth-auth-share-token-received", handleShareCode);
+			window.ipcRenderer.off("auth-share-token-received", handleShareCode);
 			window.electronAPI.removeAllListeners("update-notification");
 		};
 	}, [navigate, setInitState]);
 
-	const [animationFinished, setAnimationFinished] = useState(false);
-	const { isFirstLaunch } = useAuthStore();
+	// render main content
+	const renderMainContent = () => {
+		if (isFirstLaunch && !animationFinished) {
+			return (
+				<AnimationJson
+					onComplete={() => setAnimationFinished(true)}
+					animationData={animationData}
+				/>
+			);
+		}
+		return <AppRoutes />;
+	};
 
-	return (
-		<StackProvider app={stackClientApp}>
-			<StackTheme>
-				{isFirstLaunch && !animationFinished ? (
-					<AnimationJson
-						onComplete={() => setAnimationFinished(true)}
-						animationData={animationData}
-					/>
-				) : (
-					<AppRoutes />
-				)}
-			</StackTheme>
-			<Toaster />
-		</StackProvider>
-	);
+	// render wrapper
+	const renderWrapper = (children: React.ReactNode) => {
+		if (HAS_STACK_KEYS) {
+			return (
+				<StackProvider app={stackClientApp}>
+					<StackTheme>{children}</StackTheme>
+					<Toaster />
+				</StackProvider>
+			);
+		}
+		return (
+			<>
+				{children}
+				<Toaster />
+			</>
+		);
+	};
+
+	return renderWrapper(renderMainContent());
 }
 
 export default App;

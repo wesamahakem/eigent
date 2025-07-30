@@ -389,7 +389,7 @@ The current date is {datetime.date.today()}. For any date-related tasks, you MUS
         coordinator_agent=coordinator_agent,
         task_agent=task_agent,
         new_worker_agent=new_worker_agent,
-        use_structured_output_handler=True if options.model_platform == ModelPlatformType.GEMINI else False,
+        use_structured_output_handler=False if options.model_platform == ModelPlatformType.OPENAI else True,
     )
     workforce.add_single_agent_worker(
         "Developer Agent: A master-level coding assistant with a powerful "
