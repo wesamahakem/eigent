@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from typing import Any, Dict
 from camel.toolkits.terminal_toolkit import TerminalToolkit as BaseTerminalToolkit
+from app.component.command import uv
 from app.component.environment import env
 from app.service.task import Action, ActionTerminalData, Agents, get_task_lock
 from app.utils.listen.toolkit_listen import listen_toolkit
@@ -55,6 +56,10 @@ class TerminalToolkit(BaseTerminalToolkit, AbstractToolkit):
         )
         if hasattr(task_lock, "add_background_task"):
             task_lock.add_background_task(task)
+
+    def _ensure_uv_available(self) -> bool:
+        self.uv_path = uv()
+        return True
 
     @listen_toolkit(
         BaseTerminalToolkit.shell_exec,
