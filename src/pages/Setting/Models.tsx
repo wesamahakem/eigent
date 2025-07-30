@@ -310,7 +310,7 @@ export default function SettingModels() {
 		try {
 			// 1. Check if endpoint returns response
 			const resp = await fetch(localEndpoint, {
-				method: "POST",
+				method: "GET",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ test: true }),
 			});
