@@ -25,21 +25,21 @@ function App() {
 			});
 		};
 
-		// 监听版本更新通知
+		//  listen version update notification
 		const handleUpdateNotification = (data: {
 			type: string;
 			currentVersion: string;
 			previousVersion: string;
 			reason: string;
 		}) => {
-			console.log("收到版本更新通知:", data);
+			console.log("receive version update notification:", data);
 
 			if (data.type === "version-update") {
-				// 处理版本更新逻辑
+				// handle version update logic
 				console.log(
-					`版本从 ${data.previousVersion} 更新到 ${data.currentVersion}`
+					`version from ${data.previousVersion} to ${data.currentVersion}`
 				);
-				console.log(`更新原因: ${data.reason}`);
+				console.log(`update reason: ${data.reason}`);
 				setInitState("carousel");
 			}
 		};
@@ -53,7 +53,7 @@ function App() {
 		};
 	}, [navigate, setInitState]);
 
-	// 渲染主要内容
+	// render main content
 	const renderMainContent = () => {
 		if (isFirstLaunch && !animationFinished) {
 			return (
@@ -66,7 +66,7 @@ function App() {
 		return <AppRoutes />;
 	};
 
-	// 渲染包装器
+	// render wrapper
 	const renderWrapper = (children: React.ReactNode) => {
 		if (HAS_STACK_KEYS) {
 			return (
