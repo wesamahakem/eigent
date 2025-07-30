@@ -25,8 +25,6 @@ export default function Login() {
 	const [hidePassword, setHidePassword] = useState(true);
 
 	const [formData, setFormData] = useState({
-		// email: "luoyou1014@163.com",
-		// password: "123456",
 		email: "",
 		password: "",
 	});
