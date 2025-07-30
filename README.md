@@ -112,8 +112,8 @@ For users who prefer local control, data privacy, or customization, this option 
 #### 2. Quick Start
 
 ```bash
-git clone https://github.com/eigent-ai/Eigent-desktop.git
-cd Eigent-desktop
+git clone https://github.com/eigent-ai/eigent.git
+cd eigent
 npm install
 npm run dev
 ```
