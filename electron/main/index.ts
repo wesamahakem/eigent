@@ -55,7 +55,7 @@ async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
     try {
       log.info(' start check version', { currentVersion });
 
-      // 检查版本文件是否存在
+      // Check if version file exists
       const versionExists = fs.existsSync(versionFile);
       let savedVersion = '';
 
@@ -351,7 +351,7 @@ function registerIpcHandlers() {
         child.stdout.on('data', (data) => {
           const output = data.toString();
           stdout += output;
-          log.info('实时输出:', output.trim());
+          log.info('Real-time output:', output.trim());
         });
 
         // realtime listen error output
@@ -890,27 +890,27 @@ const setupExternalLinkHandling = () => {
 
 // ==================== check and start backend ====================
 const checkAndStartBackend = async () => {
-  log.info('检查并启动后端服务...');
+  log.info('Checking and starting backend service...');
 
   const isToolInstalled = await checkToolInstalled();
   if (isToolInstalled) {
-    log.info('工具已安装，启动后端服务...');
+    log.info('Tool installed, starting backend service...');
 
-    // 通知前端安装成功
+    // Notify frontend installation success
     if (win && !win.isDestroyed()) {
       win.webContents.send('install-dependencies-complete', { success: true, code: 0 });
     }
 
     python_process = await startBackend((port) => {
       backendPort = port;
-      log.info('后端服务启动成功', { port });
+      log.info('Backend service started successfully', { port });
     });
 
     python_process?.on('exit', (code, signal) => {
-      log.info('Python 进程退出', { code, signal });
+      log.info('Python process exited', { code, signal });
     });
   } else {
-    log.warn('工具未安装，无法启动后端服务');
+    log.warn('Tool not installed, cannot start backend service');
   }
 };
 
@@ -918,19 +918,19 @@ const checkAndStartBackend = async () => {
 const cleanupPythonProcess = () => {
   try {
     if (python_process?.pid) {
-      log.info('清理 Python 进程', { pid: python_process.pid });
+      log.info('Cleaning up Python process', { pid: python_process.pid });
       kill(python_process.pid, 'SIGINT', (err) => {
         if (err) {
-          log.error('清理进程树失败:', err);
+          log.error('Failed to clean up process tree:', err);
         } else {
-          log.info('成功清理 Python 进程树');
+          log.info('Successfully cleaned up Python process tree');
         }
       });
     } else {
-      log.info('没有需要清理的 Python 进程');
+      log.info('No Python process to clean up');
     }
   } catch (error) {
-    log.error('清理进程时发生错误:', error);
+    log.error('Error occurred while cleaning up process:', error);
   }
 };
 
