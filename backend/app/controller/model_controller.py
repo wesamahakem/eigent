@@ -33,7 +33,13 @@ async def validate_model(request: ValidateModelRequest):
             model_config_dict=request.model_config_dict,
             **extra,
         )
-        response = agent.step(input_message="Get the content of https://www.camel.ai")
+        response = agent.step(
+            input_message="""
+            Get the content of https://www.camel.ai,
+            you must use the get_website_content tool to get the content ,
+            i just want to verify the get_website_content tool is working
+            """
+        )
     except Exception as e:
         return ValidateModelResponse(is_valid=False, is_tool_calls=False, message=str(e))
     return ValidateModelResponse(
