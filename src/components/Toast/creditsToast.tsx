@@ -1,6 +1,8 @@
 import { toast } from "sonner";
 
 export function showCreditsToast() {
+	toast.dismiss();
+	
 	toast(
 		<div>
 			You've reached the limit of your current plan.
@@ -21,6 +23,14 @@ export function showCreditsToast() {
 		</div>,
 		{
 			duration: Infinity,
+			action: {
+				label: "Undo",
+				onClick: () => {
+					// 这里可以添加撤销逻辑
+					console.log("Undo clicked");
+					toast.dismiss();
+				},
+			},
 		}
 	);
 }

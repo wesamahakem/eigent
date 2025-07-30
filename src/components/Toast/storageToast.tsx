@@ -1,6 +1,8 @@
 import { toast } from "sonner";
 
 export function showStorageToast() {
+	toast.dismiss();
+
 	toast(
 		<div>
 			Your cloud storage has reached the limit of your current plan. Please
@@ -17,6 +19,14 @@ export function showStorageToast() {
 		</div>,
 		{
 			duration: Infinity,
+			action: {
+				label: "Undo",
+				onClick: () => {
+					// 这里可以添加撤销逻辑
+					console.log("Undo clicked");
+					toast.dismiss();
+				},
+			},
 		}
 	);
 }
