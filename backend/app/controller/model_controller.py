@@ -25,15 +25,29 @@ class ValidateModelResponse(BaseModel):
 async def validate_model(request: ValidateModelRequest):
     try:
         extra = request.extra_params or {}
+
+        # Ensure the model config forces tool usage when supported (e.g., OpenAI tool_choice)
+        model_config = (
+            request.model_config_dict.copy() if request.model_config_dict else {}
+        )
+        # Always require tool call for the validation prompt
+        model_config.setdefault("tool_choice", "required")
+
         agent = create_agent(
             request.model_platform,
             request.model_type,
             api_key=request.api_key,
             url=request.url,
-            model_config_dict=request.model_config_dict,
+            model_config_dict=model_config,
             **extra,
         )
-        response = agent.step(input_message="Get the content of https://www.camel.ai")
+        response = agent.step(
+            input_message="""
+            Get the content of https://www.camel-ai.org,
+            you must use the get_website_content tool to get the content ,
+            i just want to verify the get_website_content tool is working
+            """
+        )
     except Exception as e:
         return ValidateModelResponse(is_valid=False, is_tool_calls=False, message=str(e))
     return ValidateModelResponse(
