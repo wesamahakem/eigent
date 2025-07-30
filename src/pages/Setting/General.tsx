@@ -22,9 +22,7 @@ import {
 } from "@/components/ui/select";
 
 export default function SettingGeneral() {
-	// useEffect(() => {
-	// 	getUser();
-	// }, []);
+
 	const authStore = useAuthStore();
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
@@ -36,16 +34,6 @@ export default function SettingGeneral() {
 	const nickNameRef: RefObject<HTMLInputElement> = createRef();
 	const workDescRef: RefObject<HTMLInputElement> = createRef();
 
-	// const getUser = async () => {
-	// 	try {
-	// 		const res = await proxyFetchGet(`/api/user`);
-	// 		fullNameRef.current!.value = res.fullname;
-	// 		nickNameRef.current!.value = res.nickname;
-	// 		workDescRef.current!.value = res.work_desc;
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
 
 	
 

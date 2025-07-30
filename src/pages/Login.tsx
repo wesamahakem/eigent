@@ -13,10 +13,12 @@ import google from "@/assets/google.svg";
 import eye from "@/assets/eye.svg";
 import eyeOff from "@/assets/eye-off.svg";
 import { proxyFetchPost } from "@/api/http";
+import { hasStackKeys } from "@/lib";
 
+const HAS_STACK_KEYS = hasStackKeys();
 let lock = false;
 export default function Login() {
-	const app = useStackApp();
+	const app = HAS_STACK_KEYS ? useStackApp() : null;
 	const { setAuth } = useAuthStore();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -226,34 +228,40 @@ export default function Login() {
 								Sign Up
 							</span>
 						</div>
-						<div className="w-full pt-6">
-							<Button
-								variant="primary"
-								size="lg"
-								onClick={() => handleReloadBtn("google")}
-								className="w-full rounded-[24px] mb-4 transition-all duration-300 ease-in-out text-[#F5F5F5] text-center font-inter text-[15px] font-bold leading-[22px] justify-center"
-								disabled={isLoading}
-							>
-								<img src={google} className="w-5 h-5" />
-								<span className="ml-2">Continue with Google</span>
-							</Button>
-							<Button
-								variant="primary"
-								size="lg"
-								onClick={() => handleReloadBtn("github")}
-								className="w-full rounded-[24px] mb-4 transition-all duration-300 ease-in-out text-[#F5F5F5] text-center font-inter text-[15px] font-bold leading-[22px] justify-center"
-								disabled={isLoading}
-							>
-								<img src={github2} className="w-5 h-5" />
-								<span className="ml-2">Continue with Github</span>
-							</Button>
-						</div>
-						<div className="mt-2 w-full text-[#222] text-center font-inter text-[15px]  font-medium leading-[22px] mb-6">
-							or
-						</div>
+						{HAS_STACK_KEYS && (
+							<div className="w-full pt-6">
+								<Button
+									variant="primary"
+									size="lg"
+									onClick={() => handleReloadBtn("google")}
+									className="w-full rounded-[24px] mb-4 transition-all duration-300 ease-in-out text-[#F5F5F5] text-center font-inter text-[15px] font-bold leading-[22px] justify-center"
+									disabled={isLoading}
+								>
+									<img src={google} className="w-5 h-5" />
+									<span className="ml-2">Continue with Google</span>
+								</Button>
+								<Button
+									variant="primary"
+									size="lg"
+									onClick={() => handleReloadBtn("github")}
+									className="w-full rounded-[24px] mb-4 transition-all duration-300 ease-in-out text-[#F5F5F5] text-center font-inter text-[15px] font-bold leading-[22px] justify-center"
+									disabled={isLoading}
+								>
+									<img src={github2} className="w-5 h-5" />
+									<span className="ml-2">Continue with Github</span>
+								</Button>
+							</div>
+						)}
+						{HAS_STACK_KEYS && (
+							<div className="mt-2 w-full text-[#222] text-center font-inter text-[15px]  font-medium leading-[22px] mb-6">
+								or
+							</div>
+						)}
 						<div className="w-full">
-						{generalError && (
-								<p className="text-red-500 text-sm mt-0.5 mb-4">{generalError}</p>
+							{generalError && (
+								<p className="text-red-500 text-sm mt-0.5 mb-4">
+									{generalError}
+								</p>
 							)}
 							<div className="w-full mb-4 relative">
 								<Label

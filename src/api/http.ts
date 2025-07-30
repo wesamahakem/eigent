@@ -80,8 +80,6 @@ async function handleResponse(responsePromise: Promise<Response>): Promise<any> 
     const { code, text } = resData
     // showCreditsToast()
     if (code === 1 || code === 300) {
-
-      showStorageToast()
       return resData
     }
 
