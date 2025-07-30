@@ -243,12 +243,12 @@ export default function IntegrationList({
 	// listen to oauth callback URL notification
 	useEffect(() => {
 		const handler = (_event: any, data: { url: string; provider: string }) => {
-			console.log("收到 OAuth callback URL:", data);
+			console.log("Received OAuth callback URL:", data);
 
 			if (data.url && data.provider) {
 				console.log(`${data.provider} OAuth callback URL: ${data.url}`);
 				setCallBackUrl(data.url);
-				// 可以在这里添加用户提示或其他处理逻辑
+				// Add user prompt or other processing logic here
 			}
 		};
 		window.ipcRenderer?.on("oauth-callback-url", handler);
