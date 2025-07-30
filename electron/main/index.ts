@@ -16,7 +16,6 @@ import { copyBrowserData } from './copy'
 import { findAvailablePort } from './init'
 import kill from 'tree-kill';
 
-
 const userData = app.getPath('userData');
 const versionFile = path.join(userData, 'version.txt');
 
@@ -42,13 +41,13 @@ const preload = path.join(__dirname, '../preload/index.mjs');
 const indexHtml = path.join(RENDERER_DIST, 'index.html');
 const logPath = log.transports.file.getFile().path;
 
-// set remote debugging port
+// Set remote debugging port
 findAvailablePort(browser_port).then(port => {
   browser_port = port;
   app.commandLine.appendSwitch('remote-debugging-port', port + '');
 });
 
-// read last run version and install dependencies on update
+// Read last run version and install dependencies on update
 async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
   const currentVersion = app.getVersion();
   return new Promise(async (resolve, reject) => {
@@ -66,7 +65,7 @@ async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
         log.info(' version file not exist, will create new file');
       }
 
-      // if version file not exist or version not match, reinstall dependencies
+      // If version file does not exist or version does not match, reinstall dependencies
       if (!versionExists || savedVersion !== currentVersion) {
         log.info(' version changed, prepare to reinstall uv dependencies...', {
           currentVersion,
@@ -74,7 +73,7 @@ async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
           reason: !versionExists ? 'version file not exist' : 'version not match'
         });
 
-        // notify frontend to update
+        // Notify frontend to update
         if (win && !win.isDestroyed()) {
           win.webContents.send('update-notification', {
             type: 'version-update',
@@ -84,11 +83,11 @@ async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
           });
         }
 
-        // update version file
+        // Update version file
         fs.writeFileSync(versionFile, currentVersion);
         log.info(' version file updated', { currentVersion });
 
-        // install dependencies
+        // Install dependencies
         const result = await installDependencies();
         if (!result) {
           log.error(' install dependencies failed');
@@ -111,20 +110,18 @@ async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
   })
 }
 
-
-
 // ==================== app config ====================
 process.env.APP_ROOT = MAIN_DIST;
 process.env.VITE_PUBLIC = VITE_PUBLIC;
 
-// disable system theme
+// Disable system theme
 nativeTheme.themeSource = 'light';
 
-// set log level
+// Set log level
 log.transports.console.level = 'info';
 log.transports.file.level = 'info';
 
-// disable GPU Acceleration for Windows 7
+// Disable GPU Acceleration for Windows 7
 if (os.release().startsWith('6.1')) app.disableHardwareAcceleration()
 
 // Set application name for Windows 10+ notifications
@@ -209,7 +206,6 @@ const setupSingleInstanceLock = () => {
 const initializeApp = () => {
   setupProtocolHandlers();
   setupSingleInstanceLock();
-
 };
 
 /**
@@ -217,12 +213,12 @@ const initializeApp = () => {
  * This prevents "Attempted to register a second handler" errors
  * when windows are reopened
  */
-// get backup log path
+// Get backup log path
 const getBackupLogPath = () => {
   const userDataPath = app.getPath('userData')
   return path.join(userDataPath, 'logs', 'main.log')
 }
-// constants define
+// Constants define
 const BROWSER_PATHS = {
   win32: {
     chrome: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
@@ -245,7 +241,7 @@ const BROWSER_PATHS = {
   },
 } as const;
 
-// tool function
+// Tool function
 const getSystemLanguage = async () => {
   const locale = app.getLocale();
   return locale === 'zh-CN' ? 'zh-cn' : 'en';
@@ -278,7 +274,7 @@ const handleDependencyInstallation = async () => {
         log.info(' backend service start success', { port });
       });
 
-      // notify frontend to install success
+      // Notify frontend to install success
       if (win && !win.isDestroyed()) {
         win.webContents.send('install-dependencies-complete', { success: true, code: 0 });
       }
@@ -328,13 +324,13 @@ function registerIpcHandlers() {
     try {
       const { spawn } = await import('child_process');
 
-      // add --host parameter
+      // Add --host parameter
       const commandWithHost = `${command} --debug --host "dev.eigent.ai/api/oauth/notion/callback?code=1"`;
       // const commandWithHost = `${command}`;
 
       log.info(' start execute command:', commandWithHost);
 
-      // parse command and arguments
+      // Parse command and arguments
       const [cmd, ...args] = commandWithHost.split(' ');
 
       return new Promise((resolve) => {
@@ -347,14 +343,14 @@ function registerIpcHandlers() {
         let stdout = '';
         let stderr = '';
 
-        // realtime listen standard output
+        // Realtime listen standard output
         child.stdout.on('data', (data) => {
           const output = data.toString();
           stdout += output;
           log.info('Real-time output:', output.trim());
         });
 
-        // realtime listen error output
+        // Realtime listen error output
         child.stderr.on('data', (data) => {
           const output = data.toString();
           stderr += output;
@@ -362,7 +358,7 @@ function registerIpcHandlers() {
             const url = output.split('OAuth callback server running at')[1].trim();
             log.info(' detect OAuth callback URL:', url);
 
-            // notify frontend to callback URL
+            // Notify frontend to callback URL
             if (win && !win.isDestroyed()) {
               const match = url.match(/^https?:\/\/[^:\n]+:\d+/);
               const cleanedUrl = match ? match[0] : null;
@@ -377,16 +373,16 @@ function registerIpcHandlers() {
           if (output.includes('Press Ctrl+C to exit')) {
             child.kill();
           }
-          log.info(' realtime error output:', output.trim());
+          log.info(' real-time error output:', output.trim());
         });
 
-        // listen process exit
+        // Listen process exit
         child.on('close', (code) => {
           log.info(` command execute complete, exit code: ${code}`);
           resolve({ success: code === 0, stdout, stderr });
         });
 
-        // listen process error
+        // Listen process error
         child.on('error', (error) => {
           log.error(' command execute error:', error);
           resolve({ success: false, error: error.message });
@@ -419,14 +415,14 @@ function registerIpcHandlers() {
 
       const logContent = await fsp.readFile(targetLogPath, 'utf-8');
 
-      // get app version and system version
+      // Get app version and system version
       const appVersion = app.getVersion();
       const platform = process.platform;
       const arch = process.arch;
       const systemVersion = `${platform}-${arch}`;
       const defaultFileName = `eigent-${appVersion}-${systemVersion}.log`;
 
-      // show save dialog
+      // Show save dialog
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'save log file',
         defaultPath: defaultFileName,
@@ -465,7 +461,7 @@ function registerIpcHandlers() {
   });
 
   // ==================== browser related handler ====================
-  // TODO:next version implement
+  // TODO: next version implement
   ipcMain.handle('check-install-browser', async () => {
     try {
       const platform = process.platform;
@@ -514,7 +510,7 @@ function registerIpcHandlers() {
       safari: `${home}/Library/Safari`,
     };
 
-    // filter unchecked browser
+    // Filter unchecked browser
     Object.keys(candidates).forEach((key) => {
       const browser = args.find((item: any) => item.browserId === key);
       if (!browser || !browser.checked) {
