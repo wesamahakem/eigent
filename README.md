@@ -31,7 +31,7 @@
 
 Built on [CAMEL-AI][camel-site]'s acclaimed open-source project, our system introduces a **Multi-Agent Workforce** that **boosts productivity** through parallel execution, customization, and privacy protection.
 
-### ⭐ 100% Open Source - 🥇 Local Deploymen - 🏆 MCP Integration
+### ⭐ 100% Open Source - 🥇 Local Deployment - 🏆 MCP Integration
 
 - ✅ **Zero Setup** - No technical configuration required
 - ✅ **Multi-Agent Coordination** - Handle complex multi-agent workflows
@@ -112,8 +112,8 @@ For users who prefer local control, data privacy, or customization, this option 
 #### 2. Quick Start
 
 ```bash
-git clone https://github.com/eigent-ai/Eigent-desktop.git
-cd Eigent-desktop
+git clone https://github.com/eigent-ai/eigent.git
+cd eigent
 npm install
 npm run dev
 ```
