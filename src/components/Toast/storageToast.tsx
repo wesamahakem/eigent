@@ -5,7 +5,7 @@ export function showStorageToast() {
 
 	toast(
 		<div>
-			Your cloud storage has reached the limit of your current plan. Please
+			Your cloud storage has reached the limit of your current plan. Please{" "}
 			<a
 				className="underline cursor-pointer"
 				onClick={() =>
