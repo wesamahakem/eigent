@@ -122,14 +122,14 @@ export default function SettingModels() {
 								model_type: found.model_type ?? "",
 								externalConfig: fi.externalConfig
 									? fi.externalConfig.map((ec) => {
-											if (
-												found.encrypted_config &&
-												found.encrypted_config[ec.key] !== undefined
-											) {
-												return { ...ec, value: found.encrypted_config[ec.key] };
-											}
-											return ec;
-									  })
+										if (
+											found.encrypted_config &&
+											found.encrypted_config[ec.key] !== undefined
+										) {
+											return { ...ec, value: found.encrypted_config[ec.key] };
+										}
+										return ec;
+									})
 									: undefined,
 							};
 						}
@@ -284,14 +284,14 @@ export default function SettingModels() {
 							prefer: found.prefer ?? false,
 							externalConfig: fi.externalConfig
 								? fi.externalConfig.map((ec) => {
-										if (
-											found.encrypted_config &&
-											found.encrypted_config[ec.key] !== undefined
-										) {
-											return { ...ec, value: found.encrypted_config[ec.key] };
-										}
-										return ec;
-								  })
+									if (
+										found.encrypted_config &&
+										found.encrypted_config[ec.key] !== undefined
+									) {
+										return { ...ec, value: found.encrypted_config[ec.key] };
+									}
+									return ec;
+								})
 								: undefined,
 						};
 					}
@@ -528,8 +528,8 @@ export default function SettingModels() {
 									{cloud_model_type === "gpt-4.1-mini"
 										? "GPT-4.1 Mini: Lower cost, faster responses, but reduced output quality."
 										: cloud_model_type === "gpt-4.1"
-										? "GPT-4.1: Higher cost, slower responses, but superior quality and reasoning."
-										: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
+											? "GPT-4.1: Higher cost, slower responses, but superior quality and reasoning."
+											: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
 								</span>
 							</TooltipContent>
 						</Tooltip>
@@ -563,7 +563,11 @@ export default function SettingModels() {
 					<Button
 						variant="ghost"
 						size="icon"
-						onClick={() => setCollapsed((c) => !c)}
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							setCollapsed((c) => !c);
+						}}
 					>
 						{collapsed ? (
 							<ChevronDown className="w-4 h-4" />
@@ -574,10 +578,10 @@ export default function SettingModels() {
 				</div>
 				{/*  model list */}
 				<div
-					className="self-stretch inline-flex flex-col justify-start items-start gap-4 transition-all duration-300 overflow-hidden"
+					className={`self-stretch inline-flex flex-col justify-start items-start gap-4 transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[2000px] opacity-100"
+						}`}
 					style={{
-						maxHeight: collapsed ? 0 : "auto",
-						opacity: collapsed ? 0 : 1,
+						transform: collapsed ? 'translateY(-10px)' : 'translateY(0)',
 					}}
 				>
 					{items.map((item, idx) => {
@@ -720,14 +724,14 @@ export default function SettingModels() {
 																f.map((fi, i) =>
 																	i === idx
 																		? {
-																				...fi,
-																				externalConfig: fi.externalConfig?.map(
-																					(eec, i2) =>
-																						i2 === ecIdx
-																							? { ...eec, value: v }
-																							: eec
-																				),
-																		  }
+																			...fi,
+																			externalConfig: fi.externalConfig?.map(
+																				(eec, i2) =>
+																					i2 === ecIdx
+																						? { ...eec, value: v }
+																						: eec
+																			),
+																		}
 																		: fi
 																)
 															);
@@ -754,14 +758,14 @@ export default function SettingModels() {
 																f.map((fi, i) =>
 																	i === idx
 																		? {
-																				...fi,
-																				externalConfig: fi.externalConfig?.map(
-																					(eec, i2) =>
-																						i2 === ecIdx
-																							? { ...eec, value: v }
-																							: eec
-																				),
-																		  }
+																			...fi,
+																			externalConfig: fi.externalConfig?.map(
+																				(eec, i2) =>
+																					i2 === ecIdx
+																						? { ...eec, value: v }
+																						: eec
+																			),
+																		}
 																		: fi
 																)
 															);
@@ -831,9 +835,8 @@ export default function SettingModels() {
 							Model Endpoint URL
 						</label>
 						<Input
-							className={`bg-white-100% w-full${
-								localInputError ? " border-red-500" : ""
-							}`}
+							className={`bg-white-100% w-full${localInputError ? " border-red-500" : ""
+								}`}
 							value={localEndpoint}
 							onChange={(e) => {
 								setLocalEndpoint(e.target.value);
