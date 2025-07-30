@@ -294,7 +294,7 @@ const chatStore = create<ChatStore>()(
 			}
 			let mcpConfigPath = ''
 			if (email) {
-				// 获取 MCP 配置路径
+				// Get MCP config path
 				const result = await window.electronAPI.getMcpConfigPath('user@example.com');
 				if (result.success) {
 					mcpConfigPath = result.path
