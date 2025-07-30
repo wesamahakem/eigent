@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
+from loguru import logger
 from app.component import code
 from app.exception.exception import UserException
 from app.model.chat import Chat, HumanReply, McpServers, Status, SupplementChat
@@ -25,6 +26,8 @@ router = APIRouter(tags=["chat"])
 @router.post("/chat", name="start chat")
 def post(data: Chat, request: Request):
     load_dotenv(dotenv_path=data.env_path)
+
+    logger.debug(f"start chat: {data.model_dump_json()}")
 
     os.environ["file_save_path"] = data.file_save_path()
     os.environ["browser_port"] = str(data.browser_port)
