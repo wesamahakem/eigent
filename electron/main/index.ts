@@ -420,7 +420,7 @@ function registerIpcHandlers() {
       const platform = process.platform;
       const arch = process.arch;
       const systemVersion = `${platform}-${arch}`;
-      const defaultFileName = `eigent-${appVersion}-${systemVersion}.log`;
+      const defaultFileName = `eigent-${appVersion}-${systemVersion}-${Date.now()}.log`;
 
       // Show save dialog
       const { canceled, filePath } = await dialog.showSaveDialog({

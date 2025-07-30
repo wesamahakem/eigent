@@ -225,7 +225,7 @@ const chatStore = create<ChatStore>()(
 			} else if (modelType === 'cloud') {
 				// get current model
 				const res = await proxyFetchGet('/api/user/key');
-				if(res.warning_code&&res.warning_code==='21'){
+				if (res.warning_code && res.warning_code === '21') {
 					showStorageToast()
 				}
 				apiModel = {
@@ -299,7 +299,7 @@ const chatStore = create<ChatStore>()(
 				if (result.success) {
 					mcpConfigPath = result.path
 				} else {
-					console.error('Get path failed:', result.error);
+					console.error('get mcp config path failed:', result.error);
 				}
 			}
 
@@ -373,6 +373,16 @@ const chatStore = create<ChatStore>()(
 							item.status = ''
 							return item
 						})
+
+						if (!type && historyId) {
+							const obj = {
+								"project_name": agentMessages.data!.summary_task?.split('|')[0] || '',
+								"summary": agentMessages.data!.summary_task?.split('|')[1] || '',
+								"status": 1,
+								"tokens": getTokens(taskId)
+							}
+							proxyFetchPut(`/api/chat/history/${historyId}`, obj)
+						}
 						setSummaryTask(taskId, agentMessages.data.summary_task as string)
 						setTaskInfo(taskId, agentMessages.data.sub_tasks as TaskInfo[])
 						setTaskRunning(taskId, agentMessages.data.sub_tasks as TaskInfo[])
@@ -542,21 +552,22 @@ const chatStore = create<ChatStore>()(
 							if (agentMessages.data.tokens) {
 								addTokens(taskId, agentMessages.data.tokens)
 							}
+							if (!type && historyId) {
+								const obj = {
+									"project_name": tasks[taskId].summaryTask.split('|')[0],
+									"summary": tasks[taskId].summaryTask.split('|')[1],
+									"status": 1,
+									"tokens": getTokens(taskId)
+								}
+								proxyFetchPut(`/api/chat/history/${historyId}`, obj)
+							}
 
 
 							setTaskRunning(taskId, [...taskRunning]);
 							setTaskAssigning(taskId, [...taskAssigning]);
 
 
-							if (!type && historyId) {
-								const obj = {
-									"project_name": tasks[taskId].summaryTask.split('|')[0],
-									"summary": tasks[taskId].summaryTask.split('|')[1],
-									"status": 2,
-									"tokens": getTokens(taskId)
-								}
-								proxyFetchPut(`/api/chat/history/${historyId}`, obj)
-							}
+
 						}
 						return;
 					}
@@ -820,12 +831,15 @@ const chatStore = create<ChatStore>()(
 							proxyFetchPost(`/api/chat/snapshots`, { ...snapshot })
 						));
 
-						// proxyFetchPost(`/api/chat/snapshots`, {
-						// 	api_task_id: chatStore.activeTaskId,
-						// 	camel_task_id: processTaskId,
-						// 	browser_url: url,
-						// 	image_base64: base64,
-						// });
+						if (!type && historyId) {
+							const obj = {
+								"project_name": tasks[taskId].summaryTask.split('|')[0],
+								"summary": tasks[taskId].summaryTask.split('|')[1],
+								"status": 2,
+								"tokens": getTokens(taskId)
+							}
+							proxyFetchPut(`/api/chat/history/${historyId}`, obj)
+						}
 
 						let taskRunning = [...tasks[taskId].taskRunning];
 						let taskAssigning = [...tasks[taskId].taskAssigning];
