@@ -43,7 +43,7 @@ async def validate_model(request: ValidateModelRequest):
         )
         response = agent.step(
             input_message="""
-            Get the content of https://www.camel.ai,
+            Get the content of https://www.camel-ai.org,
             you must use the get_website_content tool to get the content ,
             i just want to verify the get_website_content tool is working
             """
