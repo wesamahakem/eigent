@@ -13,10 +13,12 @@ import google from "@/assets/google.svg";
 import eye from "@/assets/eye.svg";
 import eyeOff from "@/assets/eye-off.svg";
 import { proxyFetchPost } from "@/api/http";
+import { hasStackKeys } from "@/lib";
 
+const HAS_STACK_KEYS = hasStackKeys();
 let lock = false;
 export default function SignUp() {
-	const app = useStackApp();
+	const app = HAS_STACK_KEYS ? useStackApp() : null;
 	const { setAuth, initState } = useAuthStore();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -246,7 +248,7 @@ export default function SignUp() {
 								Login
 							</span>
 						</div>
-						<div className="w-full pt-6">
+						{HAS_STACK_KEYS && <div className="w-full pt-6">
 							<Button
 								variant="primary"
 								size="lg"
@@ -267,10 +269,10 @@ export default function SignUp() {
 								<img src={github2} className="w-5 h-5" />
 								<span className="ml-2">Continue with Github</span>
 							</Button>
-						</div>
-						<div className="mt-2 w-full text-[#222] text-center font-inter text-[15px] font-medium leading-[22px] mb-6">
+							</div>}
+						{HAS_STACK_KEYS && <div className="mt-2 w-full text-[#222] text-center font-inter text-[15px] font-medium leading-[22px] mb-6">
 							or
-						</div>
+						</div>}
 						<div className="w-full">
 							{generalError && (
 								<p className="text-red-500 text-sm mt-0.5 mb-4">{generalError}</p>
