@@ -70,10 +70,6 @@ export const InstallDependencies: React.FC<{
 					setStatus("success");
 					console.log("dependencies installed successfully!");
 					setProgress(100);
-					// after install successfully, delay hide install interface
-					// setTimeout(() => {
-					// 	setShowInstallScreen(false);
-					// }, 2000);
 				} else {
 					setStatus("error");
 					console.error("dependencies installation failed:", data?.code);
@@ -120,7 +116,7 @@ export const InstallDependencies: React.FC<{
 			if (!result.success) {
 				setStatus("error");
 				setIsInstalling(false);
-				return 
+				return;
 			}
 			setStatus("success");
 			setProgress(100);
@@ -159,10 +155,18 @@ export const InstallDependencies: React.FC<{
 							className="w-full"
 						/>
 						<div className="flex items-center gap-2 justify-between">
-							<div className="text-text-label text-xs font-normal leading-tight">
+							<div className="text-text-label text-xs font-normal leading-tight ">
 								{isInstalling ? "System Installing ..." : ""}
+								<span className="pl-2">
+									{logs.at(-1)?.data}
+								</span>
 							</div>
-							<Button size="icon" variant="outline" className="mt-1" onClick={handleInstall}>
+							<Button
+								size="icon"
+								variant="outline"
+								className="mt-1"
+								onClick={handleInstall}
+							>
 								<RefreshCcw className="w-4 h-4" />
 							</Button>
 						</div>

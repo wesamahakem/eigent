@@ -12,7 +12,6 @@ export function showTrafficToast() {
 			action: {
 				label: "Undo",
 				onClick: () => {
-					// 这里可以添加撤销逻辑
 					console.log("Undo clicked");
 					toast.dismiss();
 				},

@@ -299,7 +299,7 @@ const chatStore = create<ChatStore>()(
 				if (result.success) {
 					mcpConfigPath = result.path
 				} else {
-					console.error('获取路径失败:', result.error);
+					console.error('get mcp config path failed:', result.error);
 				}
 			}
 
