@@ -120,14 +120,14 @@ export default function SettingModels() {
 								model_type: found.model_type ?? "",
 								externalConfig: fi.externalConfig
 									? fi.externalConfig.map((ec) => {
-										if (
-											found.encrypted_config &&
-											found.encrypted_config[ec.key] !== undefined
-										) {
-											return { ...ec, value: found.encrypted_config[ec.key] };
-										}
-										return ec;
-									})
+											if (
+												found.encrypted_config &&
+												found.encrypted_config[ec.key] !== undefined
+											) {
+												return { ...ec, value: found.encrypted_config[ec.key] };
+											}
+											return ec;
+									  })
 									: undefined,
 							};
 						}
@@ -282,14 +282,14 @@ export default function SettingModels() {
 							prefer: found.prefer ?? false,
 							externalConfig: fi.externalConfig
 								? fi.externalConfig.map((ec) => {
-									if (
-										found.encrypted_config &&
-										found.encrypted_config[ec.key] !== undefined
-									) {
-										return { ...ec, value: found.encrypted_config[ec.key] };
-									}
-									return ec;
-								})
+										if (
+											found.encrypted_config &&
+											found.encrypted_config[ec.key] !== undefined
+										) {
+											return { ...ec, value: found.encrypted_config[ec.key] };
+										}
+										return ec;
+								  })
 								: undefined,
 						};
 					}
@@ -318,7 +318,7 @@ export default function SettingModels() {
 			}
 			// 2. Save to /api/provider/
 			const data: any = {
-				provider_name: "Local Model",
+				provider_name: localPlatform,
 				api_key: "not-required",
 				endpoint_url: localEndpoint,
 				is_valid: true,
@@ -335,9 +335,11 @@ export default function SettingModels() {
 			const res = await proxyFetchGet("/api/providers");
 			const providerList = Array.isArray(res) ? res : res.items || [];
 			const local = providerList.find(
-				(p: any) => p.provider_name === "Local Model"
+				(p: any) => p.provider_name === localPlatform
 			);
 			if (local) {
+				handleLocalSwitch(true);
+
 				setLocalProviderId(local.id);
 				setLocalPrefer(local.prefer ?? false);
 			}
@@ -503,12 +505,21 @@ export default function SettingModels() {
 						variant="primary"
 						size="sm"
 					>
-						{loadingCredits ? <Loader2 className="w-4 h-4 animate-spin" /> : subscription?.plan_key?.charAt(0).toUpperCase() +
-							subscription?.plan_key?.slice(1)}
+						{loadingCredits ? (
+							<Loader2 className="w-4 h-4 animate-spin" />
+						) : (
+							subscription?.plan_key?.charAt(0).toUpperCase() +
+							subscription?.plan_key?.slice(1)
+						)}
 						<Settings />
 					</Button>
 					<div className="text-text-body text-sm font-normal font-['Inter'] leading-tight">
-						Credits: {loadingCredits ? <Loader2 className="w-4 h-4 animate-spin" /> : credits}
+						Credits:{" "}
+						{loadingCredits ? (
+							<Loader2 className="w-4 h-4 animate-spin" />
+						) : (
+							credits
+						)}
 					</div>
 				</div>
 				<div className="w-full flex items-center flex-1 justify-between pt-4 border-t border-border-secondary">
@@ -530,8 +541,8 @@ export default function SettingModels() {
 									{cloud_model_type === "gpt-4.1-mini"
 										? "GPT-4.1 Mini: Lower cost, faster responses, but reduced output quality."
 										: cloud_model_type === "gpt-4.1"
-											? "GPT-4.1: Higher cost, slower responses, but superior quality and reasoning."
-											: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
+										? "GPT-4.1: Higher cost, slower responses, but superior quality and reasoning."
+										: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
 								</span>
 							</TooltipContent>
 						</Tooltip>
@@ -583,10 +594,13 @@ export default function SettingModels() {
 				</div>
 				{/*  model list */}
 				<div
-					className={`self-stretch inline-flex flex-col justify-start items-start gap-4 transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[3000px] opacity-100"
-						}`}
+					className={`self-stretch inline-flex flex-col justify-start items-start gap-4 transition-all duration-300 ease-in-out overflow-hidden ${
+						collapsed
+							? "max-h-0 opacity-0 pointer-events-none"
+							: "max-h-[3000px] opacity-100"
+					}`}
 					style={{
-						transform: collapsed ? 'translateY(-10px)' : 'translateY(0)',
+						transform: collapsed ? "translateY(-10px)" : "translateY(0)",
 					}}
 				>
 					{items.map((item, idx) => {
@@ -729,14 +743,14 @@ export default function SettingModels() {
 																f.map((fi, i) =>
 																	i === idx
 																		? {
-																			...fi,
-																			externalConfig: fi.externalConfig?.map(
-																				(eec, i2) =>
-																					i2 === ecIdx
-																						? { ...eec, value: v }
-																						: eec
-																			),
-																		}
+																				...fi,
+																				externalConfig: fi.externalConfig?.map(
+																					(eec, i2) =>
+																						i2 === ecIdx
+																							? { ...eec, value: v }
+																							: eec
+																				),
+																		  }
 																		: fi
 																)
 															);
@@ -763,14 +777,14 @@ export default function SettingModels() {
 																f.map((fi, i) =>
 																	i === idx
 																		? {
-																			...fi,
-																			externalConfig: fi.externalConfig?.map(
-																				(eec, i2) =>
-																					i2 === ecIdx
-																						? { ...eec, value: v }
-																						: eec
-																			),
-																		}
+																				...fi,
+																				externalConfig: fi.externalConfig?.map(
+																					(eec, i2) =>
+																						i2 === ecIdx
+																							? { ...eec, value: v }
+																							: eec
+																				),
+																		  }
 																		: fi
 																)
 															);
@@ -840,8 +854,9 @@ export default function SettingModels() {
 							Model Endpoint URL
 						</label>
 						<Input
-							className={`bg-white-100% w-full${localInputError ? " border-red-500" : ""
-								}`}
+							className={`bg-white-100% w-full${
+								localInputError ? " border-red-500" : ""
+							}`}
 							value={localEndpoint}
 							onChange={(e) => {
 								setLocalEndpoint(e.target.value);
