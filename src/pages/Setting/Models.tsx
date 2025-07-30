@@ -206,13 +206,13 @@ export default function SettingModels() {
 			});
 		}
 
-		console.log(form[idx].externalConfig);
+		console.log(form[idx]);
 		try {
 			const res = await fetchPost("/model/validate", {
 				model_platform: item.id,
 				model_type: form[idx].model_type,
 				api_key: form[idx].apiKey,
-				url: item.apiHost,
+				url: form[idx].apiHost,
 				extra_params: external,
 			});
 			if (res.is_tool_calls && res.is_valid) {
@@ -803,7 +803,7 @@ export default function SettingModels() {
 										disabled={loading === idx}
 									>
 										<span className="text-text-inverse-primary">
-											{loading === idx ? "..." : "Config"}
+											{loading === idx ? "..." : "Verify"}
 										</span>
 										<Circle className="text-text-inverse-primary"></Circle>
 									</Button>
