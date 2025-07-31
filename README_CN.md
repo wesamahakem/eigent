@@ -227,9 +227,9 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 ### 3. 英国医疗市场调研报告自动化 [回放 ▶️](https://www.eigent.ai/download?share_token=IjE3NTMzOTM1NTg3OTctODcwNyI.aIey-Q.Jh9QXzYrRYarY0kz_qsgoj3ewX0__1753393558797-8707)
 
 <details>
-<summary><strong>提示：</strong> <kbd>我们是一家生产高端电动滑板的公司... <kbd></summary>
+<summary><strong>提示：</strong> <kbd>分析英国医疗保健行业以支持我下一家公司的规划... <kbd></summary>
 <br>
-我们是一家生产高端电动滑板的公司，正在考虑进入德国市场。请为我准备一份详细的市场进入可行性报告。报告需涵盖以下方面：1. 市场规模与法规；2. 消费者画像；3. 渠道与分销；4. 成本与定价；5. 综合报告与演示。
+分析英国医疗保健行业以支持我下一家公司的规划。提供全面的市场概览，包括当前趋势、增长预测和相关法规。识别市场中5-10个主要机会、缺口或服务不足的细分领域。将所有发现整理成结构清晰、专业的HTML报告。完成后，向Slack的#eigentr-product-test频道发送消息，以便与团队成员对齐报告内容。。
 </details>
 
 <br>
