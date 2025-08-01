@@ -17,14 +17,13 @@ class SearchToolkit(BaseSearchToolkit, AbstractToolkit):
         api_task_id: str,
         agent_name: str | None = None,
         timeout: float | None = None,
-        number_of_result_pages: int = 10,
         exclude_domains: List[str] | None = None,
     ):
         self.api_task_id = api_task_id
         if agent_name is not None:
             self.agent_name = agent_name
         super().__init__(
-            timeout=timeout, number_of_result_pages=number_of_result_pages, exclude_domains=exclude_domains
+            timeout=timeout, exclude_domains=exclude_domains
         )
 
     # @listen_toolkit(BaseSearchToolkit.search_wiki)
