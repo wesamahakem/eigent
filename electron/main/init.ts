@@ -4,7 +4,7 @@ import log from 'electron-log'
 import fs from 'fs'
 import path from 'path'
 import * as net from "net";
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, app } from 'electron'
 import { promisify } from 'util'
 
 const execAsync = promisify(exec);
@@ -160,24 +160,32 @@ export async function startBackend(setPort?: (port: number) => void): Promise<an
     console.log('start fastapi')
     const uv_path = await getBinaryPath('uv')
     const backendPath = getBackendPath()
-    
+    const userData = app.getPath('userData');
+    console.log('userData', userData)
     // Try to find an available port, with aggressive cleanup if needed
     let port: number;
+    const portFile = path.join(userData, 'port.txt');
+    if (fs.existsSync(portFile)) {
+        port = parseInt(fs.readFileSync(portFile, 'utf-8'));
+        log.info(`Found port from file: ${port}`);
+        await killProcessOnPort(port);
+    }
     try {
         port = await findAvailablePort(5001);
+        fs.writeFileSync(portFile, port.toString());
         log.info(`Found available port: ${port}`);
     } catch (error) {
         log.error('Failed to find available port, attempting cleanup...');
-        
+
         // Last resort: try to kill all processes in the range
         for (let p = 5001; p <= 5050; p++) {
             await killProcessOnPort(p);
         }
-        
+
         // Try once more
         port = await findAvailablePort(5001);
     }
-    
+
     if (setPort) {
         setPort(port);
     }
@@ -221,9 +229,9 @@ export async function startBackend(setPort?: (port: number) => void): Promise<an
                 clearTimeout(startTimeout);
                 resolve(node_process);
             }
-            
+
             // Check for port binding errors
-            if (data.toString().includes("Address already in use") || 
+            if (data.toString().includes("Address already in use") ||
                 data.toString().includes("bind() failed")) {
                 started = true; // Prevent multiple rejections
                 clearTimeout(startTimeout);
@@ -267,7 +275,7 @@ export async function startBackend(setPort?: (port: number) => void): Promise<an
 function checkPortAvailable(port: number): Promise<boolean> {
     return new Promise((resolve) => {
         const server = net.createServer();
-        
+
         // Set a timeout to prevent hanging
         const timeout = setTimeout(() => {
             server.close();
@@ -280,23 +288,23 @@ function checkPortAvailable(port: number): Promise<boolean> {
                 // Try to connect to the port to verify it's truly in use
                 const client = new net.Socket();
                 client.setTimeout(500);
-                
+
                 client.once('connect', () => {
                     client.destroy();
                     resolve(false); // Port is definitely in use
                 });
-                
+
                 client.once('error', () => {
                     client.destroy();
                     // Port might be in a weird state, consider it unavailable
                     resolve(false);
                 });
-                
+
                 client.once('timeout', () => {
                     client.destroy();
                     resolve(false);
                 });
-                
+
                 client.connect(port, '127.0.0.1');
             } else {
                 resolve(false);
@@ -320,10 +328,15 @@ async function killProcessOnPort(port: number): Promise<boolean> {
     try {
         const platform = process.platform;
         let command: string;
-        
+
         if (platform === 'win32') {
             // Windows command to find and kill process
-            command = `for /f "tokens=5" %a in ('netstat -ano ^| findstr :${port}') do @taskkill /F /PID %a`;
+            command = `
+                for /f "tokens=5" %%a in ('netstat -ano ^| findstr :${port}') do (
+                    echo Killing PID: %%a
+                    taskkill /F /PID %%a
+                )
+            `;
         } else if (platform === 'darwin') {
             // macOS command
             command = `lsof -ti:${port} | xargs kill -9 2>/dev/null || true`;
@@ -331,12 +344,12 @@ async function killProcessOnPort(port: number): Promise<boolean> {
             // Linux command
             command = `fuser -k ${port}/tcp 2>/dev/null || true`;
         }
-        
+
         await execAsync(command);
-        
+
         // Wait a bit for the process to be killed
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Check if port is now available
         return await checkPortAvailable(port);
     } catch (error) {
@@ -348,29 +361,29 @@ async function killProcessOnPort(port: number): Promise<boolean> {
 export async function findAvailablePort(startPort: number, maxAttempts = 50): Promise<number> {
     let port = startPort;
     let attemptedKill = false;
-    
+
     for (let i = 0; i < maxAttempts; i++) {
         const available = await checkPortAvailable(port);
         if (available) {
             return port;
         }
-        
+
         // If port is occupied and we haven't tried killing processes yet
         if (!attemptedKill && i >= 5) {
             log.info(`Attempting to free ports ${startPort} to ${startPort + maxAttempts}...`);
-            
+
             // Try to kill processes on a range of ports
             for (let killPort = startPort; killPort < startPort + 10; killPort++) {
                 await killProcessOnPort(killPort);
             }
-            
+
             attemptedKill = true;
-            
+
             // Reset to start port and try again
             port = startPort;
             continue;
         }
-        
+
         port++;
     }
     throw new Error('No available port found');
