@@ -251,7 +251,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiofiles", specifier = ">=24.1.0" },
-    { name = "camel-ai", extras = ["eigent"], specifier = ">=0.2.74a1" },
+    { name = "camel-ai", extras = ["eigent"], specifier = ">=0.2.74a4" },
     { name = "fastapi", specifier = ">=0.115.12" },
     { name = "fastapi-babel", specifier = ">=1.0.0" },
     { name = "httpx", extras = ["socks"], specifier = ">=0.28.1" },
@@ -281,7 +281,7 @@ wheels = [
 
 [[package]]
 name = "camel-ai"
-version = "0.2.74a1"
+version = "0.2.74a4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama" },
@@ -295,9 +295,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/24/31/aebd75c7051fdaefb3c83b512f9cac8e358fb376dbee64f7af9832606224/camel_ai-0.2.74a1.tar.gz", hash = "sha256:ca31d5f9ab39e38d25367ae7660f6e299251e1fe37fd95da47ac0b400bc63dcc", size = 887227, upload-time = "2025-07-31T21:56:12.031Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/cc/c00afc42e3cf2150f3df301d6905ecda1fdec5e444f2f31ef2fb9d82df92/camel_ai-0.2.74a4.tar.gz", hash = "sha256:6b07c4040b35b44f0ea3ffe2bf4f193267c85cc3a53e563ccdcb7561f07f7462", size = 887299, upload-time = "2025-08-01T16:53:19.58Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/8c/d22b0b2eef17937e6950b167142d473f2a2d69fb450e710b1323f1f50ebb/camel_ai-0.2.74a1-py3-none-any.whl", hash = "sha256:bb029707e2ef64497822c9eff77a3cc785bdf42afda82a2406a9c17407c1615f", size = 1319257, upload-time = "2025-07-31T21:56:10.039Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/44/b3d99a528872a8e7091692bd2f08f7b5dba43d0d88f1fd36d8ac2ff91aac/camel_ai-0.2.74a4-py3-none-any.whl", hash = "sha256:7c6f9c1fc5afc4561522c433c24157c65063665bc729beb47e927eb9994dd749", size = 1319204, upload-time = "2025-08-01T16:53:16.836Z" },
 ]
 
 [package.optional-dependencies]
@@ -330,6 +330,7 @@ eigent = [
     { name = "reportlab" },
     { name = "requests-oauthlib" },
     { name = "scenedetect" },
+    { name = "slack-sdk" },
     { name = "tabulate" },
     { name = "websockets" },
     { name = "wikipedia" },
@@ -2215,6 +2216,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031, upload-time = "2024-12-04T17:35:28.174Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050, upload-time = "2024-12-04T17:35:26.475Z" },
+]
+
+[[package]]
+name = "slack-sdk"
+version = "3.36.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/1e/bbf7fdd00306f097ddb839c23628b7e271128cc8f584b9cae8f704b3924e/slack_sdk-3.36.0.tar.gz", hash = "sha256:8586022bdbdf9f8f8d32f394540436c53b1e7c8da9d21e1eab4560ba70cfcffa", size = 233382, upload-time = "2025-07-09T20:58:22.838Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/70/9a/380d20856d9ea39fbc4d3bb66f076b0d72035ebe873eb05fc88ebee4125f/slack_sdk-3.36.0-py2.py3-none-any.whl", hash = "sha256:6c96887d7175fc1b0b2777b73bb65f39b5b8bee9bd8acfec071d64014f9e2d10", size = 293949, upload-time = "2025-07-09T20:58:21.233Z" },
 ]
 
 [[package]]
