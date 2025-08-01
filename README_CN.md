@@ -112,8 +112,8 @@
 #### 2. 快速开始
 
 ```bash
-git clone https://github.com/eigent-ai/Eigent-desktop.git
-cd Eigent-desktop
+git clone https://github.com/eigent-ai/eigent.git
+cd eigent
 npm install
 npm run dev
 ```
