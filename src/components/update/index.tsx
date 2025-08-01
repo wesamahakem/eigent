@@ -53,8 +53,8 @@ const Update = () => {
     },
     []
   )
-
-  // 监听下载进度变化，更新 toast
+ 
+  // listen to download progress and update toast
   useEffect(() => {
     if (isDownloading) {
       toast.custom((t) => (
