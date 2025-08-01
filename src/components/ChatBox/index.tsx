@@ -18,6 +18,7 @@ import { proxyFetchGet } from "@/api/http";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { NoticeCard } from "./NoticeCard";
 import { useAuthStore } from "@/store/authStore";
+import { PrivacyDialog } from "../Dialog/Privacy";
 
 export default function ChatBox(): JSX.Element {
 	const [message, setMessage] = useState<string>("");
@@ -27,6 +28,7 @@ export default function ChatBox(): JSX.Element {
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const [privacy, setPrivacy] = useState<any>(false);
 	const [hasSearchKey, setHasSearchKey] = useState<any>(false);
+	const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
 	const { modelType } = useAuthStore();
 	useEffect(() => {
 		proxyFetchGet("/api/user/privacy")
@@ -53,6 +55,24 @@ export default function ChatBox(): JSX.Element {
 			if (_hasApiKey && _hasApiId) setHasSearchKey(true);
 		});
 	}, []);
+
+	// Refresh privacy status when dialog closes
+	useEffect(() => {
+		if (!privacyDialogOpen) {
+			proxyFetchGet("/api/user/privacy")
+				.then((res) => {
+					let _privacy = 0;
+					Object.keys(res).forEach((key) => {
+						if (!res[key]) {
+							_privacy++;
+							return;
+						}
+					});
+					setPrivacy(_privacy === 0 ? true : false);
+				})
+				.catch((err) => console.error("Failed to fetch settings:", err));
+		}
+	}, [privacyDialogOpen]);
 	const [searchParams] = useSearchParams();
 	const share_token = searchParams.get("share_token");
 
@@ -205,6 +225,10 @@ export default function ChatBox(): JSX.Element {
 
 	return (
 		<div className="w-full h-full flex flex-col items-center justify-center">
+			<PrivacyDialog 
+				open={privacyDialogOpen} 
+				onOpenChange={setPrivacyDialogOpen} 
+			/>
 			{(chatStore.activeTaskId &&
 				chatStore.tasks[chatStore.activeTaskId].messages.length > 0) ||
 			chatStore.tasks[chatStore.activeTaskId as string]?.hasMessages ? (
@@ -449,7 +473,15 @@ export default function ChatBox(): JSX.Element {
 					)}
 				</div>
 			) : (
-				<div className="w-full h-[calc(100vh-54px)] flex items-center  rounded-[12px] border border-zinc-200 p-2 pr-0  border-solid  relative overflow-hidden">
+				<div 
+					className="w-full h-[calc(100vh-54px)] flex items-center  rounded-[12px] border border-zinc-200 p-2 pr-0  border-solid  relative overflow-hidden"
+					onClick={() => {
+						if (!privacy) {
+							setPrivacyDialogOpen(true);
+						}
+					}}
+					style={{ cursor: !privacy ? 'pointer' : 'default' }}
+				>
 					<div className="absolute inset-0 blur-bg bg-bg-surface-primary pointer-events-none rounded-xl"></div>
 					<div className=" w-full flex flex-col relative z-10">
 						<div className="flex flex-col items-center gap-1 h-[210px] justify-end">
@@ -480,8 +512,9 @@ export default function ChatBox(): JSX.Element {
 							{!privacy ? (
 								<div className="flex items-center gap-2">
 									<div
-										onClick={() => {
-											navigate("/setting/privacy");
+										onClick={(e) => {
+											e.stopPropagation();
+											setPrivacyDialogOpen(true);
 										}}
 										className=" cursor-pointer flex items-center gap-1 px-sm py-xs rounded-md bg-surface-information"
 									>
