@@ -334,8 +334,7 @@ export default function SettingModels() {
 			});
 			
 			if (!resp.ok) {
-				// 401 is acceptable as it means the endpoint exists but needs auth
-				throw new Error(`Endpoint returned ${resp.status}: ${resp.statusText}`);
+				throw new Error("Endpoint is not responding");
 			}
 			// 2. Save to /api/provider/
 			const data: any = {
