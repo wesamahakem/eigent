@@ -322,11 +322,7 @@ export default function SettingModels() {
 					max_tokens: 1,
 					stream: false
 				});
-			} else {
-				// For base URLs, try to get available models or version info
-				if (!testUrl.endsWith('/')) testUrl += '/';
-				testUrl += 'api/tags'; // Ollama's model list endpoint
-			}
+			} 
 			
 			const resp = await fetch(testUrl, {
 				method: testMethod,
@@ -337,7 +333,7 @@ export default function SettingModels() {
 				body: testBody
 			});
 			
-			if (!resp.ok && resp.status !== 401) {
+			if (!resp.ok) {
 				// 401 is acceptable as it means the endpoint exists but needs auth
 				throw new Error(`Endpoint returned ${resp.status}: ${resp.statusText}`);
 			}
@@ -889,7 +885,7 @@ export default function SettingModels() {
 								setLocalError(null);
 							}}
 							disabled={!localEnabled}
-							placeholder="https://forwardinghost/api/chat"
+							placeholder="https://localhost:11434/v1"
 						/>
 						{localError && (
 							<div className="text-xs text-red-500 mt-1">{localError}</div>

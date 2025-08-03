@@ -183,6 +183,7 @@ const chatStore = create<ChatStore>()(
 				setType(taskId, type)
 			}
 			const base_Url = import.meta.env.DEV ? import.meta.env.VITE_PROXY_URL : import.meta.env.VITE_BASE_URL
+			const api = type == 'share' ? `${base_Url}/api/chat/share/playback/${shareToken}?delay_time=${delayTime}` : type == 'replay' ? `${base_Url}/api/chat/steps/playback/${taskId}?delay_time=${delayTime}` : `${baseURL}/chat`
 			const isInChina = await getIsInChina(systemLanguage)
 			console.log("isInChina", isInChina);
 			const { tasks } = get()
@@ -237,8 +238,6 @@ const chatStore = create<ChatStore>()(
 					extra_params: {}
 				}
 			} 
-
-			const api = type == 'share' ? `${base_Url}/api/chat/share/playback/${shareToken}?delay_time=${delayTime}` : type == 'replay' ? `${base_Url}/api/chat/steps/playback/${taskId}?delay_time=${delayTime}` : `${baseURL}/chat`
 
 			// fetch installed mcp token
 			if (!type) {
