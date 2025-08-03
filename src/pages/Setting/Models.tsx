@@ -309,12 +309,37 @@ export default function SettingModels() {
 		setLocalInputError(false);
 		try {
 			// 1. Check if endpoint returns response
-			const resp = await fetch(localEndpoint, {
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
+			let testUrl = localEndpoint;
+			let testMethod = "GET";
+			let testBody = undefined;
+			
+			// If the URL looks like a chat endpoint, use POST with a test message
+			if (testUrl.includes('/chat') || testUrl.includes('/completions')) {
+				testMethod = "POST";
+				testBody = JSON.stringify({
+					model: localType || "test",
+					messages: [{ role: "user", content: "test" }],
+					max_tokens: 1,
+					stream: false
+				});
+			} else {
+				// For base URLs, try to get available models or version info
+				if (!testUrl.endsWith('/')) testUrl += '/';
+				testUrl += 'api/tags'; // Ollama's model list endpoint
+			}
+			
+			const resp = await fetch(testUrl, {
+				method: testMethod,
+				headers: { 
+					"Content-Type": "application/json",
+					...(testMethod === "POST" && { "Authorization": "Bearer dummy" })
+				},
+				body: testBody
 			});
-			if (!resp.ok) {
-				throw new Error("Endpoint is not responding");
+			
+			if (!resp.ok && resp.status !== 401) {
+				// 401 is acceptable as it means the endpoint exists but needs auth
+				throw new Error(`Endpoint returned ${resp.status}: ${resp.statusText}`);
 			}
 			// 2. Save to /api/provider/
 			const data: any = {

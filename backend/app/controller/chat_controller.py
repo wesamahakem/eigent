@@ -32,7 +32,13 @@ def post(data: Chat, request: Request):
     os.environ["file_save_path"] = data.file_save_path()
     os.environ["browser_port"] = str(data.browser_port)
     os.environ["OPENAI_API_KEY"] = data.api_key
-    os.environ["OPENAI_API_BASE_URL"] = data.api_url or "https://api.openai.com/v1"
+    _url = (data.api_url or "https://api.openai.com").rstrip("/")
+    if _url.endswith("/chat/completions"):
+        _url = _url.rsplit("/chat/completions", 1)[0].rstrip("/")
+    if not _url.endswith("/v1"):
+        _url += "/v1"
+    data.api_url = _url
+    os.environ["OPENAI_API_BASE_URL"] = _url
     os.environ["CAMEL_MODEL_LOG_ENABLED"] = "true"
 
     email = re.sub(r'[\\/*?:"<>|\s]', "_", data.email.split("@")[0]).strip(".")

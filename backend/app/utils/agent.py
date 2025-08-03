@@ -455,7 +455,8 @@ def agent_model(
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
-            **(options.extra_params or {}),
+            **{k: v for k, v in (options.extra_params or {}).items() 
+               if k not in ['model_platform', 'model_type', 'api_key', 'url']},
         ),
         # output_language=options.language,
         tools=tools,
@@ -1292,7 +1293,8 @@ async def mcp_agent(options: Chat):
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
-            **(options.extra_params or {}),
+            **{k: v for k, v in (options.extra_params or {}).items() 
+               if k not in ['model_platform', 'model_type', 'api_key', 'url']},
         ),
         # output_language=options.language,
         tools=tools,
