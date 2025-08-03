@@ -307,7 +307,6 @@ const chatStore = create<ChatStore>()(
 			}
 
 			const browser_port = await window.ipcRenderer.invoke('get-browser-port');
-			
 			fetchEventSource(api, {
 				method: !type ? "POST" : "GET",
 				openWhenHidden: true,
