@@ -33,7 +33,17 @@ export default function SettingMCP() {
 	const [showAdd, setShowAdd] = useState(false);
 	const [addType, setAddType] = useState<"local" | "remote">("local");
 	const [localJson, setLocalJson] = useState(
-		`{ "mcpServers": { "firecrawl": { "command": "npx", "args": [ "-y", "firecrawl-mcp" ], "env": { "FIRECRAWL_API_KEY": "{{apiKey@string::Get the api key from https://firecrawl.dev/}}" } } } }`
+		`{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    }
+  }
+}`
 	);
 	const [remoteName, setRemoteName] = useState("");
 	const [remoteUrl, setRemoteUrl] = useState("");

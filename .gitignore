@@ -39,3 +39,5 @@ yarn.lock
 
 .cursor
 
+# Public directory (large media files)
+public/
