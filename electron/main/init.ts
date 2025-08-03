@@ -1,4 +1,4 @@
-import { getBackendPath, getBinaryPath, isBinaryExists, runInstallScript } from "./utils/process";
+import { getBackendPath, getBinaryPath, getCachePath, isBinaryExists, runInstallScript } from "./utils/process";
 import { spawn, exec } from 'child_process'
 import log from 'electron-log'
 import fs from 'fs'
@@ -105,7 +105,19 @@ export async function installDependencies() {
             return timezone === 'Asia/Shanghai';
         }
         console.log('isInChinaTimezone', isInChinaTimezone())
-        const node_process = spawn(uv_path, ['sync', '--no-dev', ...(isInChinaTimezone() ? proxy : [])], { cwd: backendPath })
+
+        const node_process = spawn(uv_path, [
+            'sync',
+            '--no-dev',
+            '--cache-dir', getCachePath('uv_cache'),
+            ...(isInChinaTimezone() ? proxy : [])], {
+            cwd: backendPath,
+            env: {
+                ...process.env,
+                UV_TOOL_DIR: getCachePath('uv_tool'),
+                UV_PYTHON_INSTALL_DIR: getCachePath('uv_python'),
+            }
+        })
         node_process.stdout.on('data', (data) => {
             log.info(`Script output: ${data}`)
             // notify frontend install log
