@@ -73,11 +73,91 @@ export async function installCommandTool() {
 
 }
 
+// export async function installDependencies() {
+//     return new Promise<boolean>(async (resolve, reject) => {
+//         console.log('start install dependencies')
+
+//         // notify frontend start install
+//         const mainWindow = getMainWindow();
+//         if (mainWindow && !mainWindow.isDestroyed()) {
+//             mainWindow.webContents.send('install-dependencies-start');
+//         }
+
+//         const isInstalCommandTool = await installCommandTool()
+//         if (!isInstalCommandTool) {
+//             resolve(false)
+//             return
+//         }
+//         const uv_path = await getBinaryPath('uv')
+//         const backendPath = getBackendPath()
+
+//         // ensure backend directory exists and is writable
+//         if (!fs.existsSync(backendPath)) {
+//             fs.mkdirSync(backendPath, { recursive: true })
+//         }
+
+//         // touch installing lock file
+//         const installingLockPath = path.join(backendPath, 'uv_installing.lock')
+//         fs.writeFileSync(installingLockPath, '')
+//         const proxy = ['--default-index', 'https://pypi.tuna.tsinghua.edu.cn/simple']
+//         function isInChinaTimezone() {
+//             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+//             return timezone === 'Asia/Shanghai';
+//         }
+//         console.log('isInChinaTimezone', isInChinaTimezone())
+//         const node_process = spawn(uv_path, ['sync', '--no-dev', ...(isInChinaTimezone() ? proxy : [])], { cwd: backendPath })
+//         node_process.stdout.on('data', (data) => {
+//             log.info(`Script output: ${data}`)
+//             // notify frontend install log
+//             const mainWindow = getMainWindow();
+//             if (mainWindow && !mainWindow.isDestroyed()) {
+//                 mainWindow.webContents.send('install-dependencies-log', { type: 'stdout', data: data.toString() });
+//             }
+//         })
+
+//         node_process.stderr.on('data', (data) => {
+//             log.error(`Script error: uv ${data}`)
+//             // notify frontend install error log
+//             const mainWindow = getMainWindow();
+//             if (mainWindow && !mainWindow.isDestroyed()) {
+//                 mainWindow.webContents.send('install-dependencies-log', { type: 'stderr', data: data.toString() });
+//             }
+//         })
+
+//         node_process.on('close', async (code) => {
+//             // delete installing lock file 
+//             if (fs.existsSync(installingLockPath)) {
+//                 fs.unlinkSync(installingLockPath)
+//             }
+
+//             if (code === 0) {
+//                 log.info('Script completed successfully')
+
+//                 // touch installed lock file
+//                 const installedLockPath = path.join(backendPath, 'uv_installed.lock')
+//                 fs.writeFileSync(installedLockPath, '')
+//                 console.log('end install dependencies')
+
+
+//                 spawn(uv_path, ['run', 'task', 'babel'], { cwd: backendPath })
+//                 resolve(true);
+//                 // resolve(isSuccess);
+//             } else {
+//                 log.error(`Script exited with code ${code}`)
+//                 // notify frontend install failed
+//                 const mainWindow = getMainWindow();
+//                 if (mainWindow && !mainWindow.isDestroyed()) {
+//                     mainWindow.webContents.send('install-dependencies-complete', { success: false, code, error: `Script exited with code ${code}` });
+//                     resolve(false);
+//                 }
+//             }
+//         })
+//     })
+// }
 export async function installDependencies() {
     return new Promise<boolean>(async (resolve, reject) => {
         console.log('start install dependencies')
 
-        // notify frontend start install
         const mainWindow = getMainWindow();
         if (mainWindow && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send('install-dependencies-start');
@@ -88,72 +168,80 @@ export async function installDependencies() {
             resolve(false)
             return
         }
+
         const uv_path = await getBinaryPath('uv')
         const backendPath = getBackendPath()
 
-        // ensure backend directory exists and is writable
         if (!fs.existsSync(backendPath)) {
             fs.mkdirSync(backendPath, { recursive: true })
         }
 
-        // touch installing lock file
         const installingLockPath = path.join(backendPath, 'uv_installing.lock')
         fs.writeFileSync(installingLockPath, '')
-        const proxy = ['--default-index', 'https://pypi.tuna.tsinghua.edu.cn/simple']
-        function isInChinaTimezone() {
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            return timezone === 'Asia/Shanghai';
+
+        const installedLockPath = path.join(backendPath, 'uv_installed.lock')
+        const proxyArgs = ['--default-index', 'https://pypi.tuna.tsinghua.edu.cn/simple']
+
+        const runInstall = (extraArgs: string[]) => {
+            return new Promise<boolean>((resolveInner) => {
+                const node_process = spawn(uv_path, ['sync', '--no-dev', ...extraArgs], { cwd: backendPath })
+                console.log('start install dependencies',extraArgs)
+                node_process.stdout.on('data', (data) => {
+                    
+                    log.info(`Script output: ${data}`)
+                    if (mainWindow && !mainWindow.isDestroyed()) {
+                        mainWindow.webContents.send('install-dependencies-log', { type: 'stdout', data: data.toString() });
+                    }
+                })
+
+                node_process.stderr.on('data', (data) => {
+                    log.error(`Script error: ${data}`)
+                    if (mainWindow && !mainWindow.isDestroyed()) {
+                        mainWindow.webContents.send('install-dependencies-log', { type: 'stderr', data: data.toString() });
+                    }
+                })
+
+                node_process.on('close', (code) => {
+                    console.log('install dependencies end',code===0)
+                    resolveInner(code === 0)
+                })
+            })
         }
-        console.log('isInChinaTimezone', isInChinaTimezone())
-        const node_process = spawn(uv_path, ['sync', '--no-dev', ...(isInChinaTimezone() ? proxy : [])], { cwd: backendPath })
-        node_process.stdout.on('data', (data) => {
-            log.info(`Script output: ${data}`)
-            // notify frontend install log
-            const mainWindow = getMainWindow();
+
+        // try default install
+        const installSuccess = await runInstall([])
+
+        if (installSuccess) {
+            fs.unlinkSync(installingLockPath)
+            fs.writeFileSync(installedLockPath, '')
+            log.info('Script completed successfully')
+            console.log('end install dependencies')
+            spawn(uv_path, ['run', 'task', 'babel'], { cwd: backendPath })
+            resolve(true)
+            return
+        }
+
+        // try mirror install
+        const mirrorInstallSuccess = await runInstall(proxyArgs)
+
+        fs.existsSync(installingLockPath) && fs.unlinkSync(installingLockPath)
+
+        if (mirrorInstallSuccess) {
+            fs.writeFileSync(installedLockPath, '')
+            log.info('Mirror script completed successfully')
+            console.log('end install dependencies (mirror)')
+            spawn(uv_path, ['run', 'task', 'babel'], { cwd: backendPath })
+            resolve(true)
+        } else {
+            log.error('Both default and mirror install failed')
             if (mainWindow && !mainWindow.isDestroyed()) {
-                mainWindow.webContents.send('install-dependencies-log', { type: 'stdout', data: data.toString() });
+                mainWindow.webContents.send('install-dependencies-complete', { success: false, error: 'Both default and mirror install failed' });
             }
-        })
-
-        node_process.stderr.on('data', (data) => {
-            log.error(`Script error: uv ${data}`)
-            // notify frontend install error log
-            const mainWindow = getMainWindow();
-            if (mainWindow && !mainWindow.isDestroyed()) {
-                mainWindow.webContents.send('install-dependencies-log', { type: 'stderr', data: data.toString() });
-            }
-        })
-
-        node_process.on('close', async (code) => {
-            // delete installing lock file 
-            if (fs.existsSync(installingLockPath)) {
-                fs.unlinkSync(installingLockPath)
-            }
-
-            if (code === 0) {
-                log.info('Script completed successfully')
-
-                // touch installed lock file
-                const installedLockPath = path.join(backendPath, 'uv_installed.lock')
-                fs.writeFileSync(installedLockPath, '')
-                console.log('end install dependencies')
-
-
-                spawn(uv_path, ['run', 'task', 'babel'], { cwd: backendPath })
-                resolve(true);
-                // resolve(isSuccess);
-            } else {
-                log.error(`Script exited with code ${code}`)
-                // notify frontend install failed
-                const mainWindow = getMainWindow();
-                if (mainWindow && !mainWindow.isDestroyed()) {
-                    mainWindow.webContents.send('install-dependencies-complete', { success: false, code, error: `Script exited with code ${code}` });
-                    resolve(false);
-                }
-            }
-        })
+            resolve(false)
+        }
     })
 }
+
 
 
 export async function startBackend(setPort?: (port: number) => void): Promise<any> {
