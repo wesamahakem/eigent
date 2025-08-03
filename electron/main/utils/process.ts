@@ -63,8 +63,16 @@ export async function getBinaryPath(name?: string): Promise<string> {
   const binaryName = await getBinaryName(name)
   const binariesDir = path.join(os.homedir(), '.eigent', 'bin')
   const binariesDirExists = await fs.existsSync(binariesDir)
-  
+
   return binariesDirExists ? path.join(binariesDir, binaryName) : binaryName
+}
+
+export function getCachePath(folder: string): string {
+  const cacheDir = path.join(os.homedir(), '.eigent', 'cache', folder)
+  console.log('cacheDir+++++++++++++++++++++++++++')
+  console.log('Cache directory:', cacheDir)
+  console.log('cacheDir--------------------')
+  return cacheDir
 }
 
 export async function isBinaryExists(name: string): Promise<boolean> {

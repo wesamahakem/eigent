@@ -1,4 +1,4 @@
-import { getBackendPath, getBinaryPath, isBinaryExists, runInstallScript } from "./utils/process";
+import { getBackendPath, getBinaryPath, getCachePath, isBinaryExists, runInstallScript } from "./utils/process";
 import { spawn, exec } from 'child_process'
 import log from 'electron-log'
 import fs from 'fs'
@@ -184,7 +184,18 @@ export async function installDependencies() {
 
         const runInstall = (extraArgs: string[]) => {
             return new Promise<boolean>((resolveInner) => {
-                const node_process = spawn(uv_path, ['sync', '--no-dev', ...extraArgs], { cwd: backendPath })
+                const node_process = spawn(uv_path, [
+                    'sync',
+                    '--no-dev',
+                    '--cache-dir', getCachePath('uv_cache'),
+                    ...extraArgs], {
+                    cwd: backendPath,
+                    env: {
+                        ...process.env,
+                        UV_TOOL_DIR: getCachePath('uv_tool'),
+                        UV_PYTHON_INSTALL_DIR: getCachePath('uv_python'),
+                    }
+                })
                 console.log('start install dependencies',extraArgs)
                 node_process.stdout.on('data', (data) => {
                     

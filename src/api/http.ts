@@ -48,17 +48,17 @@ async function fetchRequest(
         .map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
         .join('&')
       : ''
-    return handleResponse(fetch(fullUrl + query, options))
+    return handleResponse(fetch(fullUrl + query, options), data)
   }
 
   if (data) {
     options.body = JSON.stringify(data)
   }
 
-  return handleResponse(fetch(fullUrl, options))
+  return handleResponse(fetch(fullUrl, options), data)
 }
 
-async function handleResponse(responsePromise: Promise<Response>): Promise<any> {
+async function handleResponse(responsePromise: Promise<Response>, requestData?: Record<string, any>): Promise<any> {
   try {
     const res = await responsePromise
     if (res.status === 204) {
@@ -103,7 +103,11 @@ async function handleResponse(responsePromise: Promise<Response>): Promise<any> 
     return resData
   } catch (err: any) {
 
-    showTrafficToast()
+    // Only show traffic toast for cloud model requests
+    const isCloudRequest = requestData?.api_url === 'cloud'
+    if (isCloudRequest) {
+      showTrafficToast()
+    }
 
     console.error('[fetch error]:', err)
 
