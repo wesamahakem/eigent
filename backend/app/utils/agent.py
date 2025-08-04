@@ -1324,6 +1324,9 @@ async def mcp_agent(options: Chat):
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
+            model_config_dict={
+                "user": str(options.task_id),
+            },
             **{
                 k: v
                 for k, v in (options.extra_params or {}).items()
