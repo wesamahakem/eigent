@@ -298,7 +298,7 @@ const chatStore = create<ChatStore>()(
 			let mcpConfigPath = ''
 			if (email) {
 				// Get MCP config path
-				const result = await window.electronAPI.getMcpConfigPath('user@example.com');
+				const result = await window.electronAPI.getMcpConfigPath(email);
 				if (result.success) {
 					mcpConfigPath = result.path
 				} else {

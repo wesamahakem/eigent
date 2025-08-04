@@ -12,12 +12,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useChatStore } from "@/store/chatStore";
 import { MarkDown } from "@/components/ChatBox/MarkDown";
 import { useAuthStore } from "@/store/authStore";
@@ -31,7 +25,7 @@ interface FileTreeNode {
 	isFolder?: boolean;
 	icon?: React.ElementType;
 	children?: FileTreeNode[];
-	isRemote?: boolean; 
+	isRemote?: boolean;
 }
 
 interface FileInfo {
@@ -42,7 +36,7 @@ interface FileInfo {
 	icon?: React.ElementType;
 	content?: string;
 	relativePath?: string;
-	isRemote?: boolean; 
+	isRemote?: boolean;
 }
 
 // FileTree component to render nested file structure
@@ -77,7 +71,7 @@ const FileTree: React.FC<FileTreeProps> = ({
 					type: child.type || "",
 					isFolder: child.isFolder,
 					icon: child.icon,
-					isRemote: child.isRemote, 
+					isRemote: child.isRemote,
 				};
 
 				return (
@@ -141,16 +135,17 @@ const FileTree: React.FC<FileTreeProps> = ({
 };
 
 function downloadByBrowser(url: string) {
-	window.ipcRenderer.invoke('download-file', url)
+	window.ipcRenderer
+		.invoke("download-file", url)
 		.then((result) => {
 			if (result.success) {
-				console.log('download-file success:', result.path);
+				console.log("download-file success:", result.path);
 			} else {
-				console.error('download-file error:', result.error);
+				console.error("download-file error:", result.error);
 			}
 		})
 		.catch((error) => {
-			console.error('download-file error:', error);
+			console.error("download-file error:", error);
 		});
 }
 
@@ -177,7 +172,7 @@ export default function Folder({ data }: { data?: Agent }) {
 		setSelectedFile(file);
 		setLoading(true);
 		console.log("file", JSON.parse(JSON.stringify(file)));
-		
+
 		// all files call open-file interface, the backend handles download and parsing
 		window.ipcRenderer
 			.invoke("open-file", file.type, file.path, isShowSourceCode)
@@ -230,7 +225,7 @@ export default function Folder({ data }: { data?: Agent }) {
 				isFolder: file.isFolder,
 				icon: file.icon,
 				children: file.isFolder ? [] : undefined,
-				isRemote: file.isRemote, 
+				isRemote: file.isRemote,
 			};
 
 			parentNode.children!.push(node);
@@ -289,8 +284,8 @@ export default function Folder({ data }: { data?: Agent }) {
 			)
 			.then((res: FileInfo[]) => {
 				console.log("res", res);
-				let tree:any =null
-				if (res && res.length > 0) {
+				let tree: any = null;
+				if ((res && res.length > 0)||import.meta.env.DEV) {
 					tree = buildFileTree(res || []);
 					setFileTree(tree);
 					// Keep the old structure for compatibility
@@ -497,10 +492,8 @@ export default function Folder({ data }: { data?: Agent }) {
 								) : selectedFile.type === "pdf" ? (
 									<iframe
 										src={
-											selectedFile.isRemote 
-												? "localfile://" + encodeURIComponent(selectedFile.content as string)
-												: "localfile://" +
-												  encodeURIComponent(selectedFile.content as string)
+											"localfile://" +
+											encodeURIComponent(selectedFile.content as string)
 										}
 										className="w-full h-full border-0"
 										title={selectedFile.name}
@@ -520,10 +513,8 @@ export default function Folder({ data }: { data?: Agent }) {
 									) : (
 										<iframe
 											src={
-												selectedFile.isRemote 
-													? "localfile://" + encodeURIComponent(selectedFile.content as string)
-													: "localfile://" +
-													  encodeURIComponent(selectedFile.content as string)
+												"localfile://" +
+												encodeURIComponent(selectedFile.content as string)
 											}
 											className="w-full h-full border-0"
 											title={selectedFile.name}
@@ -548,8 +539,9 @@ export default function Folder({ data }: { data?: Agent }) {
 									<div className="flex items-center justify-center h-full">
 										<img
 											src={
-												selectedFile.isRemote 
-													? "localfile://" + encodeURIComponent(selectedFile.content as string)
+												selectedFile.isRemote
+													? "localfile://" +
+													  encodeURIComponent(selectedFile.content as string)
 													: `localfile://${encodeURIComponent(
 															selectedFile.path
 													  )}`
