@@ -276,53 +276,58 @@ export default function Folder({ data }: { data?: Agent }) {
 		},
 	]);
 	useEffect(() => {
-		window.ipcRenderer
-			.invoke(
+		const setFileList = async () => {
+			let res = null;
+			res = await window.ipcRenderer.invoke(
 				"get-file-list",
 				authStore.email,
 				chatStore.activeTaskId as string
-			)
-			.then((res: FileInfo[]) => {
+			);
+			let tree: any = null;
+			if ((res && res.length > 0) ) {
+				tree = buildFileTree(res || []);
+			} else {
+				res = await proxyFetchGet("/api/chat/files", {
+					task_id: chatStore.activeTaskId as string,
+				});
 				console.log("res", res);
-				let tree: any = null;
-				if ((res && res.length > 0)||import.meta.env.DEV) {
-					tree = buildFileTree(res || []);
-					setFileTree(tree);
-					// Keep the old structure for compatibility
-					setFileGroups((prev) => {
-						return [
-							{
-								...prev[0],
-								files: res || [],
-							},
-						];
-					});
-				} else {
-					proxyFetchGet("/api/chat/files", {
-						task_id: chatStore.activeTaskId as string,
-					}).then((res) => {
-						console.log("res", res);
-						const files = res.map((item: any) => {
-							return {
-								name: item.filename,
-								type: item.filename.split(".")[1],
-								path: item.url,
-								isRemote: true, // 标识为远程文件
-							};
-						});
-						const tree = buildFileTree(files || []);
-						setFileTree(tree);
-						setFileGroups((prev) => {
-							return [
-								{
-									...prev[0],
-									files: files || [],
-								},
-							];
-						});
-					});
+				res = res.map((item: any) => {
+					return {
+						name: item.filename,
+						type: item.filename.split(".")[1],
+						path: item.url,
+						isRemote: true,
+					};
+				});
+				tree = buildFileTree(res || []);
+			}
+			setFileTree(tree);
+			// Keep the old structure for compatibility
+			setFileGroups((prev) => {
+				const chatStoreSelectedFile = chatStore.tasks[chatStore.activeTaskId as string]?.selectedFile;
+				if (chatStoreSelectedFile) {
+					console.log(res,chatStoreSelectedFile)
+					const file = res.find((item: any) => item.name === chatStoreSelectedFile.name);
+					console.log("file", file);
+					if(file){
+						selecetdFileChange(file as FileInfo,isShowSourceCode);
+					}
 				}
+				return [
+					{
+						...prev[0],
+						files: res || [],
+					},
+				];
 			});
+			// if (chatStore.tasks[chatStore.activeTaskId as string]?.selectedFile) {
+			// 	selecetdFileChange(
+			// 		chatStore.tasks[chatStore.activeTaskId as string]
+			// 			.selectedFile as FileInfo
+			// 	);
+			// }
+		};
+		setFileList();
 	}, [data, chatStore.tasks[chatStore.activeTaskId as string]?.taskAssigning]);
 	const handleBack = () => {
 		chatStore.setActiveWorkSpace(chatStore.activeTaskId as string, "workflow");

@@ -295,14 +295,12 @@ const chatStore = create<ChatStore>()(
 			} catch (error) {
 				console.log('get-env-path error', error)
 			}
-			let mcpConfigPath = ''
+			let mcpConfigPath = undefined
 			if (email) {
 				// Get MCP config path
 				const result = await window.electronAPI.getMcpConfigPath(email);
 				if (result.success) {
 					mcpConfigPath = result.path
-				} else {
-					console.error('get mcp config path failed:', result.error);
 				}
 			}
 
