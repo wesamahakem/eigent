@@ -107,7 +107,7 @@ export default function MCPAddDialog({
 					<div className="mb-4 text-sm text-gray-600 rounded-xl">
 						Add a local MCP server by providing a valid JSON configuration.{" "}
 						<a
-							href="https://docs.example.com/mcp/local"
+							href="https://modelcontextprotocol.io/docs/getting-started/intro"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-blue-600 underline"

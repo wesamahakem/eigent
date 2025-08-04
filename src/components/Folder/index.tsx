@@ -18,6 +18,7 @@ import {
 import { useChatStore } from "@/store/chatStore";
 import { MarkDown } from "@/components/ChatBox/MarkDown";
 import { useAuthStore } from "@/store/authStore";
+import { proxyFetchGet } from "@/api/http";
 
 export default function Folder({ data }: { data?: Agent }) {
 	const chatStore = useChatStore();
@@ -77,14 +78,37 @@ export default function Folder({ data }: { data?: Agent }) {
 			)
 			.then((res) => {
 				console.log("res", res);
-				setFileGroups((prev) => {
-					return [
-						{
-							...prev[0],
-							files: res || [],
-						},
-					];
-				});
+				if (res && res.length > 0) {
+					setFileGroups((prev) => {
+						return [
+							{
+								...prev[0],
+								files: res || [],
+							},
+						];
+					});
+				} else {
+					proxyFetchGet("/api/chat/files", {
+						task_id: chatStore.activeTaskId as string,
+					}).then((res) => {
+						console.log("res", res);
+						setFileGroups((prev) => {
+							return [
+								{
+									...prev[0],
+									files:
+										res.map((item: any) => {
+											return {
+												name: item.filename,
+												type: item.filename.split(".")[1],
+												path: item.url,
+											};
+										}) || [],
+								},
+							];
+						});
+					});
+				}
 			});
 	}, [data, chatStore.tasks[chatStore.activeTaskId as string]?.taskAssigning]);
 	const handleBack = () => {
