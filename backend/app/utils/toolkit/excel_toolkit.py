@@ -19,7 +19,7 @@ class ExcelToolkit(BaseExcelToolkit, AbstractToolkit):
         self.api_task_id = api_task_id
         if working_directory is None:
             working_directory = env("file_save_path", os.path.expanduser("~/Downloads"))
-        super().__init__(timeout)
+        super().__init__(timeout=timeout, working_directory=working_directory)
 
     @listen_toolkit(BaseExcelToolkit.extract_excel_content)
     def extract_excel_content(self, document_path: str) -> str:

@@ -338,8 +338,7 @@ async def construct_workforce(options: Chat) -> tuple[Workforce, ListenChatAgent
             Agents.coordinator_agent: f"""
 You are a helpful coordinator.
 - You are now working in system {platform.system()} with architecture
-{platform.machine()} at working directory `{working_directory}`. All your
-work related to local operations should be done in that directory.
+{platform.machine()} at working directory `{working_directory}`. All local file operations must occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
 The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 
 - If a task assigned to another agent fails, you should re-assign it to the 
@@ -349,8 +348,7 @@ access and can resolve a wide range of issues.
             Agents.task_agent: f"""
 You are a helpful task planner.
 - You are now working in system {platform.system()} with architecture
-{platform.machine()} at working directory `{working_directory}`. All your
-work related to local operations should be done in that directory.
+{platform.machine()} at working directory `{working_directory}`. All local file operations must occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
 The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
         """,
         }.items()
@@ -360,8 +358,7 @@ The current date is {datetime.date.today()}. For any date-related tasks, you MUS
         f"""
         You are a helpful assistant.
 - You are now working in system {platform.system()} with architecture
-{platform.machine()} at working directory `{working_directory}`. All your
-work related to local operations should be done in that directory.
+{platform.machine()} at working directory `{working_directory}`. All local file operations must occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
 The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
         """,
         options,
@@ -387,6 +384,13 @@ The current date is {datetime.date.today()}. For any date-related tasks, you MUS
     # msg_toolkit.register_agent("Document_Agent", documenter)
     # msg_toolkit.register_agent("Multi_Modal_Agent", multi_modaler)
 
+    # Convert string model_platform to enum for comparison
+    try:
+        model_platform_enum = ModelPlatformType(options.model_platform.lower())
+    except (ValueError, AttributeError):
+        # If conversion fails, default to non-OpenAI behavior
+        model_platform_enum = None
+    
     workforce = Workforce(
         options.task_id,
         "A workforce",
@@ -395,7 +399,7 @@ The current date is {datetime.date.today()}. For any date-related tasks, you MUS
         coordinator_agent=coordinator_agent,
         task_agent=task_agent,
         new_worker_agent=new_worker_agent,
-        use_structured_output_handler=False if options.model_platform == ModelPlatformType.OPENAI else True,
+        use_structured_output_handler=False if model_platform_enum == ModelPlatformType.OPENAI else True,
     )
     workforce.add_single_agent_worker(
         "Developer Agent: A master-level coding assistant with a powerful "
@@ -482,8 +486,7 @@ async def new_agent_model(data: NewAgent | ActionNewAgent, options: Chat):
     # Enhanced system message with platform information
     enhanced_description = f"""{data.description}
 - You are now working in system {platform.system()} with architecture
-{platform.machine()} at working directory `{working_directory}`. All your
-work related to local operations should be done in that directory.
+{platform.machine()} at working directory `{working_directory}`. All local file operations must occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
 The current date is {datetime.date.today()}. For any date-related tasks, you 
 MUST use this as the current date.
 """

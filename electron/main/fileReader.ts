@@ -36,6 +36,244 @@ export class FileReader {
 		}
 	}
 
+	private async parseXlsx(filePath: string): Promise<string> {
+		try {
+			const directory = await unzipper.Open.file(filePath);
+			
+			// Find the shared strings file and worksheets
+			const sharedStringsFile = directory.files.find((f: any) => f.path === 'xl/sharedStrings.xml');
+			const worksheetFiles = directory.files.filter((f: any) => f.path.match(/^xl\/worksheets\/sheet\d+\.xml$/));
+			
+			// Parse shared strings if exists
+			let sharedStrings: string[] = [];
+			if (sharedStringsFile) {
+				const sharedStringsBuffer = await sharedStringsFile.buffer();
+				const sharedStringsContent = sharedStringsBuffer.toString('utf-8');
+				const parsedSharedStrings = await parseStringPromise(sharedStringsContent);
+				
+				if (parsedSharedStrings.sst && parsedSharedStrings.sst.si) {
+					sharedStrings = parsedSharedStrings.sst.si.map((si: any) => {
+						// Handle simple text nodes
+						if (si.t && si.t[0]) {
+							return typeof si.t[0] === 'string' ? si.t[0] : String(si.t[0]);
+						}
+						// Handle rich text nodes
+						if (si.r) {
+							return si.r.map((r: any) => {
+								if (r.t && r.t[0]) {
+									return typeof r.t[0] === 'string' ? r.t[0] : String(r.t[0]);
+								}
+								return '';
+							}).join('');
+						}
+						// Handle direct string values
+						if (typeof si === 'string') {
+							return si;
+						}
+						return '';
+					});
+					console.log(`Parsed ${sharedStrings.length} shared strings`);
+				}
+			}
+			
+			let html = `
+				<style>
+					.xlsx-container {
+						font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+						padding: 20px;
+					}
+					.xlsx-table {
+						border-collapse: collapse;
+						width: 100%;
+						margin: 10px 0;
+						font-size: 14px;
+						box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+					}
+					.xlsx-table th {
+						background-color: #f8f9fa;
+						border: 1px solid #dee2e6;
+						padding: 12px 8px;
+						text-align: left;
+						font-weight: 600;
+						color: #495057;
+						position: sticky;
+						top: 0;
+						z-index: 10;
+					}
+					.xlsx-table td {
+						border: 1px solid #dee2e6;
+						padding: 8px;
+						color: #212529;
+					}
+					.xlsx-table tr:nth-child(even) {
+						background-color: #f8f9fa;
+					}
+					.xlsx-table tr:hover {
+						background-color: #e9ecef;
+					}
+					.sheet-title {
+						font-size: 18px;
+						font-weight: 600;
+						margin: 20px 0 10px 0;
+						color: #212529;
+					}
+				</style>
+				<div class="xlsx-container">
+			`;
+			
+			// Process each worksheet
+			for (let i = 0; i < worksheetFiles.length && i < 5; i++) { // Limit to first 5 sheets
+				const file = worksheetFiles[i];
+				const contentBuffer = await file.buffer();
+				const content = contentBuffer.toString('utf-8');
+				const parsed = await parseStringPromise(content);
+				
+				if (worksheetFiles.length > 1) {
+					html += `<h3 class="sheet-title">Sheet ${i + 1}</h3>`;
+				}
+				
+				// Create table
+				html += '<table class="xlsx-table">';
+				
+				// Get all rows
+				const rows = parsed.worksheet?.sheetData?.[0]?.row || [];
+				
+				// Find the maximum column to create column headers
+				let maxCol = 0;
+				for (const row of rows) {
+					const cells = row.c || [];
+					for (const cell of cells) {
+						if (cell.$ && cell.$.r) {
+							const colMatch = cell.$.r.match(/^([A-Z]+)/);
+							if (colMatch) {
+								const colIndex = this.columnToNumber(colMatch[1]);
+								maxCol = Math.max(maxCol, colIndex);
+							}
+						}
+					}
+				}
+				
+				// Add column headers row (A, B, C, ...)
+				html += '<thead><tr>';
+				html += '<th style="background-color: #e9ecef; width: 50px;"></th>'; // Empty cell for row numbers
+				for (let i = 0; i < maxCol; i++) {
+					html += `<th>${this.numberToColumn(i + 1)}</th>`;
+				}
+				html += '</tr></thead>';
+				
+				// Add data rows
+				html += '<tbody>';
+				for (const row of rows) {
+					html += '<tr>';
+					
+					// Add row number
+					const rowNum = row.$ && row.$.r ? row.$.r : '';
+					html += `<th style="background-color: #e9ecef; text-align: center;">${rowNum}</th>`;
+					
+					// Create cells array with proper indexing
+					const cells = row.c || [];
+					const cellMap = new Map();
+					
+					// Map cells by column index
+					for (const cell of cells) {
+						if (cell.$ && cell.$.r) {
+							const colMatch = cell.$.r.match(/^([A-Z]+)/);
+							if (colMatch) {
+								const colIndex = this.columnToNumber(colMatch[1]);
+								cellMap.set(colIndex, cell);
+							}
+						}
+					}
+					
+					// Add cells in order, including empty cells
+					for (let i = 1; i <= maxCol; i++) {
+						const cell = cellMap.get(i);
+						const cellValue = cell ? this.getCellValue(cell, sharedStrings) : '';
+						html += `<td>${cellValue}</td>`;
+					}
+					
+					html += '</tr>';
+				}
+				html += '</tbody>';
+				
+				html += '</table>';
+			}
+			
+			html += '</div></div>';
+			return html;
+		} catch (error) {
+			console.error('XLSX parsing error:', error);
+			throw error;
+		}
+	}
+
+	private columnToNumber(column: string): number {
+		let result = 0;
+		for (let i = 0; i < column.length; i++) {
+			result = result * 26 + (column.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+		}
+		return result;
+	}
+
+	private numberToColumn(num: number): string {
+		let column = '';
+		while (num > 0) {
+			num--;
+			column = String.fromCharCode((num % 26) + 'A'.charCodeAt(0)) + column;
+			num = Math.floor(num / 26);
+		}
+		return column;
+	}
+
+	private getCellValue(cell: any, sharedStrings: string[]): string {
+		try {
+			// If cell has a value
+			if (cell.v && cell.v[0] !== undefined) {
+				const value = cell.v[0];
+				
+				// Check cell type
+				if (cell.$ && cell.$.t === 's') {
+					// Shared string
+					const index = parseInt(value);
+					if (!isNaN(index) && index >= 0 && index < sharedStrings.length) {
+						return sharedStrings[index] || '';
+					}
+					console.warn(`Shared string index ${index} out of bounds (array length: ${sharedStrings.length})`);
+					return value; // Return raw value as fallback
+				} else if (cell.$ && cell.$.t === 'inlineStr') {
+					// Inline string
+					return cell.is?.[0]?.t?.[0] || '';
+				} else if (cell.$ && cell.$.t === 'str') {
+					// Formula result string
+					return value;
+				} else {
+					// Number or other value
+					// Format numbers to avoid long decimals
+					const numValue = parseFloat(value);
+					if (!isNaN(numValue) && numValue % 1 !== 0) {
+						return numValue.toFixed(2);
+					}
+					return value;
+				}
+			}
+			
+			// Check for inline string without type attribute
+			if (cell.is && cell.is[0] && cell.is[0].t && cell.is[0].t[0]) {
+				return cell.is[0].t[0];
+			}
+			
+			// Check for formula cells
+			if (cell.f && cell.f[0] && cell.v && cell.v[0]) {
+				return cell.v[0];
+			}
+			
+			return '';
+		} catch (error) {
+			console.error('Error getting cell value:', error, 'Cell:', JSON.stringify(cell));
+			return '';
+		}
+	}
+
 	private async parsePptx(filePath: string): Promise<string> {
 		try {
 			const directory = await unzipper.Open.file(filePath)
@@ -165,6 +403,15 @@ export class FileReader {
 						const content = fs.readFileSync(filePath, 'base64') //  backup processing
 						resolve(`<pre>${content}</pre>`)
 					}
+				} else if (type === 'xlsx') {
+					try {
+						const htmlContent = await this.parseXlsx(filePath)
+						resolve(htmlContent)
+					} catch (error) {
+						console.warn('XLSX parsing failed, reading as text:', error)
+						const content = fs.readFileSync(filePath, 'utf-8')
+						resolve(content)
+					}
 				} else {
 					const content = fs.readFileSync(filePath, 'utf-8')
 					resolve(content)
@@ -173,6 +420,42 @@ export class FileReader {
 				reject(error)
 			}
 		})
+	}
+
+	private getFilesRecursive(dirPath: string, basePath: string): FileInfo[] {
+		try {
+			const files = fs.readdirSync(dirPath);
+			const result: FileInfo[] = [];
+
+			for (const file of files) {
+				if (file.startsWith(".")) continue;
+				
+				const filePath = path.join(dirPath, file);
+				const stats = fs.statSync(filePath);
+				const isFolder = stats.isDirectory();
+				const relativePath = path.relative(basePath, dirPath);
+				
+				const fileInfo: FileInfo = {
+					path: filePath,
+					name: file,
+					type: isFolder ? 'folder' : (file.split('.').pop()?.toLowerCase() || ''),
+					isFolder: isFolder,
+					relativePath: relativePath === '' ? '' : relativePath
+				};
+				
+				result.push(fileInfo);
+				
+				if (isFolder) {
+					const subFiles = this.getFilesRecursive(filePath, basePath);
+					result.push(...subFiles);
+				}
+			}
+			
+			return result;
+		} catch (err) {
+			console.error("Error reading directory:", dirPath, err);
+			return [];
+		}
 	}
 
 	public getFileList(email: string, taskId: string): FileInfo[] {
@@ -186,15 +469,8 @@ export class FileReader {
 			if (!fs.existsSync(dirPath)) {
 				return [];
 			}
-			const files = fs.readdirSync(dirPath);
-
-			return files.filter(file=>!file.startsWith(".")).map(file => {
-				return {
-					path: path.join(dirPath, file),
-					name: file,
-					type: file.split('.').pop()?.toLowerCase() || '',
-				}
-			});
+			
+			return this.getFilesRecursive(dirPath, dirPath);
 		} catch (err) {
 			console.error("Load file failed:", err);
 			return [];

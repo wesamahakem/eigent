@@ -24,6 +24,8 @@ declare global {
 		icon?: React.ElementType;
 		agent_id?: string;
 		task_id?: string;
+		isFolder?: boolean;
+		relativePath?: string;
 	}
 
 	interface File {
