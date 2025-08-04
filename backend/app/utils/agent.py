@@ -528,7 +528,7 @@ and generation.
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
 occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
-- **Current Date**: {datetime.date.today()}.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -716,7 +716,7 @@ comprehensive and well-documented information.
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
 occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
-- **Current Date**: {datetime.date.today()}.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -864,7 +864,7 @@ to be embedded in your work.
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
 occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
-- **Current Date**: {datetime.date.today()}.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -1087,7 +1087,7 @@ presentations, and other documents.
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
 occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
-- **Current Date**: {datetime.date.today()}.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
