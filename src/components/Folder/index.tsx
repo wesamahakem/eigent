@@ -284,7 +284,7 @@ export default function Folder({ data }: { data?: Agent }) {
 				chatStore.activeTaskId as string
 			);
 			let tree: any = null;
-			if ((res && res.length > 0) ) {
+			if ((res && res.length > 0) || import.meta.env.DEV) {
 				tree = buildFileTree(res || []);
 			} else {
 				res = await proxyFetchGet("/api/chat/files", {

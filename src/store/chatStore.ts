@@ -783,7 +783,7 @@ const chatStore = create<ChatStore>()(
 						addFileList(taskId, agentMessages.data.process_task_id as string, fileInfo);
 
 						// Async file upload
-						if (!type && file_path) {
+						if (!type && file_path && !import.meta.env.DEV) {
 							(async () => {
 								try {
 									// Read file content using Electron API
