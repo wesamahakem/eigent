@@ -211,7 +211,7 @@ export default function ChatBox(): JSX.Element {
 			const _taskId = chatStore.activeTaskId as string;
 			timer = setTimeout(() => {
 				handleSend("skip", _taskId);
-			}, 20000); // 20 seconds
+			}, 30000); // 20 seconds
 			return () => clearTimeout(timer); // clear previous timer
 		}
 		// if activeAsk is empty, also clear timer
