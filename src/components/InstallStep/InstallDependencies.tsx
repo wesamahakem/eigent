@@ -23,7 +23,7 @@ export const InstallDependencies: React.FC<{
 	isInstalling: boolean;
 	setIsInstalling: (isInstalling: boolean) => void;
 }> = ({ isInstalling, setIsInstalling }) => {
-	const { initState } = useAuthStore();
+	const { initState, setInitState } = useAuthStore();
 	const [logs, setLogs] = useState<InstallLog[]>([]);
 	const [status, setStatus] = useState<
 		"idle" | "installing" | "success" | "error"
@@ -70,6 +70,7 @@ export const InstallDependencies: React.FC<{
 					setStatus("success");
 					console.log("dependencies installed successfully!");
 					setProgress(100);
+					setInitState("done");
 				} else {
 					setStatus("error");
 					console.error("dependencies installation failed:", data?.code);
@@ -121,6 +122,7 @@ export const InstallDependencies: React.FC<{
 			setStatus("success");
 			setProgress(100);
 			setIsInstalling(false);
+			setInitState("done");
 		} catch (error) {
 			console.error("install start failed:", error);
 			setStatus("error");
