@@ -31,6 +31,18 @@ interface FileTreeNode {
 	isFolder?: boolean;
 	icon?: React.ElementType;
 	children?: FileTreeNode[];
+	isRemote?: boolean; 
+}
+
+interface FileInfo {
+	name: string;
+	path: string;
+	type: string;
+	isFolder?: boolean;
+	icon?: React.ElementType;
+	content?: string;
+	relativePath?: string;
+	isRemote?: boolean; 
 }
 
 // FileTree component to render nested file structure
@@ -65,6 +77,7 @@ const FileTree: React.FC<FileTreeProps> = ({
 					type: child.type || "",
 					isFolder: child.isFolder,
 					icon: child.icon,
+					isRemote: child.isRemote, 
 				};
 
 				return (
@@ -127,22 +140,33 @@ const FileTree: React.FC<FileTreeProps> = ({
 	);
 };
 
+function downloadByBrowser(url: string) {
+	window.ipcRenderer.invoke('download-file', url)
+		.then((result) => {
+			if (result.success) {
+				console.log('download-file success:', result.path);
+			} else {
+				console.error('download-file error:', result.error);
+			}
+		})
+		.catch((error) => {
+			console.error('download-file error:', error);
+		});
+}
+
 export default function Folder({ data }: { data?: Agent }) {
 	const chatStore = useChatStore();
 	const authStore = useAuthStore();
 	const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
 	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		if (chatStore?.tasks[chatStore.activeTaskId as string].selectedFile) {
-			selecetdFileChange(
-				chatStore.tasks[chatStore.activeTaskId as string]
-					.selectedFile as FileInfo
-			);
-		}
-	}, [chatStore.tasks[chatStore.activeTaskId as string].selectedFile]);
 	const selecetdFileChange = (file: FileInfo, isShowSourceCode?: boolean) => {
 		if (file.type === "zip") {
+			// if file is remote, don't call reveal-in-folder
+			if (file.isRemote) {
+				downloadByBrowser(file.path);
+				return;
+			}
 			window.ipcRenderer.invoke("reveal-in-folder", file.path);
 			return;
 		}
@@ -153,16 +177,23 @@ export default function Folder({ data }: { data?: Agent }) {
 		setSelectedFile(file);
 		setLoading(true);
 		console.log("file", JSON.parse(JSON.stringify(file)));
+		
+		// all files call open-file interface, the backend handles download and parsing
 		window.ipcRenderer
 			.invoke("open-file", file.type, file.path, isShowSourceCode)
 			.then((res) => {
 				setSelectedFile({ ...file, content: res });
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error("open-file error:", error);
 				setLoading(false);
 			});
 	};
 
 	const [isShowSourceCode, setIsShowSourceCode] = useState(false);
 	const isShowSourceCodeChange = () => {
+		// all files can reload content
 		selecetdFileChange(selectedFile!, !isShowSourceCode);
 		setIsShowSourceCode(!isShowSourceCode);
 	};
@@ -188,7 +219,6 @@ export default function Folder({ data }: { data?: Agent }) {
 			const depthB = (b.relativePath || "").split("/").filter(Boolean).length;
 			return depthA - depthB;
 		});
-
 		for (const file of sortedFiles) {
 			const parentPath = file.relativePath || "";
 			const parentNode = nodeMap.get(parentPath) || root;
@@ -200,6 +230,7 @@ export default function Folder({ data }: { data?: Agent }) {
 				isFolder: file.isFolder,
 				icon: file.icon,
 				children: file.isFolder ? [] : undefined,
+				isRemote: file.isRemote, 
 			};
 
 			parentNode.children!.push(node);
@@ -258,8 +289,9 @@ export default function Folder({ data }: { data?: Agent }) {
 			)
 			.then((res: FileInfo[]) => {
 				console.log("res", res);
+				let tree:any =null
 				if (res && res.length > 0) {
-					const tree = buildFileTree(res || []);
+					tree = buildFileTree(res || []);
 					setFileTree(tree);
 					// Keep the old structure for compatibility
 					setFileGroups((prev) => {
@@ -275,18 +307,21 @@ export default function Folder({ data }: { data?: Agent }) {
 						task_id: chatStore.activeTaskId as string,
 					}).then((res) => {
 						console.log("res", res);
+						const files = res.map((item: any) => {
+							return {
+								name: item.filename,
+								type: item.filename.split(".")[1],
+								path: item.url,
+								isRemote: true, // 标识为远程文件
+							};
+						});
+						const tree = buildFileTree(files || []);
+						setFileTree(tree);
 						setFileGroups((prev) => {
 							return [
 								{
 									...prev[0],
-									files:
-										res.map((item: any) => {
-											return {
-												name: item.filename,
-												type: item.filename.split(".")[1],
-												path: item.url,
-											};
-										}) || [],
+									files: files || [],
 								},
 							];
 						});
@@ -395,7 +430,11 @@ export default function Folder({ data }: { data?: Agent }) {
 										}`}
 										title={file.name}
 									>
-										{file.icon && <file.icon className="w-4 h-4" />}
+										{file.icon ? (
+											<file.icon className="w-4 h-4" />
+										) : (
+											<FileText className="w-4 h-4" />
+										)}
 									</button>
 								))
 							)}
@@ -412,6 +451,11 @@ export default function Folder({ data }: { data?: Agent }) {
 						<div className="flex items-center justify-between gap-2">
 							<div
 								onClick={() => {
+									// if file is remote, don't call reveal-in-folder
+									if (selectedFile.isRemote) {
+										downloadByBrowser(selectedFile.path);
+										return;
+									}
 									window.ipcRenderer.invoke(
 										"reveal-in-folder",
 										selectedFile.path
@@ -453,8 +497,10 @@ export default function Folder({ data }: { data?: Agent }) {
 								) : selectedFile.type === "pdf" ? (
 									<iframe
 										src={
-											"localfile://" +
-											encodeURIComponent(selectedFile.content as string)
+											selectedFile.isRemote 
+												? "localfile://" + encodeURIComponent(selectedFile.content as string)
+												: "localfile://" +
+												  encodeURIComponent(selectedFile.content as string)
 										}
 										className="w-full h-full border-0"
 										title={selectedFile.name}
@@ -474,8 +520,10 @@ export default function Folder({ data }: { data?: Agent }) {
 									) : (
 										<iframe
 											src={
-												"localfile://" +
-												encodeURIComponent(selectedFile.content as string)
+												selectedFile.isRemote 
+													? "localfile://" + encodeURIComponent(selectedFile.content as string)
+													: "localfile://" +
+													  encodeURIComponent(selectedFile.content as string)
 											}
 											className="w-full h-full border-0"
 											title={selectedFile.name}
@@ -499,9 +547,13 @@ export default function Folder({ data }: { data?: Agent }) {
 								  ].includes(selectedFile.type.toLowerCase()) ? (
 									<div className="flex items-center justify-center h-full">
 										<img
-											src={`localfile://${encodeURIComponent(
-												selectedFile.path
-											)}`}
+											src={
+												selectedFile.isRemote 
+													? "localfile://" + encodeURIComponent(selectedFile.content as string)
+													: `localfile://${encodeURIComponent(
+															selectedFile.path
+													  )}`
+											}
 											alt={selectedFile.name}
 											className="max-w-full max-h-full object-contain"
 										/>

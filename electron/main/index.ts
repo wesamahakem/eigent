@@ -728,6 +728,54 @@ function registerIpcHandlers() {
     return manager.openFile(type, filePath, isShowSourceCode);
   });
 
+  ipcMain.handle('download-file', async (_, url: string) => {
+    try {
+      const https = await import('https');
+      const http = await import('http');
+      
+      // extract file name from URL
+      const urlObj = new URL(url);
+      const fileName = urlObj.pathname.split('/').pop() || 'download';
+      
+      // get download directory
+      const downloadPath = path.join(app.getPath('downloads'), fileName);
+      
+      // create write stream
+      const fileStream = fs.createWriteStream(downloadPath);
+      
+      // choose module according to protocol
+      const client = url.startsWith('https:') ? https : http;
+      
+      return new Promise((resolve, reject) => {
+        const request = client.get(url, (response) => {
+          if (response.statusCode !== 200) {
+            reject(new Error(`HTTP ${response.statusCode}`));
+            return;
+          }
+          
+          response.pipe(fileStream);
+          
+          fileStream.on('finish', () => {
+            fileStream.close();
+            shell.showItemInFolder(downloadPath);
+            resolve({ success: true, path: downloadPath });
+          });
+          
+          fileStream.on('error', (err) => {
+            reject(err);
+          });
+        });
+        
+        request.on('error', (err) => {
+          reject(err);
+        });
+      });
+    } catch (error: any) {
+      log.error('Download file error:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
   ipcMain.handle('get-file-list', async (_, email: string, taskId: string) => {
     const manager = checkManagerInstance(fileReader, 'FileReader');
     return manager.getFileList(email, taskId);
