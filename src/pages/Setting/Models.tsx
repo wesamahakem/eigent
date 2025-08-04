@@ -309,10 +309,30 @@ export default function SettingModels() {
 		setLocalInputError(false);
 		try {
 			// 1. Check if endpoint returns response
-			const resp = await fetch(localEndpoint, {
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
+			let testUrl = localEndpoint;
+			let testMethod = "GET";
+			let testBody = undefined;
+			
+			// If the URL looks like a chat endpoint, use POST with a test message
+			if (testUrl.includes('/chat') || testUrl.includes('/completions')) {
+				testMethod = "POST";
+				testBody = JSON.stringify({
+					model: localType || "test",
+					messages: [{ role: "user", content: "test" }],
+					max_tokens: 1,
+					stream: false
+				});
+			} 
+			
+			const resp = await fetch(testUrl, {
+				method: testMethod,
+				headers: { 
+					"Content-Type": "application/json",
+					...(testMethod === "POST" && { "Authorization": "Bearer dummy" })
+				},
+				body: testBody
 			});
+			
 			if (!resp.ok) {
 				throw new Error("Endpoint is not responding");
 			}
@@ -864,7 +884,7 @@ export default function SettingModels() {
 								setLocalError(null);
 							}}
 							disabled={!localEnabled}
-							placeholder="https://forwardinghost/api/chat"
+							placeholder="https://localhost:11434/v1"
 						/>
 						{localError && (
 							<div className="text-xs text-red-500 mt-1">{localError}</div>
