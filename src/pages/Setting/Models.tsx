@@ -309,26 +309,33 @@ export default function SettingModels() {
 		setLocalInputError(false);
 		try {
 			// 1. Check if endpoint returns response
-			let testUrl = localEndpoint;
+			let baseUrl = localEndpoint;
+			let testUrl = baseUrl;
 			let testMethod = "GET";
 			let testBody = undefined;
 			
-			// If the URL looks like a chat endpoint, use POST with a test message
-			if (testUrl.includes('/chat') || testUrl.includes('/completions')) {
-				testMethod = "POST";
-				testBody = JSON.stringify({
-					model: localType || "test",
-					messages: [{ role: "user", content: "test" }],
-					max_tokens: 1,
-					stream: false
-				});
-			} 
+			// Extract base URL if it contains specific endpoints
+			if (baseUrl.includes('/chat/completions')) {
+				baseUrl = baseUrl.replace('/chat/completions', '');
+			} else if (baseUrl.includes('/completions')) {
+				baseUrl = baseUrl.replace('/completions', '');
+			}
+			
+			// Always test with chat completions endpoint for OpenAI-compatible APIs
+			testUrl = `${baseUrl}/chat/completions`;
+			testMethod = "POST";
+			testBody = JSON.stringify({
+				model: localType || "test",
+				messages: [{ role: "user", content: "test" }],
+				max_tokens: 1,
+				stream: false
+			});
 			
 			const resp = await fetch(testUrl, {
 				method: testMethod,
 				headers: { 
 					"Content-Type": "application/json",
-					...(testMethod === "POST" && { "Authorization": "Bearer dummy" })
+					"Authorization": "Bearer dummy"
 				},
 				body: testBody
 			});
@@ -336,11 +343,11 @@ export default function SettingModels() {
 			if (!resp.ok) {
 				throw new Error("Endpoint is not responding");
 			}
-			// 2. Save to /api/provider/
+			// 2. Save to /api/provider/ (save only base URL)
 			const data: any = {
 				provider_name: localPlatform,
 				api_key: "not-required",
-				endpoint_url: localEndpoint,
+				endpoint_url: baseUrl, // Save base URL without specific endpoints
 				is_valid: true,
 				model_type: localType,
 				encrypted_config: {
@@ -884,7 +891,7 @@ export default function SettingModels() {
 								setLocalError(null);
 							}}
 							disabled={!localEnabled}
-							placeholder="https://localhost:11434/v1"
+							placeholder="http://localhost:11434/v1"
 						/>
 						{localError && (
 							<div className="text-xs text-red-500 mt-1">{localError}</div>
