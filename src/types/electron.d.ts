@@ -5,6 +5,7 @@ interface IpcRenderer {
   closeWindow: () => void;
   triggerMenuAction: (action: string) => void;
   onExecuteAction: (callback: (action: string) => void) => void;
+  invoke: (channel: string, ...args: any[]) => Promise<any>;
 }
 
 interface ElectronAPI {

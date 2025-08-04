@@ -295,14 +295,12 @@ const chatStore = create<ChatStore>()(
 			} catch (error) {
 				console.log('get-env-path error', error)
 			}
-			let mcpConfigPath = ''
+			let mcpConfigPath = undefined
 			if (email) {
 				// Get MCP config path
-				const result = await window.electronAPI.getMcpConfigPath('user@example.com');
+				const result = await window.electronAPI.getMcpConfigPath(email);
 				if (result.success) {
 					mcpConfigPath = result.path
-				} else {
-					console.error('get mcp config path failed:', result.error);
 				}
 			}
 
@@ -785,7 +783,7 @@ const chatStore = create<ChatStore>()(
 						addFileList(taskId, agentMessages.data.process_task_id as string, fileInfo);
 
 						// Async file upload
-						if (!type && file_path) {
+						if (!type && file_path && !import.meta.env.DEV) {
 							(async () => {
 								try {
 									// Read file content using Electron API

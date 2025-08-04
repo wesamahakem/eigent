@@ -92,20 +92,20 @@ async function checkAndInstallDepsOnUpdate(): Promise<boolean> {
         if (!result) {
           log.error(' install dependencies failed');
           resolve(false);
-          return 
+          return
         }
         resolve(true);
         log.info(' install dependencies complete');
-        return 
+        return
       } else {
         log.info(' version not changed, skip install dependencies', { currentVersion });
         resolve(true);
-        return 
+        return
       }
     } catch (error) {
       log.error(' check version and install dependencies error:', error);
       resolve(false);
-      return 
+      return
     }
   })
 }
@@ -651,12 +651,15 @@ function registerIpcHandlers() {
       const tempEmail = email.split("@")[0].replace(/[\\/*?:"<>|\s]/g, "_").replace(".", "_");
       const MCP_CONFIG_DIR = path.join(os.homedir(), '.eigent');
       const MCP_REMOTE_CONFIG_DIR = path.join(MCP_CONFIG_DIR, tempEmail);
-      
+
       log.info('Getting MCP config path for email:', email);
       log.info('MCP config path:', MCP_REMOTE_CONFIG_DIR);
-      
+      // 判断MCP_REMOTE_CONFIG_DIR+mcp-remote-0.1.18的文件夹是否存在
+      const mcpRemoteDir = path.join(MCP_REMOTE_CONFIG_DIR, 'mcp-remote-0.1.18');
+      const isMcpRemoteDirExists = fs.existsSync(mcpRemoteDir);
+
       return {
-        success: true,
+        success: isMcpRemoteDirExists,
         path: MCP_REMOTE_CONFIG_DIR,
         tempEmail: tempEmail,
         baseDir: MCP_CONFIG_DIR
@@ -726,6 +729,54 @@ function registerIpcHandlers() {
   ipcMain.handle('open-file', async (_, type: string, filePath: string, isShowSourceCode: boolean) => {
     const manager = checkManagerInstance(fileReader, 'FileReader');
     return manager.openFile(type, filePath, isShowSourceCode);
+  });
+
+  ipcMain.handle('download-file', async (_, url: string) => {
+    try {
+      const https = await import('https');
+      const http = await import('http');
+
+      // extract file name from URL
+      const urlObj = new URL(url);
+      const fileName = urlObj.pathname.split('/').pop() || 'download';
+
+      // get download directory
+      const downloadPath = path.join(app.getPath('downloads'), fileName);
+
+      // create write stream
+      const fileStream = fs.createWriteStream(downloadPath);
+
+      // choose module according to protocol
+      const client = url.startsWith('https:') ? https : http;
+
+      return new Promise((resolve, reject) => {
+        const request = client.get(url, (response) => {
+          if (response.statusCode !== 200) {
+            reject(new Error(`HTTP ${response.statusCode}`));
+            return;
+          }
+
+          response.pipe(fileStream);
+
+          fileStream.on('finish', () => {
+            fileStream.close();
+            shell.showItemInFolder(downloadPath);
+            resolve({ success: true, path: downloadPath });
+          });
+
+          fileStream.on('error', (err) => {
+            reject(err);
+          });
+        });
+
+        request.on('error', (err) => {
+          reject(err);
+        });
+      });
+    } catch (error: any) {
+      log.error('Download file error:', error);
+      return { success: false, error: error.message };
+    }
   });
 
   ipcMain.handle('get-file-list', async (_, email: string, taskId: string) => {

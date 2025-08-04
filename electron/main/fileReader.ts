@@ -5,6 +5,9 @@ import mammoth from 'mammoth'
 import Papa from 'papaparse'
 import * as unzipper from 'unzipper'
 import { parseStringPromise } from 'xml2js'
+import https from 'https'
+import http from 'http'
+import { URL } from 'url'
 
 
 export class FileReader {
@@ -356,9 +359,87 @@ export class FileReader {
 		}
 	}
 
+	// add download file method
+	private async downloadFile(url: string, localPath: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const urlObj = new URL(url);
+			const protocol = urlObj.protocol === 'https:' ? https : http;
+			
+			const request = protocol.get(url, (response) => {
+				if (response.statusCode !== 200) {
+					reject(new Error(`HTTP ${response.statusCode}: ${response.statusMessage}`));
+					return;
+				}
+
+				const fileStream = fs.createWriteStream(localPath);
+				response.pipe(fileStream);
+
+				fileStream.on('finish', () => {
+					fileStream.close();
+					resolve();
+				});
+
+				fileStream.on('error', (err) => {
+					fs.unlink(localPath, () => {}); // delete incomplete file
+					reject(err);
+				});
+			});
+
+			request.on('error', (err) => {
+				reject(err);
+			});
+
+			request.setTimeout(30000, () => {
+				request.destroy();
+				reject(new Error('Download timeout'));
+			});
+		});
+	}
+
+	// check if it is a local file path
+	private isLocalFile(filePath: string): boolean {
+		return filePath.startsWith('localfile://') || 
+			   filePath.startsWith('file://') || 
+			   (!filePath.startsWith('http://') && !filePath.startsWith('https://') && !filePath.includes('://'));
+	}
+
+	// get temporary file path
+	private getTempFilePath(originalPath: string, type: string): string {
+		const userData = app.getPath('userData');
+		const tempDir = path.join(userData, 'temp');
+		
+		// ensure temporary directory exists
+		if (!fs.existsSync(tempDir)) {
+			fs.mkdirSync(tempDir, { recursive: true });
+		}
+		
+		const fileName = path.basename(originalPath) || `temp_${Date.now()}.${type}`;
+		return path.join(tempDir, fileName);
+	}
+
 	public openFile(type: string, filePath: string, isShowSourceCode: boolean) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// check if it is a remote file
+				if (!this.isLocalFile(filePath)) {
+					console.log('detect remote file, start downloading:', filePath);
+					
+					// download file to temporary directory
+					const tempPath = this.getTempFilePath(filePath, type);
+					try {
+						await this.downloadFile(filePath, tempPath);
+						console.log('file download completed:', tempPath);
+						
+						// use temporary file path to continue processing
+						filePath = tempPath;
+					} catch (downloadError) {
+						console.error('file download failed:', downloadError);
+						reject(downloadError);
+						return;
+					}
+				}
+
+				// original file processing logic
 				if (type === 'md') {
 					const content = fs.readFileSync(filePath, 'utf-8')
 					resolve(content)
