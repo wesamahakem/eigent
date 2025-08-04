@@ -455,6 +455,9 @@ def agent_model(
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
+            model_config_dict={
+                "user": str(options.task_id),
+            },
             **(options.extra_params or {}),
         ),
         # output_language=options.language,
