@@ -142,7 +142,7 @@ Eigent pre-defined the following agent workers:
 - **Document Agent:** Creates and manages documents.
 - **Multi-Modal Agent:** Processes images and audio.
 
-![Workforce](/public/images/feature_dynamic_workforce.gif)
+![Workforce](https://eigent-ai.github.io/.github/assets/gif/feature_dynamic_workforce.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -151,7 +151,7 @@ Eigent pre-defined the following agent workers:
 ### 🧠 Comprehensive Model Support
 Deploy Eigent locally with your preferred models. 
 
-![Model](/public/images/feature_local_model.gif)
+![Model](https://eigent-ai.github.io/.github/assets/gif/feature_local_model.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -160,7 +160,7 @@ Deploy Eigent locally with your preferred models.
 ### 🔌 MCP Tools Integration (MCP)
 Eigent comes with massive built-in **Model Context Protocol (MCP)** tools (for web browsing, code execution, Notion, Google suite, Slack etc.), and also lets you **install your own tools**. Equip agents with exactly the right tools for your scenarios – even integrate internal APIs or custom functions – to enhance their capabilities.
 
-![MCP](/public/images/feature_add_mcps.gif)
+![MCP](https://eigent-ai.github.io/.github/assets/gif/feature_add_mcps.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -169,7 +169,7 @@ Eigent comes with massive built-in **Model Context Protocol (MCP)** tools (for
 ### ✋ Human-in-the-Loop
 If a task gets stuck or encounters uncertainty, Eigent will automatically request human input. 
 
-![Human-in-the-loop](/public/images/feature_human_in_the_loop.gif)
+![Human-in-the-loop](https://eigent-ai.github.io/.github/assets/gif/feature_human_in_the_loop.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -196,13 +196,6 @@ We are two tennis fans and want to go see the tennis tournament in Palm Springs 
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/palm_springs_tennis_trip_itinerary_with_slack_summary.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
-<br>
-
 [![][download-shield]][eigent-download]
 
 ### 2. Generate Q2 Report from CSV Bank Data [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM1MjY4OTE4MDgtODczOSI.aIjJmQ.WTdoX9mATwrcBr_w53BmGEHPo8U__1753526891808-8739)
@@ -215,13 +208,6 @@ Please help me prepare a Q2 financial statement based on my bank transfer record
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/generate_q2_report_from_csv_bank_data.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
-<br>
-
 [![][download-shield]][eigent-download]
 
 ### 3. UK Healthcare Market Research Report Automation [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTMzOTM1NTg3OTctODcwNyI.aIey-Q.Jh9QXzYrRYarY0kz_qsgoj3ewX0__1753393558797-8707)
@@ -231,13 +217,6 @@ Please help me prepare a Q2 financial statement based on my bank transfer record
 <br>
 Analyze the UK healthcare industry to support the planning of my next company. Provide a comprehensive market overview, including current trends, growth projections, and relevant regulations. Identify the top 5–10 major opportunities, gaps, or underserved segments within the market. Present all findings in a well-structured, professional HTML report. Then send a message to slack #eigentr-product-test channel when this task is done to align the report content with my teammates.
 </details>
-
-<br>
-
-<video width="100%" controls>
-  <source src="public/images/uk_healthcare_market_research_report_automation.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
 <br>
 
@@ -258,13 +237,6 @@ We are a company that produces high-end electric skateboards, and we are conside
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/german_electric_skateboard_market_feasibility.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
-<br>
-
 [![][download-shield]][eigent-download]
 
 ### 5. SEO Audit for Workforce Multiagent Launch [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTM2OTk5NzExNDQtNTY5NiI.aIex0w.jc_NIPmfIf9e3zGt-oG9fbMi3K4__1753699971144-5696)
@@ -274,13 +246,6 @@ We are a company that produces high-end electric skateboards, and we are conside
 <br>
 To support the launch of our new Workforce Multiagent product, please run a thorough SEO audit on our official website (https://www.camel-ai.org/) and deliver a detailed optimization report with actionable recommendations.
 </details>
-
-<br>
-
-<video width="100%" controls>
-  <source src="public/images/seo_audit_for_workforce_multiagent_launch.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
 <br>
 
@@ -296,10 +261,15 @@ I have a folder named mydocs inside my Documents directory. Please scan it and i
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/identify_duplicate_files_in_downloads.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[![][download-shield]][eigent-download]
+
+### 7. Add Signature to PDF [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTQwOTU0ODM0NTItNTY2MSI.aJCHrA.Mg5yPOFqj86H_GQvvRNditzepXc__1754095483452-5661)
+
+<details>
+<summary><strong>Prompt:</strong> <kbd>Please add this signature image to the Signature Areas in the PDF ... <kbd></summary>
+<br>
+Please add this signature image to the Signature Areas in the PDF. You could install the CLI tool ‘tesseract’ (needed for reliable location of ‘Signature Areas’ via OCR) to help finish this task.
+</details>
 
 <br>
 

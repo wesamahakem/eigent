@@ -142,7 +142,7 @@ Eigent 预定义了以下智能体工作者：
 - **文档智能体**：创建和管理文档。  
 - **多模态智能体**：处理图像和音频。  
 
-![Workforce](/public/images/feature_dynamic_workforce.gif)
+![Workforce](https://eigent-ai.github.io/.github/assets/gif/feature_dynamic_workforce.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -151,7 +151,7 @@ Eigent 预定义了以下智能体工作者：
 ### 🧠 全面模型支持  
 使用您偏好的模型本地部署 Eigent。  
 
-![Model](/public/images/feature_local_model.gif)
+![Model](https://eigent-ai.github.io/.github/assets/gif/feature_local_model.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -160,7 +160,7 @@ Eigent 预定义了以下智能体工作者：
 ### 🔌 MCP 工具集成  
 Eigent 内置大量 **模型上下文协议（MCP）** 工具（用于网页浏览、代码执行、Notion、Google 套件、Slack 等），并允许您 **安装自己的工具**。为智能体配备适合您场景的工具——甚至集成内部 API 或自定义功能——以增强其能力。
 
-![MCP](/public/images/feature_add_mcps.gif)
+![MCP](https://eigent-ai.github.io/.github/assets/gif/feature_add_mcps.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -169,7 +169,7 @@ Eigent 内置大量 **模型上下文协议（MCP）** 工具（用于网页浏�
 ### ✋ 人工介入  
 如果任务卡住或遇到不确定性，Eigent 会自动请求人工输入。  
 
-![Human-in-the-loop](/public/images/feature_human_in_the_loop.gif)
+![Human-in-the-loop](https://eigent-ai.github.io/.github/assets/gif/feature_human_in_the_loop.gif)
 
 [![][download-shield]][eigent-download]
 
@@ -196,13 +196,6 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/palm_springs_tennis_trip_itinerary_with_slack_summary.mp4" type="video/mp4">
-  您的浏览器不支持视频标签。
-</video>
-
-<br>
-
 [![][download-shield]][eigent-download]
 
 ### 2. 从 CSV 银行数据生成 Q2 报告 [回放 ▶️](https://www.eigent.ai/download?share_token=IjE3NTM1MjY4OTE4MDgtODczOSI.aIjJmQ.WTdoX9mATwrcBr_w53BmGEHPo8U__1753526891808-8739)
@@ -212,13 +205,6 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 <br>
 请根据我桌面上的银行转账记录文件 bank_transacation.csv，帮我准备一份 Q2 财务报表，生成带图表的 HTML 报告，向投资者展示我们的支出情况。
 </details>
-
-<br>
-
-<video width="100%" controls>
-  <source src="public/images/generate_q2_report_from_csv_bank_data.mp4" type="video/mp4">
-  您的浏览器不支持视频标签。
-</video>
 
 <br>
 
@@ -234,13 +220,6 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/uk_healthcare_market_research_report_automation.mp4" type="video/mp4">
-  您的浏览器不支持视频标签。
-</video>
-
-<br>
-
 [![][download-shield]][eigent-download]
 
 ### 4. 德国电动滑板市场可行性 [回放 ▶️](https://www.eigent.ai/download?share_token=IjE3NTM2NTI4MjY3ODctNjk2Ig.aIjGiA.t-qIXxk_BZ4ENqa-yVIm0wMVyXU__1753652826787-696)
@@ -250,13 +229,6 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 <br>
 我们是一家生产高端电动滑板的公司，正在考虑进入德国市场。请为我准备一份详细的市场进入可行性报告。报告需涵盖以下方面：1. 市场规模与法规；2. 消费者画像；3. 渠道与分销；4. 成本与定价；5. 综合报告与演示。
 </details>
-
-<br>
-
-<video width="100%" controls>
-  <source src="public/images/german_electric_skateboard_market_feasibility.mp4" type="video/mp4">
-  您的浏览器不支持视频标签。
-</video>
 
 <br>
 
@@ -272,13 +244,6 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/seo_audit_for_workforce_multiagent_launch.mp4" type="video/mp4">
-  您的浏览器不支持视频标签。
-</video>
-
-<br>
-
 [![][download-shield]][eigent-download]
 
 ### 6. 识别下载文件夹中的重复文件 [回放 ▶️](https://www.eigent.ai/download?share_token=IjE3NTM3NjAzODgxNzEtMjQ4Ig.aIhKLQ.epOG--0Nj0o4Bqjtdqm9OZdaqRQ__1753760388171-248)
@@ -291,10 +256,15 @@ Eigent 完全开源。您可以下载、检查和修改代码，确保透明度�
 
 <br>
 
-<video width="100%" controls>
-  <source src="public/images/identify_duplicate_files_in_downloads.mp4" type="video/mp4">
-  您的浏览器不支持视频标签。
-</video>
+[![][download-shield]][eigent-download]
+
+### 7. 添加签名到 PDF [Replay ▶️](https://www.eigent.ai/download?share_token=IjE3NTQwOTU0ODM0NTItNTY2MSI.aJCHrA.Mg5yPOFqj86H_GQvvRNditzepXc__1754095483452-5661)
+
+<details>
+<summary><strong>提示:</strong> <kbd>请将此签名图片添加到 PDF 中的签名区域 ... <kbd></summary>
+<br>
+请将此签名图片添加到 PDF 中的签名区域。你可以安装命令行工具 “tesseract”（该工具通过 OCR 技术可可靠定位“签名区域”），以帮助完成此任务。
+</details>
 
 <br>
 
