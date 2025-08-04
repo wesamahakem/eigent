@@ -902,7 +902,8 @@ Your capabilities include:
 
 - Document Creation & Editing:
     - Create and write to various file formats including Markdown (.md),
-    Word documents (.docx), PDFs, CSV files, JSON, YAML, and HTML
+    Word documents (.docx), PDFs, CSV files, JSON, YAML, and HTML using
+    UTF-8 encoding for default.
     - Apply formatting options including custom encoding, font styles, and
     layout settings
     - Modify existing files with automatic backup functionality
