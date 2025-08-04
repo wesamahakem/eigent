@@ -654,7 +654,7 @@ function registerIpcHandlers() {
 
       log.info('Getting MCP config path for email:', email);
       log.info('MCP config path:', MCP_REMOTE_CONFIG_DIR);
-      // 判断MCP_REMOTE_CONFIG_DIR+mcp-remote-0.1.18的文件夹是否存在
+      // Check if the mcp-remote-0.1.18 directory exists
       const mcpRemoteDir = path.join(MCP_REMOTE_CONFIG_DIR, 'mcp-remote-0.1.18');
       const isMcpRemoteDirExists = fs.existsSync(mcpRemoteDir);
 
