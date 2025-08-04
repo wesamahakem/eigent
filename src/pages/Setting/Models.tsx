@@ -307,6 +307,12 @@ export default function SettingModels() {
 		setLocalVerifying(true);
 		setLocalError(null);
 		setLocalInputError(false);
+		if(!localEndpoint){
+			setLocalError("Endpoint URL can not be empty!");
+			setLocalInputError(true);
+			setLocalVerifying(false);
+			return;
+		}
 		try {
 			// 1. Check if endpoint returns response
 			let baseUrl = localEndpoint;
