@@ -307,20 +307,91 @@ export default function SettingModels() {
 		setLocalVerifying(true);
 		setLocalError(null);
 		setLocalInputError(false);
+		if (!localEndpoint) {
+			setLocalError("Endpoint URL can not be empty!");
+			setLocalInputError(true);
+			setLocalVerifying(false);
+			return;
+		}
 		try {
-			// 1. Check if endpoint returns response
-			const resp = await fetch(localEndpoint, {
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
-			});
-			if (!resp.ok) {
-				throw new Error("Endpoint is not responding");
+			// // 1. Check if endpoint returns response
+			// let baseUrl = localEndpoint;
+			// let testUrl = baseUrl;
+			// let testMethod = "GET";
+			// let testBody = undefined;
+
+			// // Extract base URL if it contains specific endpoints
+			// if (baseUrl.includes('/chat/completions')) {
+			// 	baseUrl = baseUrl.replace('/chat/completions', '');
+			// } else if (baseUrl.includes('/completions')) {
+			// 	baseUrl = baseUrl.replace('/completions', '');
+			// }
+
+			// // Always test with chat completions endpoint for OpenAI-compatible APIs
+			// testUrl = `${baseUrl}/chat/completions`;
+			// testMethod = "POST";
+			// testBody = JSON.stringify({
+			// 	model: localType || "test",
+			// 	messages: [{ role: "user", content: "test" }],
+			// 	max_tokens: 1,
+			// 	stream: false
+			// });
+
+			// const resp = await fetch(testUrl, {
+			// 	method: testMethod,
+			// 	headers: {
+			// 		"Content-Type": "application/json",
+			// 		"Authorization": "Bearer dummy"
+			// 	},
+			// 	body: testBody
+			// });
+
+			// if (!resp.ok) {
+			// 	throw new Error("Endpoint is not responding");
+			// }
+
+			try {
+				const res = await fetchPost("/model/validate", {
+					model_platform: localPlatform,
+					model_type: localType,
+					api_key: "not-required",
+					url: localEndpoint,
+				});
+				if (res.is_tool_calls && res.is_valid) {
+					console.log("success");
+					toast("validate success", {
+						description:
+							"Verify model supports function calling to use Eigent.",
+						action: {
+							label: "Undo",
+							onClick: () => console.log("Undo"),
+						},
+					});
+				} else {
+					console.log("failed", res.message);
+					toast("validate failed", {
+						description:
+							"This model doesn't support Eigent's required capabilities (e.g., tool calls). Please switch models and try again.",
+						action: {
+							label: "Undo",
+							onClick: () => console.log("Undo"),
+						},
+					});
+
+					return;
+				}
+				console.log(res);
+			} catch (e) {
+				console.log(e);
+			} finally {
+				setLoading(null);
 			}
-			// 2. Save to /api/provider/
+
+			// 2. Save to /api/provider/ (save only base URL)
 			const data: any = {
 				provider_name: localPlatform,
 				api_key: "not-required",
-				endpoint_url: localEndpoint,
+				endpoint_url: localEndpoint, // Save base URL without specific endpoints
 				is_valid: true,
 				model_type: localType,
 				encrypted_config: {
@@ -864,7 +935,7 @@ export default function SettingModels() {
 								setLocalError(null);
 							}}
 							disabled={!localEnabled}
-							placeholder="https://forwardinghost/api/chat"
+							placeholder="http://localhost:11434/v1"
 						/>
 						{localError && (
 							<div className="text-xs text-red-500 mt-1">{localError}</div>

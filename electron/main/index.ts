@@ -962,7 +962,7 @@ app.whenReady().then(() => {
           break;
       }
 
-      return new Response(data, {
+      return new Response(new Uint8Array(data), {
         headers: {
           'Content-Type': contentType,
         },
