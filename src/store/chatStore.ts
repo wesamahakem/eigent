@@ -341,7 +341,7 @@ const chatStore = create<ChatStore>()(
 						multi_modal_agent: "Multi Modal Agent",
 						social_medium_agent: "Social Media Agent",
 					};
-					const { setNuwFileNum, setCotList, getTokens, setUpdateCount, addTokens, setStatus, addWebViewUrl, setIsPending, addMessages, setHasWaitComfirm, setSummaryTask, setTaskAssigning, setTaskInfo, setTaskRunning, addTerminal, addFileList, setActiveAsk, setActiveAskList, tasks } = get()
+					const { setNuwFileNum, setCotList, getTokens, setUpdateCount, addTokens, setStatus, addWebViewUrl, setIsPending, addMessages, setHasWaitComfirm, setSummaryTask, setTaskAssigning, setTaskInfo, setTaskRunning, addTerminal, addFileList, setActiveAsk, setActiveAskList, tasks, create, setActiveTaskId } = get()
 					// if (tasks[taskId].status === 'finished') return
 
 					if (agentMessages.step === "to_sub_tasks") {
@@ -822,6 +822,27 @@ const chatStore = create<ChatStore>()(
 						console.log('error', agentMessages.data)
 						showCreditsToast()
 						setStatus(taskId, 'pause');
+						return
+					}
+
+					if (agentMessages.step === "error") {
+						console.error('Model error:', agentMessages.data)
+						const errorMessage = agentMessages.data.message || 'An error occurred while processing your request';
+						
+						// Create a new task to avoid "Task already exists" error
+						// and completely reset the interface
+						const newTaskId = create();
+						// Prevent showing task skeleton after an error occurs
+						setActiveTaskId(newTaskId);
+						setHasWaitComfirm(newTaskId, true);
+
+						// Add error message to the new clean task
+						addMessages(newTaskId, {
+							id: generateUniqueId(),
+							role: "agent",
+							content: `❌ **Error**: ${errorMessage}`,
+						});
+						
 						return
 					}
 
