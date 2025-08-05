@@ -120,17 +120,24 @@ export default function ChatBox(): JSX.Element {
 					chatStore.addMessages(_taskId, message!);
 				}
 			} else {
-				if (chatStore.tasks[_taskId as string]?.hasWaitComfirm) {
-					fetchPost(`/chat/${_taskId}`, {
-						question: tempMessageContent,
-					});
-					chatStore.setIsPending(_taskId, true);
-					// chatStore.setHasWaitComfirm(_taskId as string, false);
-				} else {
-					chatStore.setIsPending(_taskId, true);
-					chatStore.startTask(_taskId);
-					chatStore.setHasWaitComfirm(_taskId as string, true);
-				}
+									if (chatStore.tasks[_taskId as string]?.hasWaitComfirm) {
+						// If the task has not started yet (pending status), start it normally
+						if (chatStore.tasks[_taskId as string].status === "pending") {
+							chatStore.setIsPending(_taskId, true);
+							chatStore.startTask(_taskId);
+							// keep hasWaitComfirm as true so that follow-up improves work as usual
+						} else {
+							// Task already started and is waiting for user confirmation – use improve API
+							fetchPost(`/chat/${_taskId}`, {
+								question: tempMessageContent,
+							});
+							chatStore.setIsPending(_taskId, true);
+						}
+					} else {
+						chatStore.setIsPending(_taskId, true);
+						chatStore.startTask(_taskId);
+						chatStore.setHasWaitComfirm(_taskId as string, true);
+					}
 			}
 		} catch (error) {
 			console.error("error:", error);
