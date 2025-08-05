@@ -208,9 +208,9 @@ const chatStore = create<ChatStore>()(
 				model_type: '',
 				model_platform: '',
 				api_url: '',
-				extra_params:{}
+				extra_params: {}
 			}
-			if (modelType === 'custom'||modelType==='local') {
+			if (modelType === 'custom' || modelType === 'local') {
 				const res = await proxyFetchGet('/api/providers', {
 					prefer: true
 				});
@@ -237,7 +237,7 @@ const chatStore = create<ChatStore>()(
 					api_url: res.api_url,
 					extra_params: {}
 				}
-			} 
+			}
 
 			// fetch installed mcp token
 			if (!type) {
@@ -403,11 +403,11 @@ const chatStore = create<ChatStore>()(
 							if (!hasAgent) {
 								let activeWebviewIds: any = [];
 								if (agent_name == 'search_agent') {
-									console.log()
 									snapshots.forEach((item: any) => {
+										const imgurl = item.image_path.includes('/public') ? item.image_path : (import.meta.env.DEV ? import.meta.env.VITE_PROXY_URL : import.meta.env.VITE_BASE_URL) + item.image_path
 										activeWebviewIds.push({
 											id: item.id,
-											img: (import.meta.env.DEV ? import.meta.env.VITE_PROXY_URL : import.meta.env.VITE_BASE_URL) + item.image_path,
+											img: imgurl,
 											processTaskId: item.camel_task_id,
 											url: item.browser_url
 										})
