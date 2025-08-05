@@ -455,8 +455,15 @@ def agent_model(
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
-            **{k: v for k, v in (options.extra_params or {}).items() 
-               if k not in ['model_platform', 'model_type', 'api_key', 'url']},
+            model_config_dict={
+                "user": str(options.task_id),
+            },
+            **(options.extra_params or {}),
+            **{
+                k: v
+                for k, v in (options.extra_params or {}).items()
+                if k not in ["model_platform", "model_type", "api_key", "url"]
+            },
         ),
         # output_language=options.language,
         tools=tools,
@@ -1047,7 +1054,7 @@ def multi_modal_agent(options: Chat):
         model_platform_enum = ModelPlatformType(options.model_platform.lower())
     except (ValueError, AttributeError):
         model_platform_enum = None
-    
+
     if model_platform_enum == ModelPlatformType.OPENAI:
         audio_analysis_toolkit = AudioAnalysisToolkit(
             options.task_id,
@@ -1317,8 +1324,14 @@ async def mcp_agent(options: Chat):
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
-            **{k: v for k, v in (options.extra_params or {}).items() 
-               if k not in ['model_platform', 'model_type', 'api_key', 'url']},
+            model_config_dict={
+                "user": str(options.task_id),
+            },
+            **{
+                k: v
+                for k, v in (options.extra_params or {}).items()
+                if k not in ["model_platform", "model_type", "api_key", "url"]
+            },
         ),
         # output_language=options.language,
         tools=tools,
