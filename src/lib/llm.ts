@@ -29,7 +29,7 @@ export const INIT_PROVODERS: Provider[] = [
     model_type: ""
   },
   {
-    id: 'qwen',
+    id: 'tongyi-qianwen',
     name: 'Qwen',
     apiKey: '',
     apiHost: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
