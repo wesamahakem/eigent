@@ -59,7 +59,7 @@ function HeaderWin() {
 			}
 			if (response.savedPath) {
 				window.location.href =
-					"https://eigent-ai.notion.site/23c511c70ba28030ab28e49e5010eca0?pvs=105";
+					"https://github.com/eigent-ai/eigent/issues/new/choose";
 				alert("log saved:" + response.savedPath);
 			}
 		} catch (e: any) {
@@ -141,14 +141,7 @@ function HeaderWin() {
 						</>
 					)}
 
-					<Button
-						onClick={exportLog}
-						variant="ghost"
-						size="icon"
-						className="mr-2 no-drag"
-					>
-						<FileDown className="w-4 h-4" />
-					</Button>
+					
 				</div>
 				<div id="maximize-window" className="flex-1 h-10"></div>
 				{/* right */}
@@ -157,6 +150,15 @@ function HeaderWin() {
 						platform === "darwin" && "pr-2"
 					} flex h-full items-center space-x-1 z-50 relative no-drag`}
 				>
+					<Button
+						onClick={exportLog}
+						variant="outline"
+						size="xs"
+						className="mr-2 no-drag leading-tight"
+					>
+						<FileDown className="w-4 h-4" />
+						Export Log
+					</Button>
 					<Button
 						onClick={() => {
 							window.location.href = "https://www.eigent.ai/dashboard";

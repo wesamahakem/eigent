@@ -19,13 +19,7 @@ export function showStorageToast() {
 		</div>,
 		{
 			duration: Infinity,
-			action: {
-				label: "Undo",
-				onClick: () => {
-					console.log("Undo clicked");
-					toast.dismiss();
-				},
-			},
+			closeButton: true,
 		}
 	);
 }
