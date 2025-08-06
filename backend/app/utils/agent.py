@@ -446,6 +446,7 @@ def agent_model(
             ActionCreateAgentData(data={"agent_name": agent_name, "agent_id": agent_id, "tools": tool_names or []})
         )
     )
+
     return ListenChatAgent(
         options.task_id,
         agent_name,
@@ -455,7 +456,17 @@ def agent_model(
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
+            model_config_dict={
+                "user": str(options.task_id),
+            }
+            if options.is_cloud()
+            else None,
             **(options.extra_params or {}),
+            **{
+                k: v
+                for k, v in (options.extra_params or {}).items()
+                if k not in ["model_platform", "model_type", "api_key", "url"]
+            },
         ),
         # output_language=options.language,
         tools=tools,
@@ -526,8 +537,8 @@ and generation.
 <operating_environment>
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
-occur here, but you can access files from any place in the file system.
-- **Current Date**: {datetime.date.today()}.
+occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -698,6 +709,7 @@ You are a Senior Research Analyst, a key member of a multi-agent team. Your
 primary responsibility is to conduct expert-level web research to gather, 
 analyze, and document information required to solve the user's task. You 
 operate with precision, efficiency, and a commitment to data quality.
+You must use the search/browser tools to get the information you need.
 </role>
 
 <team_structure>
@@ -713,8 +725,8 @@ comprehensive and well-documented information.
 <operating_environment>
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
-occur here.
-- **Current Date**: {datetime.date.today()}.
+occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -815,7 +827,6 @@ async def document_agent(options: Chat):
         message_handler=HumanToolkit(options.task_id, Agents.task_agent).send_message_to_user
     )
     file_write_toolkit = FileWriteToolkit(options.task_id, working_directory=working_directory)
-    file_write_toolkit = message_integration.register_toolkits(file_write_toolkit)
     pptx_toolkit = PPTXToolkit(options.task_id, working_directory=working_directory)
     pptx_toolkit = message_integration.register_toolkits(pptx_toolkit)
     mark_it_down_toolkit = MarkItDownToolkit(options.task_id)
@@ -862,8 +873,8 @@ to be embedded in your work.
 <operating_environment>
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
-occur here.
-- **Current Date**: {datetime.date.today()}.
+occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -884,7 +895,7 @@ occur here.
     your work and the path to the final document, presented in a clear,
     detailed, and easy-to-read format. Avoid using markdown tables for
     presenting data; use plain text formatting instead.
-<mandatory_instructions>
+</mandatory_instructions>
 
 <capabilities>
 Your capabilities include:
@@ -902,7 +913,8 @@ Your capabilities include:
 
 - Document Creation & Editing:
     - Create and write to various file formats including Markdown (.md),
-    Word documents (.docx), PDFs, CSV files, JSON, YAML, and HTML
+    Word documents (.docx), PDFs, CSV files, JSON, YAML, and HTML using
+    UTF-8 encoding for default.
     - Apply formatting options including custom encoding, font styles, and
     layout settings
     - Modify existing files with automatic backup functionality
@@ -917,6 +929,19 @@ Your capabilities include:
     - Support for step-by-step process slides with visual indicators
     - Create tables with headers and rows of data
     - Support for custom templates and slide layouts
+    - IMPORTANT: The `create_presentation` tool requires content to be a JSON
+    string, not plain text. You must format your content as a JSON array of
+    slide objects, then use `json.dumps()` to convert it to a string. Example:
+      ```python
+      import json
+      slides = [
+          {{"title": "Main Title", "subtitle": "Subtitle"}},
+          {{"heading": "Slide Title", "bullet_points": ["Point 1", "Point 2"]}},
+          {{"heading": "Data", "table": {{"headers": ["Col1", "Col2"], "rows": [["A", "B"]]}}}}
+      ]
+      content_json = json.dumps(slides)
+      create_presentation(content=content_json, filename="presentation.pptx")
+      ```
 
 - Excel Spreadsheet Management:
     - Extract and analyze content from Excel files (.xlsx, .xls, .csv)
@@ -957,6 +982,10 @@ When working with documents, you should:
 - Provide clear feedback about document creation and modification processes
 - Ask clarifying questions when user requirements are ambiguous
 - Recommend best practices for document organization and presentation
+- For PowerPoint presentations, ALWAYS convert your slide content to JSON
+  format before calling `create_presentation`. Never pass plain text or
+  instructions - only properly formatted JSON strings as shown in the
+  capabilities section
 - For Excel files, always provide clear data structure and organization
 - When creating spreadsheets, consider data relationships and use
 appropriate sheet naming conventions
@@ -1023,7 +1052,13 @@ def multi_modal_agent(options: Chat):
         *terminal_toolkit.get_tools(),
         *note_toolkit.get_tools(),
     ]
-    if options.model_platform == ModelPlatformType.OPENAI:
+    # Convert string model_platform to enum for comparison
+    try:
+        model_platform_enum = ModelPlatformType(options.model_platform.lower())
+    except (ValueError, AttributeError):
+        model_platform_enum = None
+
+    if model_platform_enum == ModelPlatformType.OPENAI:
         audio_analysis_toolkit = AudioAnalysisToolkit(
             options.task_id,
             working_directory,
@@ -1061,8 +1096,8 @@ presentations, and other documents.
 <operating_environment>
 - **System**: {platform.system()} ({platform.machine()})
 - **Working Directory**: `{working_directory}`. All local file operations must 
-occur here.
-- **Current Date**: {datetime.date.today()}.
+occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
+The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 </operating_environment>
 
 <mandatory_instructions>
@@ -1181,8 +1216,8 @@ be a comprehensive summary of your actions, presented in a clear, detailed,
 and easy-to-read format. Avoid using markdown tables for presenting data;
 use plain text formatting instead.
 
-You are now working in `{working_directory}`. All your work
-related to local operations should be done in that directory.
+- **Working Directory**: `{working_directory}`. All local file operations must 
+occur here, but you can access files from any place in the file system. For all file system operations, you MUST use absolute paths to ensure precision and avoid ambiguity.
 The current date is {datetime.date.today()}. For any date-related tasks, you MUST use this as the current date.
 
 Your integrated toolkits enable you to:
@@ -1292,7 +1327,16 @@ async def mcp_agent(options: Chat):
             model_type=options.model_type,
             api_key=options.api_key,
             url=options.api_url,
-            **(options.extra_params or {}),
+            model_config_dict={
+                "user": str(options.task_id),
+            }
+            if options.is_cloud()
+            else None,
+            **{
+                k: v
+                for k, v in (options.extra_params or {}).items()
+                if k not in ["model_platform", "model_type", "api_key", "url"]
+            },
         ),
         # output_language=options.language,
         tools=tools,

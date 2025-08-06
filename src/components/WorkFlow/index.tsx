@@ -76,7 +76,7 @@ export default function Workflow({
 				"Video Downloader Toolkit",
 				"Audio Analysis Toolkit",
 				"Image Analysis Toolkit",
-				"Open Ai Image Toolkit",
+				"Open AI Image Toolkit",
 				"Human Toolkit",
 				"Terminal Toolkit",
 				"Note Taking Toolkit",

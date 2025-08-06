@@ -6,18 +6,148 @@ import {
 	CodeXml,
 	ChevronLeft,
 	Download,
+	Folder as FolderIcon,
+	ChevronRight,
+	ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useChatStore } from "@/store/chatStore";
 import { MarkDown } from "@/components/ChatBox/MarkDown";
 import { useAuthStore } from "@/store/authStore";
+import { proxyFetchGet } from "@/api/http";
+
+// Type definitions
+interface FileTreeNode {
+	name: string;
+	path: string;
+	type?: string;
+	isFolder?: boolean;
+	icon?: React.ElementType;
+	children?: FileTreeNode[];
+	isRemote?: boolean;
+}
+
+interface FileInfo {
+	name: string;
+	path: string;
+	type: string;
+	isFolder?: boolean;
+	icon?: React.ElementType;
+	content?: string;
+	relativePath?: string;
+	isRemote?: boolean;
+}
+
+// FileTree component to render nested file structure
+interface FileTreeProps {
+	node: FileTreeNode;
+	level?: number;
+	selectedFile: FileInfo | null;
+	expandedFolders: Set<string>;
+	onToggleFolder: (path: string) => void;
+	onSelectFile: (file: FileInfo) => void;
+	isShowSourceCode: boolean;
+}
+
+const FileTree: React.FC<FileTreeProps> = ({
+	node,
+	level = 0,
+	selectedFile,
+	expandedFolders,
+	onToggleFolder,
+	onSelectFile,
+	isShowSourceCode,
+}) => {
+	if (!node.children || node.children.length === 0) return null;
+
+	return (
+		<div className={level > 0 ? "ml-4" : ""}>
+			{node.children.map((child) => {
+				const isExpanded = expandedFolders.has(child.path);
+				const fileInfo: FileInfo = {
+					name: child.name,
+					path: child.path,
+					type: child.type || "",
+					isFolder: child.isFolder,
+					icon: child.icon,
+					isRemote: child.isRemote,
+				};
+
+				return (
+					<div key={child.path}>
+						<button
+							onClick={() => {
+								if (child.isFolder) {
+									onToggleFolder(child.path);
+								} else {
+									onSelectFile(fileInfo);
+								}
+							}}
+							className={`w-full flex items-center gap-2 p-2 text-sm rounded-md bg-transparent text-primary hover:bg-white-50 transition-colors text-left ${
+								selectedFile?.path === child.path && "bg-white-50"
+							}`}
+						>
+							{child.isFolder && (
+								<span className="w-4 h-4 flex items-center justify-center">
+									{isExpanded ? (
+										<ChevronDown className="w-4 h-4" />
+									) : (
+										<ChevronRight className="w-4 h-4" />
+									)}
+								</span>
+							)}
+							{!child.isFolder && <span className="w-4" />}
+
+							{child.isFolder ? (
+								<FolderIcon className="w-5 h-5 flex-shrink-0 text-yellow-600" />
+							) : child.icon ? (
+								<child.icon className="w-5 h-5 flex-shrink-0" />
+							) : (
+								<FileText className="w-5 h-5 flex-shrink-0" />
+							)}
+
+							<span
+								className={`truncate text-[13px] leading-5 ${
+									child.isFolder ? "font-semibold" : "font-medium"
+								}`}
+							>
+								{child.name}
+							</span>
+						</button>
+
+						{child.isFolder && isExpanded && child.children && (
+							<FileTree
+								node={child}
+								level={level + 1}
+								selectedFile={selectedFile}
+								expandedFolders={expandedFolders}
+								onToggleFolder={onToggleFolder}
+								onSelectFile={onSelectFile}
+								isShowSourceCode={isShowSourceCode}
+							/>
+						)}
+					</div>
+				);
+			})}
+		</div>
+	);
+};
+
+function downloadByBrowser(url: string) {
+	window.ipcRenderer
+		.invoke("download-file", url)
+		.then((result) => {
+			if (result.success) {
+				console.log("download-file success:", result.path);
+			} else {
+				console.error("download-file error:", result.error);
+			}
+		})
+		.catch((error) => {
+			console.error("download-file error:", error);
+		});
+}
 
 export default function Folder({ data }: { data?: Agent }) {
 	const chatStore = useChatStore();
@@ -25,37 +155,114 @@ export default function Folder({ data }: { data?: Agent }) {
 	const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
 	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		if (chatStore?.tasks[chatStore.activeTaskId as string].selectedFile) {
-			selecetdFileChange(
-				chatStore.tasks[chatStore.activeTaskId as string]
-					.selectedFile as FileInfo
-			);
-		}
-	}, [chatStore.tasks[chatStore.activeTaskId as string].selectedFile]);
 	const selecetdFileChange = (file: FileInfo, isShowSourceCode?: boolean) => {
 		if (file.type === "zip") {
+			// if file is remote, don't call reveal-in-folder
+			if (file.isRemote) {
+				downloadByBrowser(file.path);
+				return;
+			}
 			window.ipcRenderer.invoke("reveal-in-folder", file.path);
+			return;
+		}
+		// Don't open folders in preview - they are handled by expand/collapse
+		if (file.isFolder) {
 			return;
 		}
 		setSelectedFile(file);
 		setLoading(true);
 		console.log("file", JSON.parse(JSON.stringify(file)));
+
+		// all files call open-file interface, the backend handles download and parsing
 		window.ipcRenderer
 			.invoke("open-file", file.type, file.path, isShowSourceCode)
 			.then((res) => {
 				setSelectedFile({ ...file, content: res });
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error("open-file error:", error);
 				setLoading(false);
 			});
 	};
 
 	const [isShowSourceCode, setIsShowSourceCode] = useState(false);
 	const isShowSourceCodeChange = () => {
+		// all files can reload content
 		selecetdFileChange(selectedFile!, !isShowSourceCode);
 		setIsShowSourceCode(!isShowSourceCode);
 	};
 
 	const [isCollapsed, setIsCollapsed] = useState(false);
+
+	// Build tree structure from flat file list
+	const buildFileTree = (files: FileInfo[]): FileTreeNode => {
+		const root: FileTreeNode = {
+			name: "root",
+			path: "",
+			children: [],
+			isFolder: true,
+		};
+
+		// Create a map for quick access
+		const nodeMap = new Map<string, FileTreeNode>();
+		nodeMap.set("", root);
+
+		// Sort files so folders come before files and by path depth
+		const sortedFiles = [...files].sort((a, b) => {
+			const depthA = (a.relativePath || "").split("/").filter(Boolean).length;
+			const depthB = (b.relativePath || "").split("/").filter(Boolean).length;
+			return depthA - depthB;
+		});
+		for (const file of sortedFiles) {
+			const parentPath = file.relativePath || "";
+			const parentNode = nodeMap.get(parentPath) || root;
+
+			const node: FileTreeNode = {
+				name: file.name,
+				path: file.path,
+				type: file.type,
+				isFolder: file.isFolder,
+				icon: file.icon,
+				children: file.isFolder ? [] : undefined,
+				isRemote: file.isRemote,
+			};
+
+			parentNode.children!.push(node);
+
+			if (file.isFolder) {
+				const folderPath = parentPath
+					? `${parentPath}/${file.name}`
+					: file.name;
+				nodeMap.set(folderPath, node);
+			}
+		}
+
+		return root;
+	};
+
+	const [fileTree, setFileTree] = useState<FileTreeNode>({
+		name: "root",
+		path: "",
+		children: [],
+		isFolder: true,
+	});
+
+	const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+		new Set()
+	);
+
+	const toggleFolder = (folderPath: string) => {
+		setExpandedFolders((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(folderPath)) {
+				newSet.delete(folderPath);
+			} else {
+				newSet.add(folderPath);
+			}
+			return newSet;
+		});
+	};
 
 	const [fileGroups, setFileGroups] = useState<
 		{
@@ -69,23 +276,58 @@ export default function Folder({ data }: { data?: Agent }) {
 		},
 	]);
 	useEffect(() => {
-		window.ipcRenderer
-			.invoke(
+		const setFileList = async () => {
+			let res = null;
+			res = await window.ipcRenderer.invoke(
 				"get-file-list",
 				authStore.email,
 				chatStore.activeTaskId as string
-			)
-			.then((res) => {
-				console.log("res", res);
-				setFileGroups((prev) => {
-					return [
-						{
-							...prev[0],
-							files: res || [],
-						},
-					];
+			);
+			let tree: any = null;
+			if ((res && res.length > 0) || import.meta.env.DEV) {
+				tree = buildFileTree(res || []);
+			} else {
+				res = await proxyFetchGet("/api/chat/files", {
+					task_id: chatStore.activeTaskId as string,
 				});
+				console.log("res", res);
+				res = res.map((item: any) => {
+					return {
+						name: item.filename,
+						type: item.filename.split(".")[1],
+						path: item.url,
+						isRemote: true,
+					};
+				});
+				tree = buildFileTree(res || []);
+			}
+			setFileTree(tree);
+			// Keep the old structure for compatibility
+			setFileGroups((prev) => {
+				const chatStoreSelectedFile = chatStore.tasks[chatStore.activeTaskId as string]?.selectedFile;
+				if (chatStoreSelectedFile) {
+					console.log(res,chatStoreSelectedFile)
+					const file = res.find((item: any) => item.name === chatStoreSelectedFile.name);
+					console.log("file", file);
+					if(file){
+						selecetdFileChange(file as FileInfo,isShowSourceCode);
+					}
+				}
+				return [
+					{
+						...prev[0],
+						files: res || [],
+					},
+				];
 			});
+			// if (chatStore.tasks[chatStore.activeTaskId as string]?.selectedFile) {
+			// 	selecetdFileChange(
+			// 		chatStore.tasks[chatStore.activeTaskId as string]
+			// 			.selectedFile as FileInfo
+			// 	);
+			// }
+		};
+		setFileList();
 	}, [data, chatStore.tasks[chatStore.activeTaskId as string]?.taskAssigning]);
 	const handleBack = () => {
 		chatStore.setActiveWorkSpace(chatStore.activeTaskId as string, "workflow");
@@ -157,48 +399,21 @@ export default function Folder({ data }: { data?: Agent }) {
 				<div className="flex-1 overflow-y-auto min-h-0">
 					{!isCollapsed ? (
 						<div className="p-2">
-							<Accordion
-								type="single"
-								collapsible
-								defaultValue="folder-0"
-								className="w-full"
-							>
-								{fileGroups.map((group, index) => (
-									<AccordionItem
-										key={group.folder}
-										value={`folder-${index}`}
-										className="border-none bg-transparent"
-									>
-										<AccordionTrigger className="mb-1 bg-transparent px-1 py-2 hover:no-underline hover:bg-white-50 rounded-md text-xs font-medium text-zinc-700">
-											<div className="flex items-center gap-2 text-primary text-[10px] leading-4 font-bold">
-												{group.folder}
-											</div>
-										</AccordionTrigger>
-										<AccordionContent className="pb-0">
-											<div className="space-y-2">
-												{group.files?.map((file) => (
-													<button
-														key={file.name}
-														onClick={() =>
-															selecetdFileChange(file, isShowSourceCode)
-														}
-														className={`w-full flex items-center gap-2 p-2 text-sm rounded-md bg-transparent text-primary hover:bg-white-50 transition-colors text-left ${
-															selectedFile?.name === file.name && "bg-white-50%"
-														}`}
-													>
-														{file.icon && (
-															<file.icon className="w-5 h-5 flex-shrink-0 text-ellipsis overflow-hidden" />
-														)}
-														<span className="truncate text-[13px] font-medium leading-5 text-ellipsis overflow-hidden">
-															{file.name}
-														</span>
-													</button>
-												))}
-											</div>
-										</AccordionContent>
-									</AccordionItem>
-								))}
-							</Accordion>
+							<div className="mb-2">
+								<div className="text-primary text-[10px] leading-4 font-bold px-2 py-1">
+									Files
+								</div>
+								<FileTree
+									node={fileTree}
+									selectedFile={selectedFile}
+									expandedFolders={expandedFolders}
+									onToggleFolder={toggleFolder}
+									onSelectFile={(file) =>
+										selecetdFileChange(file, isShowSourceCode)
+									}
+									isShowSourceCode={isShowSourceCode}
+								/>
+							</div>
 						</div>
 					) : (
 						// Display simplified file icons when collapsed
@@ -215,7 +430,11 @@ export default function Folder({ data }: { data?: Agent }) {
 										}`}
 										title={file.name}
 									>
-										{file.icon && <file.icon className="w-4 h-4" />}
+										{file.icon ? (
+											<file.icon className="w-4 h-4" />
+										) : (
+											<FileText className="w-4 h-4" />
+										)}
 									</button>
 								))
 							)}
@@ -232,6 +451,11 @@ export default function Folder({ data }: { data?: Agent }) {
 						<div className="flex items-center justify-between gap-2">
 							<div
 								onClick={() => {
+									// if file is remote, don't call reveal-in-folder
+									if (selectedFile.isRemote) {
+										downloadByBrowser(selectedFile.path);
+										return;
+									}
 									window.ipcRenderer.invoke(
 										"reveal-in-folder",
 										selectedFile.path
@@ -279,7 +503,7 @@ export default function Folder({ data }: { data?: Agent }) {
 										className="w-full h-full border-0"
 										title={selectedFile.name}
 									/>
-								) : ["csv", "doc", "docx", "pptx"].includes(
+								) : ["csv", "doc", "docx", "pptx", "xlsx"].includes(
 										selectedFile.type
 								  ) ? (
 									<div
@@ -319,9 +543,14 @@ export default function Folder({ data }: { data?: Agent }) {
 								  ].includes(selectedFile.type.toLowerCase()) ? (
 									<div className="flex items-center justify-center h-full">
 										<img
-											src={`localfile://${encodeURIComponent(
-												selectedFile.path
-											)}`}
+											src={
+												selectedFile.isRemote
+													? "localfile://" +
+													  encodeURIComponent(selectedFile.content as string)
+													: `localfile://${encodeURIComponent(
+															selectedFile.path
+													  )}`
+											}
 											alt={selectedFile.name}
 											className="max-w-full max-h-full object-contain"
 										/>
