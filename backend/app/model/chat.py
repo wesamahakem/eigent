@@ -68,7 +68,7 @@ class Chat(BaseModel):
         return {"UV_DEFAULT_INDEX": self.uvx_mirror, "PIP_INDEX_URL": self.uvx_mirror} if self.uvx_mirror else {}
 
     def is_cloud(self):
-        return self.api_url is not None
+        return self.api_url is not None and "44.247.171.124" in self.api_url
 
     def file_save_path(self, path: str | None = None):
         email = re.sub(r'[\\/*?:"<>|\s]', "_", self.email.split("@")[0]).strip(".")
