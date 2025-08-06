@@ -914,6 +914,7 @@ export default function SettingModels() {
 								<SelectItem value="ollama">Ollama</SelectItem>
 								<SelectItem value="vllm">vLLM</SelectItem>
 								<SelectItem value="sglang">Sglang</SelectItem>
+								<SelectItem value="lmstudio">LMStudio</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
