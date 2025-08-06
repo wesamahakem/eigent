@@ -783,7 +783,7 @@ const chatStore = create<ChatStore>()(
 						addFileList(taskId, agentMessages.data.process_task_id as string, fileInfo);
 
 						// Async file upload
-						if (!type && file_path && !import.meta.env.DEV) {
+						if (!type && file_path && import.meta.env.VITE_USE_LOCAL_PROXY!=='true') {
 							(async () => {
 								try {
 									// Read file content using Electron API
@@ -1612,6 +1612,9 @@ const chatStore = create<ChatStore>()(
 // 	return ''
 // }
 const filterMessage = (message: AgentMessage) => {
+	if (message.data.toolkit_name?.includes('Search ')) {
+		message.data.toolkit_name='Search '
+	}
 	if (message.data.toolkit_name === 'Note Taking Toolkit') {
 		message.data.message = message.data.message!.replace(/content='/g, '').replace(/', update=False/g, '').replace(/', update=True/g, '')
 	}

@@ -9,13 +9,7 @@ export function showTrafficToast() {
 		</div>,
 		{
 			duration: 5000,
-			action: {
-				label: "Undo",
-				onClick: () => {
-					console.log("Undo clicked");
-					toast.dismiss();
-				},
-			},
+			closeButton: true,
 		}
 	);
 }
