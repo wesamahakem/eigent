@@ -53,6 +53,7 @@ function HeaderWin() {
 	const exportLog = async () => {
 		try {
 			const response = await window.electronAPI.exportLog();
+
 			if (!response.success) {
 				alert("Export cancelled:" + response.error);
 				return;
@@ -65,6 +66,20 @@ function HeaderWin() {
 		} catch (e: any) {
 			alert("export error:" + e.message);
 		}
+	};
+
+	// create new project handler reused by plus icon and label
+	const createNewProject = () => {
+		const taskId = Object.keys(chatStore.tasks).find((taskId) => {
+			return chatStore.tasks[taskId].messages.length === 0;
+		});
+		if (taskId) {
+			chatStore.setActiveTaskId(taskId);
+			navigate("/");
+			return;
+		}
+		chatStore.create();
+		navigate("/");
 	};
 
 	const activeTaskTitle = useMemo(() => {
@@ -117,27 +132,24 @@ function HeaderWin() {
 						variant="ghost"
 						size="icon"
 						className="mr-2 no-drag"
-						onClick={() => {
-							const taskId = Object.keys(chatStore.tasks).find((taskId) => {
-								console.log(chatStore.tasks[taskId].messages.length);
-								return chatStore.tasks[taskId].messages.length === 0;
-							});
-							if (taskId) {
-								chatStore.setActiveTaskId(taskId);
-								navigate(`/`);
-								return;
-							}
-							chatStore.create();
-							navigate("/");
-						}}
+						onClick={createNewProject}
 					>
 						<Plus className="w-4 h-4" />
 					</Button>
 					{location.pathname !== "/history" && (
 						<>
-							<div className="font-bold leading-10 text-base ">
-								{activeTaskTitle}
-							</div>
+							{activeTaskTitle === "New Project" ? (
+								<Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="font-bold text-base no-drag"
+                                    onClick={createNewProject}
+                                >
+                                    {activeTaskTitle}
+                                </Button>
+							) : (
+								<div className="font-bold leading-10 text-base ">{activeTaskTitle}</div>
+							)}
 						</>
 					)}
 
