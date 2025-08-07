@@ -46,6 +46,6 @@ async def validate_model(request: ValidateModelRequest):
         return ValidateModelResponse(is_valid=False, is_tool_calls=False, message=str(e))
     return ValidateModelResponse(
         is_valid=True if response else False,
-        is_tool_calls=response.info["tool_calls"][0].result == "Tool execution completed successfully, Website content: Welcome to CAMEL AI!",
+        is_tool_calls=response.info["tool_calls"][0].result == "Tool execution completed successfully for https://www.camel-ai.org, Website Content: Welcome to CAMEL AI!",
         message="",
     )
