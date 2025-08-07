@@ -1051,6 +1051,8 @@ def multi_modal_agent(options: Chat):
             size="1024x1024",
             quality="standard",
             working_directory=working_directory,
+            api_key=options.api_key,
+            url=options.api_url,
         )
         open_ai_image_toolkit = message_integration.register_toolkits(open_ai_image_toolkit)
         tools = [
