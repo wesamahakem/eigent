@@ -1028,15 +1028,7 @@ def multi_modal_agent(options: Chat):
     video_download_toolkit = message_integration.register_toolkits(video_download_toolkit)
     image_analysis_toolkit = ImageAnalysisToolkit(options.task_id)
     image_analysis_toolkit = message_integration.register_toolkits(image_analysis_toolkit)
-    open_ai_image_toolkit = OpenAIImageToolkit(  # todo check llm has this model
-        options.task_id,
-        model="dall-e-3",
-        response_format="b64_json",
-        size="1024x1024",
-        quality="standard",
-        working_directory=working_directory,
-    )
-    open_ai_image_toolkit = message_integration.register_toolkits(open_ai_image_toolkit)
+
     terminal_toolkit = TerminalToolkit(
         options.task_id, agent_name=Agents.multi_modal_agent, safe_mode=True, clone_current_env=False
     )
@@ -1046,11 +1038,26 @@ def multi_modal_agent(options: Chat):
     tools = [
         *video_download_toolkit.get_tools(),
         *image_analysis_toolkit.get_tools(),
-        *open_ai_image_toolkit.get_tools(),
         *HumanToolkit.get_can_use_tools(options.task_id, Agents.multi_modal_agent),
         *terminal_toolkit.get_tools(),
         *note_toolkit.get_tools(),
     ]
+    if options.is_cloud():
+        open_ai_image_toolkit = OpenAIImageToolkit(  # todo check llm has this model
+            options.task_id,
+            model="dall-e-3",
+            response_format="b64_json",
+            size="1024x1024",
+            quality="standard",
+            working_directory=working_directory,
+            api_key=options.api_key,
+            url=options.api_url,
+        )
+        open_ai_image_toolkit = message_integration.register_toolkits(open_ai_image_toolkit)
+        tools = [
+            *tools,
+            *open_ai_image_toolkit.get_tools(),
+        ]
     # Convert string model_platform to enum for comparison
     try:
         model_platform_enum = ModelPlatformType(options.model_platform.lower())
