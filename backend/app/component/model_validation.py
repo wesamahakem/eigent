@@ -12,7 +12,7 @@ def get_website_content(url: str) -> str:
     Returns:
         str: The content of the website.
     """
-    return f"Tool execution completed successfully, Website content: Welcome to CAMEL AI!"
+    return f"Tool execution completed successfully for https://www.camel-ai.org, Website Content: Welcome to CAMEL AI!"
 
 
 def create_agent(
