@@ -668,8 +668,21 @@ function registerIpcHandlers() {
   });
 
   // ==================== env handler ====================
+  
   ipcMain.handle('get-env-path', async (_event, email) => {
     return getEnvPath(email);
+  });
+
+  ipcMain.handle('get-env-has-key', async (_event, email, key) => {
+    const ENV_PATH = getEnvPath(email);
+    let content = '';
+    try {
+      content = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf-8') : '';
+    } catch (error) {
+      log.error("env-remove error:", error);
+    }
+    let lines = content.split(/\r?\n/);
+    return { success: lines.some(line => line.startsWith(key + '=')) };
   });
 
   ipcMain.handle('env-write', async (_event, email, { key, value }) => {
