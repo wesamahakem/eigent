@@ -29,7 +29,7 @@ interface IntegrationItem {
 
 const EnvOauthInfoMap = {
 	SLACK_BOT_TOKEN: "access_token",
-	NOTION_TOKEN: "access_token",
+	MCP_REMOTE_CONFIG_DIR: "MCP_REMOTE_CONFIG_DIR",
 };
 
 interface IntegrationListProps {
@@ -137,13 +137,15 @@ export default function IntegrationList({
 						console.log("res", res);
 					});
 				}
+				const {MCP_REMOTE_CONFIG_DIR} = await window.electronAPI.getEmailFolderPath(email);
+				console.log("MCP_REMOTE_CONFIG_DIR", MCP_REMOTE_CONFIG_DIR);
 				try {
-					const tokenResult ={access_token:'1'} 
+					const tokenResult ={MCP_REMOTE_CONFIG_DIR} 
 					const currentItem = items.find(
 						(item) => item.key.toLowerCase() === provider
 					);
 					if (
-						tokenResult.access_token &&
+						tokenResult.MCP_REMOTE_CONFIG_DIR &&
 						currentItem &&
 						currentItem.env_vars &&
 						currentItem.env_vars.length > 0
@@ -152,12 +154,12 @@ export default function IntegrationList({
 							currentItem.env_vars.find(
 								(k) =>
 									EnvOauthInfoMap[k as keyof typeof EnvOauthInfoMap] ===
-									"access_token"
+									"MCP_REMOTE_CONFIG_DIR"
 							) || currentItem.env_vars[0];
 						await saveEnvAndConfig(
 							provider,
 							envVarKey,
-							tokenResult.access_token
+							tokenResult.MCP_REMOTE_CONFIG_DIR
 						);
 						fetchInstalled();
 						console.log(

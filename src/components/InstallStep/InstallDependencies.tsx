@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { ProgressInstall } from "@/components/ui/progress-install";
-import { RefreshCcw, RotateCcw } from "lucide-react";
+import { FileDown, RefreshCcw, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Permissions } from "@/components/InstallStep/Permissions";
 import { CarouselStep } from "@/components/InstallStep/Carousel";
@@ -130,6 +130,24 @@ export const InstallDependencies: React.FC<{
 		}
 	};
 
+	const exportLog = async () => {
+		try {
+			const response = await window.electronAPI.exportLog();
+
+			if (!response.success) {
+				alert("Export cancelled:" + response.error);
+				return;
+			}
+			if (response.savedPath) {
+				window.location.href =
+					"https://github.com/eigent-ai/eigent/issues/new/choose";
+				alert("log saved:" + response.savedPath);
+			}
+		} catch (e: any) {
+			alert("export error:" + e.message);
+		}
+	};
+
 	// if not show install interface, return null
 	if (initState === "done" && !isInstalling) {
 		return (
@@ -139,6 +157,7 @@ export const InstallDependencies: React.FC<{
 						<DialogTitle>Installation Failed</DialogTitle>
 					</DialogHeader>
 					<DialogFooter>
+						<Button onClick={handleInstall}>Retry</Button>
 						<Button onClick={handleInstall}>Retry</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -159,9 +178,7 @@ export const InstallDependencies: React.FC<{
 						<div className="flex items-center gap-2 justify-between">
 							<div className="text-text-label text-xs font-normal leading-tight ">
 								{isInstalling ? "System Installing ..." : ""}
-								<span className="pl-2">
-									{logs.at(-1)?.data}
-								</span>
+								<span className="pl-2">{logs.at(-1)?.data}</span>
 							</div>
 							<Button
 								size="icon"
@@ -186,6 +203,15 @@ export const InstallDependencies: React.FC<{
 						<DialogTitle>Installation Failed</DialogTitle>
 					</DialogHeader>
 					<DialogFooter>
+						<Button
+							onClick={exportLog}
+							variant="outline"
+							size="xs"
+							className="mr-2 no-drag leading-tight"
+						>
+							<FileDown className="w-4 h-4" />
+							Export Log
+						</Button>
 						<Button size="sm" onClick={handleInstall}>
 							Retry
 						</Button>

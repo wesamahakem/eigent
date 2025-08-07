@@ -58,6 +58,11 @@ interface ElectronAPI {
     reason: string; 
   }) => void) => void;
   removeAllListeners: (channel: string) => void;
+  getEmailFolderPath: (email: string) => Promise<{
+    MCP_REMOTE_CONFIG_DIR: string;
+    MCP_CONFIG_DIR: string;
+    tempEmail: string;
+  }>;
 }
 
 declare global {
