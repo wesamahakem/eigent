@@ -38,13 +38,14 @@ async def validate_model(request: ValidateModelRequest):
             input_message="""
             Get the content of https://www.camel-ai.org,
             you must use the get_website_content tool to get the content ,
-            i just want to verify the get_website_content tool is working
+            i just want to verify the get_website_content tool is working,
+            you must call the get_website_content tool only once.
             """
         )
     except Exception as e:
         return ValidateModelResponse(is_valid=False, is_tool_calls=False, message=str(e))
     return ValidateModelResponse(
         is_valid=True if response else False,
-        is_tool_calls=response.info["tool_calls"][0].result == "Welcome to CAMEL AI!",
+        is_tool_calls=response.info["tool_calls"][0].result == "Tool execution completed successfully, Website content: Welcome to CAMEL AI!",
         message="",
     )
