@@ -48,3 +48,8 @@ class OpenAIImageToolkit(BaseOpenAIImageToolkit, AbstractToolkit):
     @listen_toolkit(BaseOpenAIImageToolkit.generate_image)
     def generate_image(self, prompt: str, image_name: str = "image") -> str:
         return super().generate_image(prompt, image_name)
+
+    def _build_base_params(self, prompt: str) -> dict:
+        params = super()._build_base_params(prompt)
+        params["user"] = self.api_task_id  # support cloud key billing
+        return params
