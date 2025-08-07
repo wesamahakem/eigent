@@ -41,6 +41,7 @@ export default function IntegrationList({
 	installedKeys = [],
 	oauth,
 }: IntegrationListProps) {
+	const [callBackUrl, setCallBackUrl] = useState<string | null>(null);
 	const [showEnvConfig, setShowEnvConfig] = useState(false);
 	const [activeMcp, setActiveMcp] = useState<any | null>(null);
 	const { email, checkAgentTool } = useAuthStore();
@@ -132,51 +133,48 @@ export default function IntegrationList({
 			}
 			isLockedRef.current = true;
 			if (provider === "notion") {
+				if (callBackUrl) {
+					console.log("callBackUrl", callBackUrl);
+					fetch(`${callBackUrl}/oauth/callback?code=${data.code}`, {
+						method: "GET",
+					}).then((res) => {
+						console.log("res", res);
+					});
+				}
+				const {MCP_REMOTE_CONFIG_DIR} = await window.electronAPI.getEmailFolderPath(email);
+				console.log("MCP_REMOTE_CONFIG_DIR", MCP_REMOTE_CONFIG_DIR);
 				try {
-					console.log("oauth", oauth);
-					if (oauth) {
-						const tokenResult = await oauth.getToken(data.code, email || "");
-						console.log("tokenResult", tokenResult);
-						const currentItem = items.find(
-							(item) => item.key.toLowerCase() === provider
+					const tokenResult ={MCP_REMOTE_CONFIG_DIR} 
+					const currentItem = items.find(
+						(item) => item.key.toLowerCase() === provider
+					);
+					if (
+						tokenResult.MCP_REMOTE_CONFIG_DIR &&
+						currentItem &&
+						currentItem.env_vars &&
+						currentItem.env_vars.length > 0
+					) {
+						const envVarKey =
+							currentItem.env_vars.find(
+								(k) =>
+									EnvOauthInfoMap[k as keyof typeof EnvOauthInfoMap] ===
+									"MCP_REMOTE_CONFIG_DIR"
+							) || currentItem.env_vars[0];
+						await saveEnvAndConfig(
+							provider,
+							envVarKey,
+							tokenResult.MCP_REMOTE_CONFIG_DIR
 						);
-						if (
-							tokenResult.access_token &&
-							currentItem &&
-							currentItem.env_vars &&
-							currentItem.env_vars.length > 0
-						) {
-							const envVarKey =
-								currentItem.env_vars.find(
-									(k) =>
-										EnvOauthInfoMap[k as keyof typeof EnvOauthInfoMap] ===
-										"access_token"
-								) || currentItem.env_vars[0];
-							await saveEnvAndConfig(
-								provider,
-								envVarKey,
-								tokenResult.access_token
-							);
-							fetchInstalled();
-							console.log(
-								"Notion authorization successful and configuration saved!"
-							);
-							console.log(
-								"currentItem",
-								items,
-								currentItem,
-								tokenResult.bot_id
-							);
-						} else {
-							console.log("Notion authorization successful, but bot_id not found or env configuration not found");
-							console.log(
-								"currentItem",
-								items,
-								currentItem,
-								tokenResult.bot_id
-							);
-						}
+						fetchInstalled();
+						console.log(
+							"Notion authorization successful and configuration saved!"
+						);
+					} else {
+						console.log(
+							"Notion authorization successful, but bot_id not found or env configuration not found"
+						);
 					}
+
 					return;
 				} finally {
 					isLockedRef.current = false;
@@ -265,11 +263,9 @@ export default function IntegrationList({
 	// listen to oauth callback URL notification
 	useEffect(() => {
 		const handler = (_event: any, data: { url: string; provider: string }) => {
-			console.log('收到 OAuth callback URL:', data);
-			// 这里可以处理 callback URL，比如显示给用户或自动打开浏览器
+			console.log('OAuth callback URL:', data);
 			if (data.url && data.provider) {
-				console.log(`${data.provider} OAuth callback URL: ${data.url}`);
-				// 可以在这里添加用户提示或其他处理逻辑
+				setCallBackUrl(data.url);
 			}
 		};
 		window.ipcRenderer?.on("oauth-callback-url", handler);

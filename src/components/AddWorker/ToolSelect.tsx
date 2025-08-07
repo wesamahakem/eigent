@@ -77,10 +77,16 @@ const ToolSelect = forwardRef<
 							let onInstall = null;
 							const mcp = mcpMap[key as keyof typeof mcpMap];
 							if (mcp) {
-								onInstall = () => {
-									const oauth = new OAuth(key);
-									console.log("oauth", oauth);
-									setOauth(oauth);
+								onInstall = async () => {
+									const platform = await window.electronAPI.getPlatform();
+									const homeDir = await window.electronAPI.getHomeDir();
+
+									const command =
+										platform === "win32"
+											? `${homeDir}\\.eigent\\bin\\bun.exe x -y mcp-remote https://mcp.notion.com/mcp`
+											: `${homeDir}/.eigent/bin/bun x -y mcp-remote https://mcp.notion.com/mcp`;
+
+									await window.electronAPI.executeCommand(command, email);
 								};
 							} else {
 								onInstall = () =>
