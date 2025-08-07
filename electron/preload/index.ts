@@ -84,6 +84,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   removeAllListeners: (channel: string) => {
     ipcRenderer.removeAllListeners(channel);
   },
+  getEmailFolderPath: (email: string) => ipcRenderer.invoke('get-email-folder-path', email),
 });
 
 

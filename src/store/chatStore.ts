@@ -299,7 +299,8 @@ const chatStore = create<ChatStore>()(
 			if (email) {
 				// Get MCP config path
 				const result = await window.electronAPI.getMcpConfigPath(email);
-				if (result.success) {
+				const hasEnv = await window.ipcRenderer.invoke('get-env-has-key', email, 'MCP_REMOTE_CONFIG_DIR');
+				if (hasEnv&&result.success) {
 					mcpConfigPath = result.path
 				}
 			}
