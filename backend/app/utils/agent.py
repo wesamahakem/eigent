@@ -461,7 +461,6 @@ def agent_model(
             }
             if options.is_cloud()
             else None,
-            **(options.extra_params or {}),
             **{
                 k: v
                 for k, v in (options.extra_params or {}).items()
