@@ -1596,8 +1596,12 @@ const chatStore = create<ChatStore>()(
 // }
 const filterMessage = (message: AgentMessage) => {
 	if (message.data.toolkit_name?.includes('Search ')) {
-		message.data.toolkit_name='Search '
+		message.data.toolkit_name='Search Toolkit'
 	}
+	if (message.data.method_name?.includes('search')) {
+		message.data.method_name='search'
+	}
+	
 	if (message.data.toolkit_name === 'Note Taking Toolkit') {
 		message.data.message = message.data.message!.replace(/content='/g, '').replace(/', update=False/g, '').replace(/', update=True/g, '')
 	}
