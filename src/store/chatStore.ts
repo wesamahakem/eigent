@@ -239,15 +239,6 @@ const chatStore = create<ChatStore>()(
 				}
 			}
 
-			// fetch installed mcp token
-			if (!type) {
-				const oauth = new OAuth();
-				try {
-					await oauth.refreshToken("notion", email || "");
-				} catch (err) {
-					console.error("fetch notion token error", err);
-				}
-			}
 
 
 
@@ -274,16 +265,7 @@ const chatStore = create<ChatStore>()(
 			} catch (error) {
 				console.log('get-env-path error', error)
 			}
-			let mcpConfigPath = undefined
-			if (email) {
-				// Get MCP config path
-				const result = await window.electronAPI.getMcpConfigPath(email);
-				const hasEnv = await window.ipcRenderer.invoke('get-env-has-key', email, 'MCP_REMOTE_CONFIG_DIR');
-				console.log('hasEnv', hasEnv)
-				if (hasEnv.success&&result.success) {
-					mcpConfigPath = result.path
-				}
-			}
+			
 			// create history
 			if (!type) {
 				const authStore = getAuthStore();
@@ -329,8 +311,7 @@ const chatStore = create<ChatStore>()(
 					summary_prompt: ``,
 					new_agents: [...addWorkers],
 					browser_port: browser_port,
-					env_path: envPath,
-					MCP_REMOTE_CONFIG_DIR: mcpConfigPath
+					env_path: envPath
 				}) : undefined,
 
 				async onmessage(event: any) {
@@ -1615,8 +1596,12 @@ const chatStore = create<ChatStore>()(
 // }
 const filterMessage = (message: AgentMessage) => {
 	if (message.data.toolkit_name?.includes('Search ')) {
-		message.data.toolkit_name='Search '
+		message.data.toolkit_name='Search Toolkit'
 	}
+	if (message.data.method_name?.includes('search')) {
+		message.data.method_name='search'
+	}
+	
 	if (message.data.toolkit_name === 'Note Taking Toolkit') {
 		message.data.message = message.data.message!.replace(/content='/g, '').replace(/', update=False/g, '').replace(/', update=True/g, '')
 	}

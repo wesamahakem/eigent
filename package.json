@@ -1,6 +1,6 @@
 {
   "name": "eigent",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "main": "dist-electron/main/index.js",
   "description": "Eigent",
   "author": "Eigent.AI",
