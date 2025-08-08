@@ -16,6 +16,7 @@ dependencies = [
     "pydash>=8.0.5",
     "inflection>=0.5.1",
     "aiofiles>=24.1.0",
+    "openai>=1.99.3,<2",
 ]
 
 
