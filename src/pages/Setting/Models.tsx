@@ -650,6 +650,12 @@ export default function SettingModels() {
 											? "Claude Sonnet 4: Higher cost, slower responses, but superior quality and reasoning."
 											: cloud_model_type === "claude-3-5-haiku-20241022"
 											? "Claude 3.5 Haiku: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "gpt-5"
+											? "GPT-5: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "gpt-5-mini"
+											? "GPT-5 mini: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "gpt-5-nano"
+											? "GPT-5 nano: Higher cost, slower responses, but superior quality and reasoning."
 											: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
 									</span>
 								</TooltipContent>
@@ -672,6 +678,9 @@ export default function SettingModels() {
 									</SelectItem>
 									<SelectItem value="gpt-4.1-mini">GPT-4.1 mini</SelectItem>
 									<SelectItem value="gpt-4.1">GPT-4.1</SelectItem>
+									<SelectItem value="gpt-5">GPT-5</SelectItem>
+									<SelectItem value="gpt-5-mini">GPT-5 mini</SelectItem>
+									<SelectItem value="gpt-5-nano">GPT-5 nano</SelectItem>
 									<SelectItem value="claude-opus-4-1-20250805">
 										Claude Opus 4.1
 									</SelectItem>
