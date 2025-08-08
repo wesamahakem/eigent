@@ -250,28 +250,7 @@ const chatStore = create<ChatStore>()(
 			}
 
 
-			// create history
-			if (!type) {
-				const authStore = getAuthStore();
 
-				const obj = {
-					"task_id": taskId,
-					"user_id": authStore.user_id,
-					"question": tasks[taskId]?.messages[0]?.content ?? '',
-					"language": systemLanguage,
-					"model_platform": "openai",
-					"model_type": "gpt-4o",
-					"api_url": modelType === 'cloud' ? "cloud" : apiModel.api_url,
-					"max_retries": 3,
-					"file_save_path": "string",
-					"installed_mcp": "string",
-					"status": 1,
-					"tokens": 0
-				}
-				await proxyFetchPost(`/api/chat/history`, obj).then(res => {
-					historyId = res.id;
-				})
-			}
 
 			let mcpLocal = {}
 			if (window.ipcRenderer) {
@@ -305,7 +284,28 @@ const chatStore = create<ChatStore>()(
 					mcpConfigPath = result.path
 				}
 			}
+			// create history
+			if (!type) {
+				const authStore = getAuthStore();
 
+				const obj = {
+					"task_id": taskId,
+					"user_id": authStore.user_id,
+					"question": tasks[taskId]?.messages[0]?.content ?? '',
+					"language": systemLanguage,
+					"model_platform": apiModel.model_platform,
+					"model_type": apiModel.model_type,
+					"api_url": modelType === 'cloud' ? "cloud" : apiModel.api_url,
+					"max_retries": 3,
+					"file_save_path": "string",
+					"installed_mcp": "string",
+					"status": 1,
+					"tokens": 0
+				}
+				await proxyFetchPost(`/api/chat/history`, obj).then(res => {
+					historyId = res.id;
+				})
+			}
 			const browser_port = await window.ipcRenderer.invoke('get-browser-port');
 			fetchEventSource(api, {
 				method: !type ? "POST" : "GET",
