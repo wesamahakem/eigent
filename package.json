@@ -1,6 +1,6 @@
 {
   "name": "eigent",
-  "version": "0.0.42",
+  "version": "0.0.44",
   "main": "dist-electron/main/index.js",
   "description": "Eigent",
   "author": "Eigent.AI",
@@ -105,5 +105,8 @@
   },
   "pnpm": {
     "neverBuiltDependencies": []
+  },
+  "engines": {
+    "node": ">=18.0.0 <23.0.0"
   }
 }

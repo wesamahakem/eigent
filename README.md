@@ -107,7 +107,7 @@ For users who prefer local control, data privacy, or customization, this option 
 
 #### 1. Prerequisites
 
-- Node.js and npm
+- Node.js (version 18-22) and npm
 
 #### 2. Quick Start
 

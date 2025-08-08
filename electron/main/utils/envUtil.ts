@@ -70,4 +70,14 @@ export function removeEnvKey(lines: string[], key: string) {
     ...newBlock,
     ...lines.slice(end)
   ];
-} 
+}
+
+export function getEmailFolderPath(email: string) {
+  const tempEmail = email.split("@")[0].replace(/[\\/*?:"<>|\s]/g, "_").replace(".", "_")
+  const MCP_CONFIG_DIR = path.join(os.homedir(), '.eigent');
+  const MCP_REMOTE_CONFIG_DIR = path.join(MCP_CONFIG_DIR, tempEmail);
+  if (!fs.existsSync(MCP_REMOTE_CONFIG_DIR)) {
+    fs.mkdirSync(MCP_REMOTE_CONFIG_DIR, { recursive: true });
+  }
+  return { MCP_REMOTE_CONFIG_DIR, MCP_CONFIG_DIR, tempEmail };
+}
