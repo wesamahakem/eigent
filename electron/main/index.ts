@@ -324,14 +324,15 @@ function registerIpcHandlers() {
       const { spawn } = await import('child_process');
 
       // Add --host parameter
-      const commandWithHost = `${command} --debug --host "dev.eigent.ai/api/oauth/notion/callback?code=1"`;
+      const commandWithHost = `${command} --debug --host dev.eigent.ai/api/oauth/notion/callback?code=1`;
       // const commandWithHost = `${command}`;
 
       log.info(' start execute command:', commandWithHost);
 
       // Parse command and arguments
       const [cmd, ...args] = commandWithHost.split(' ');
-
+      log.info('start execute command:', commandWithHost.split(' '));
+      console.log(cmd, args)
       return new Promise((resolve) => {
         const child = spawn(cmd, args, {
           cwd: process.cwd(),
