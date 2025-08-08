@@ -406,7 +406,7 @@ const chatStore = create<ChatStore>()(
 								let activeWebviewIds: any = [];
 								if (agent_name == 'search_agent') {
 									snapshots.forEach((item: any) => {
-										const imgurl = item.image_path.includes('/public') ? item.image_path : (import.meta.env.DEV ? import.meta.env.VITE_PROXY_URL : import.meta.env.VITE_BASE_URL) + item.image_path
+										const imgurl = !item.image_path.includes('/public') ? item.image_path : (import.meta.env.DEV ? import.meta.env.VITE_PROXY_URL : import.meta.env.VITE_BASE_URL) + item.image_path
 										activeWebviewIds.push({
 											id: item.id,
 											img: imgurl,
