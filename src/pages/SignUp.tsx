@@ -336,7 +336,7 @@ export default function SignUp() {
 									<Input
 										id="invite_code"
 										type="text"
-										placeholder="Enter your invite code"
+										placeholder="Enter your invite code(optional)"
 										required
 										value={formData.invite_code}
 										onChange={(e) =>

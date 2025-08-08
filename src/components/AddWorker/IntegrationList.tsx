@@ -13,6 +13,7 @@ import { capitalizeFirstLetter } from "@/lib";
 import { MCPEnvDialog } from "@/pages/Setting/components/MCPEnvDialog";
 import { useAuthStore } from "@/store/authStore";
 import { OAuth } from "@/lib/oauth";
+import { toast } from "sonner";
 interface IntegrationItem {
 	key: string;
 	name: string;
@@ -41,6 +42,7 @@ export default function IntegrationList({
 	installedKeys = [],
 	oauth,
 }: IntegrationListProps) {
+	const [callBackUrl, setCallBackUrl] = useState<string | null>(null);
 	const [showEnvConfig, setShowEnvConfig] = useState(false);
 	const [activeMcp, setActiveMcp] = useState<any | null>(null);
 	const { email, checkAgentTool } = useAuthStore();
@@ -124,59 +126,51 @@ export default function IntegrationList({
 				return;
 			}
 			const provider = data.provider.toLowerCase();
-			if (provider === "notion" && !oauth) {
-				// oauth not ready, cache event, wait for oauth to have value
-				pendingOauthEventRef.current = data;
-				console.warn("oauth is empty, cache oauth event", data);
-				return;
-			}
 			isLockedRef.current = true;
 			if (provider === "notion") {
+
+				const {MCP_REMOTE_CONFIG_DIR,hasToken} = await window.electronAPI.getEmailFolderPath(email);
+				console.log("MCP_REMOTE_CONFIG_DIR", MCP_REMOTE_CONFIG_DIR);
+				if(!hasToken){
+					toast.error("Notion authorization failed, please try again", {
+						closeButton: true,
+					});
+					console.log("activeMcp", activeMcp);
+					handleUninstall(activeMcp);
+					return;
+				} 
 				try {
-					console.log("oauth", oauth);
-					if (oauth) {
-						const tokenResult = await oauth.getToken(data.code, email || "");
-						console.log("tokenResult", tokenResult);
-						const currentItem = items.find(
-							(item) => item.key.toLowerCase() === provider
+					const tokenResult ={MCP_REMOTE_CONFIG_DIR} 
+					const currentItem = items.find(
+						(item) => item.key.toLowerCase() === provider
+					);
+					if (
+						tokenResult.MCP_REMOTE_CONFIG_DIR &&
+						currentItem &&
+						currentItem.env_vars &&
+						currentItem.env_vars.length > 0
+					) {
+						const envVarKey =
+							currentItem.env_vars.find(
+								(k) =>
+									EnvOauthInfoMap[k as keyof typeof EnvOauthInfoMap] ===
+									"MCP_REMOTE_CONFIG_DIR"
+							) || currentItem.env_vars[0];
+						await saveEnvAndConfig(
+							provider,
+							envVarKey,
+							tokenResult.MCP_REMOTE_CONFIG_DIR
 						);
-						if (
-							tokenResult.access_token &&
-							currentItem &&
-							currentItem.env_vars &&
-							currentItem.env_vars.length > 0
-						) {
-							const envVarKey =
-								currentItem.env_vars.find(
-									(k) =>
-										EnvOauthInfoMap[k as keyof typeof EnvOauthInfoMap] ===
-										"access_token"
-								) || currentItem.env_vars[0];
-							await saveEnvAndConfig(
-								provider,
-								envVarKey,
-								tokenResult.access_token
-							);
-							fetchInstalled();
-							console.log(
-								"Notion authorization successful and configuration saved!"
-							);
-							console.log(
-								"currentItem",
-								items,
-								currentItem,
-								tokenResult.bot_id
-							);
-						} else {
-							console.log("Notion authorization successful, but bot_id not found or env configuration not found");
-							console.log(
-								"currentItem",
-								items,
-								currentItem,
-								tokenResult.bot_id
-							);
-						}
+						fetchInstalled();
+						console.log(
+							"Notion authorization successful and configuration saved!"
+						);
+					} else {
+						console.log(
+							"Notion authorization successful, but bot_id not found or env configuration not found"
+						);
 					}
+
 					return;
 				} finally {
 					isLockedRef.current = false;
@@ -265,11 +259,9 @@ export default function IntegrationList({
 	// listen to oauth callback URL notification
 	useEffect(() => {
 		const handler = (_event: any, data: { url: string; provider: string }) => {
-			console.log('收到 OAuth callback URL:', data);
-			// 这里可以处理 callback URL，比如显示给用户或自动打开浏览器
+			console.log('OAuth callback URL:', data);
 			if (data.url && data.provider) {
-				console.log(`${data.provider} OAuth callback URL: ${data.url}`);
-				// 可以在这里添加用户提示或其他处理逻辑
+				setCallBackUrl(data.url);
 			}
 		};
 		window.ipcRenderer?.on("oauth-callback-url", handler);
@@ -446,6 +438,7 @@ export default function IntegrationList({
 									"LinkedIn",
 									"Reddit",
 									"Github",
+									"Notion",
 								].includes(item.name)}
 								variant={isInstalled ? "secondary" : "primary"}
 								size="sm"
@@ -462,6 +455,7 @@ export default function IntegrationList({
 									"LinkedIn",
 									"Reddit",
 									"Github",
+									"Notion",
 								].includes(item.name)
 									? "Coming Soon"
 									: isInstalled

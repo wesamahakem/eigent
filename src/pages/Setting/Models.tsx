@@ -165,8 +165,10 @@ export default function SettingModels() {
 			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		fetchSubscription();
-		updateCredits();
+		if (import.meta.env.VITE_USE_LOCAL_PROXY !== "true") {
+			fetchSubscription();
+			updateCredits();
+		}
 	}, []);
 
 	const handleVerify = async (idx: number) => {
@@ -219,20 +221,34 @@ export default function SettingModels() {
 				console.log("success");
 				toast("validate success", {
 					description: "Verify model supports function calling to use Eigent.",
-					action: {
-						label: "Undo",
-						onClick: () => console.log("Undo"),
-					},
+					closeButton: true,
 				});
 			} else {
 				console.log("failed", res.message);
 				toast("validate failed", {
-					description:
-						"This model doesn't support Eigent's required capabilities (e.g., tool calls). Please switch models and try again.",
-					action: {
-						label: "Undo",
-						onClick: () => console.log("Undo"),
-					},
+					description: (
+						<div
+							style={{
+								maxHeight: "120px",
+								overflowY: "auto",
+							}}
+						>
+							<div>{res.message}</div>
+							<div className="flex justify-end">
+								<Button
+									size="xs"
+									variant="primary"
+									onClick={() => {
+										navigator.clipboard.writeText(res.message);
+										toast.success("Copied to clipboard");
+									}}
+								>
+									Copy
+								</Button>
+							</div>
+						</div>
+					),
+					closeButton: true,
 				});
 
 				return;
@@ -362,20 +378,34 @@ export default function SettingModels() {
 					toast("validate success", {
 						description:
 							"Verify model supports function calling to use Eigent.",
-						action: {
-							label: "Undo",
-							onClick: () => console.log("Undo"),
-						},
+						closeButton: true,
 					});
 				} else {
 					console.log("failed", res.message);
 					toast("validate failed", {
-						description:
-							"This model doesn't support Eigent's required capabilities (e.g., tool calls). Please switch models and try again.",
-						action: {
-							label: "Undo",
-							onClick: () => console.log("Undo"),
-						},
+						description: (
+							<div
+								style={{
+									maxHeight: "120px",
+									overflowY: "auto",
+								}}
+							>
+								<div>{res.message}</div>
+								<div className="flex justify-end">
+									<Button
+										size="xs"
+										variant="primary"
+										onClick={() => {
+											navigator.clipboard.writeText(res.message);
+											toast.success("Copied to clipboard");
+										}}
+									>
+										Copy
+									</Button>
+								</div>
+							</div>
+						),
+						closeButton: true,
 					});
 
 					return;
@@ -526,117 +556,146 @@ export default function SettingModels() {
 
 	return (
 		<div className="space-y-2">
-			<div className="w-[630px] pt-4 self-stretch px-6 py-4 bg-surface-secondary rounded-2xl inline-flex flex-col justify-start items-start gap-4">
-				<div className="self-stretch flex flex-col justify-start items-start gap-1">
-					<div className="self-stretch h-6 inline-flex justify-start items-center gap-2.5">
-						<div className="flex-1 justify-center text-text-body text-base font-bold leading-snug">
-							Eigent Cloud Version
+			{import.meta.env.VITE_USE_LOCAL_PROXY !== "true" && (
+				<div className="w-[630px] pt-4 self-stretch px-6 py-4 bg-surface-secondary rounded-2xl inline-flex flex-col justify-start items-start gap-4">
+					<div className="self-stretch flex flex-col justify-start items-start gap-1">
+						<div className="self-stretch h-6 inline-flex justify-start items-center gap-2.5">
+							<div className="flex-1 justify-center text-text-body text-base font-bold leading-snug">
+								Eigent Cloud Version
+							</div>
+							<Switch
+								checked={cloudPrefer}
+								onCheckedChange={(checked) => {
+									if (checked) {
+										setLocalPrefer(false);
+										setActiveModelIdx(null);
+										setForm((f) => f.map((fi) => ({ ...fi, prefer: false })));
+										setCloudPrefer(true);
+										setModelType("cloud");
+									} else {
+										setCloudPrefer(false);
+										setModelType("custom");
+									}
+								}}
+							/>
 						</div>
-						<Switch
-							checked={cloudPrefer}
-							onCheckedChange={(checked) => {
-								if (checked) {
-									setLocalPrefer(false);
-									setActiveModelIdx(null);
-									setForm((f) => f.map((fi) => ({ ...fi, prefer: false })));
-									setCloudPrefer(true);
-									setModelType("cloud");
-								} else {
-									setCloudPrefer(false);
-									setModelType("custom");
-								}
-							}}
-						/>
-					</div>
-					<div className="self-stretch justify-center">
-						<span className="text-text-body text-xs font-normal font-['Inter'] leading-tight">
-							You are currently subscribed to the{" "}
-							{subscription?.plan_key?.charAt(0).toUpperCase() +
-								subscription?.plan_key?.slice(1)}
-							. Discover more about our{" "}
-						</span>
-						<span
-							onClick={() => {
-								window.location.href = `https://www.eigent.ai/pricing`;
-							}}
-							className="cursor-pointer text-text-body text-xs font-normal font-['Inter'] underline leading-tight"
-						>
-							pricing options
-						</span>
-						<span className="text-text-body text-xs font-normal font-['Inter'] leading-tight">
-							.
-						</span>
-					</div>
-				</div>
-				<div className="flex flex-row items-center justify-start gap-2 mt-2 w-full">
-					<Button
-						onClick={() => {
-							window.location.href = `https://www.eigent.ai/dashboard`;
-						}}
-						variant="primary"
-						size="sm"
-					>
-						{loadingCredits ? (
-							<Loader2 className="w-4 h-4 animate-spin" />
-						) : (
-							subscription?.plan_key?.charAt(0).toUpperCase() +
-							subscription?.plan_key?.slice(1)
-						)}
-						<Settings />
-					</Button>
-					<div className="text-text-body text-sm font-normal font-['Inter'] leading-tight">
-						Credits:{" "}
-						{loadingCredits ? (
-							<Loader2 className="w-4 h-4 animate-spin" />
-						) : (
-							credits
-						)}
-					</div>
-				</div>
-				<div className="w-full flex items-center flex-1 justify-between pt-4 border-t border-border-secondary">
-					<div className="flex items-center flex-1 min-w-0">
-						<span className="whitespace-nowrap overflow-hidden text-ellipsis text-xs font-medium leading-tight">
-							Select Model Type
-						</span>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<span className="ml-1 cursor-pointer inline-flex items-center">
-									<Info className="w-4 h-4 text-gray-400" />
-								</span>
-							</TooltipTrigger>
-							<TooltipContent
-								side="top"
-								className="flex items-center justify-center text-center min-w-[220px] min-h-[40px]"
+						<div className="self-stretch justify-center">
+							<span className="text-text-body text-xs font-normal font-['Inter'] leading-tight">
+								You are currently subscribed to the{" "}
+								{subscription?.plan_key?.charAt(0).toUpperCase() +
+									subscription?.plan_key?.slice(1)}
+								. Discover more about our{" "}
+							</span>
+							<span
+								onClick={() => {
+									window.location.href = `https://www.eigent.ai/pricing`;
+								}}
+								className="cursor-pointer text-text-body text-xs font-normal font-['Inter'] underline leading-tight"
 							>
-								<span className="w-full flex items-center justify-center">
-									{cloud_model_type === "gpt-4.1-mini"
-										? "GPT-4.1 Mini: Lower cost, faster responses, but reduced output quality."
-										: cloud_model_type === "gpt-4.1"
-										? "GPT-4.1: Higher cost, slower responses, but superior quality and reasoning."
-										: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
-								</span>
-							</TooltipContent>
-						</Tooltip>
+								pricing options
+							</span>
+							<span className="text-text-body text-xs font-normal font-['Inter'] leading-tight">
+								.
+							</span>
+						</div>
 					</div>
-					<div className="flex-shrink-0">
-						<Select value={cloud_model_type} onValueChange={setCloudModelType}>
-							<SelectTrigger className="h-7 min-w-[160px]  px-3 py-1 text-xs">
-								<SelectValue placeholder="Select Model Type" />
-							</SelectTrigger>
-							<SelectContent className="bg-input-bg-default">
-								<SelectItem value="gemini/gemini-2.5-pro">
-									Gemini 2.5 Pro
-								</SelectItem>
-								<SelectItem value="gemini-2.5-flash">
-									Gemini 2.5 Flash
-								</SelectItem>
-								<SelectItem value="gpt-4.1-mini">GPT-4.1 mini</SelectItem>
-								<SelectItem value="gpt-4.1">GPT-4.1</SelectItem>
-							</SelectContent>
-						</Select>
+					<div className="flex flex-row items-center justify-start gap-2 mt-2 w-full">
+						<Button
+							onClick={() => {
+								window.location.href = `https://www.eigent.ai/dashboard`;
+							}}
+							variant="primary"
+							size="sm"
+						>
+							{loadingCredits ? (
+								<Loader2 className="w-4 h-4 animate-spin" />
+							) : (
+								subscription?.plan_key?.charAt(0).toUpperCase() +
+								subscription?.plan_key?.slice(1)
+							)}
+							<Settings />
+						</Button>
+						<div className="text-text-body text-sm font-normal font-['Inter'] leading-tight">
+							Credits:{" "}
+							{loadingCredits ? (
+								<Loader2 className="w-4 h-4 animate-spin" />
+							) : (
+								credits
+							)}
+						</div>
+					</div>
+					<div className="w-full flex items-center flex-1 justify-between pt-4 border-t border-border-secondary">
+						<div className="flex items-center flex-1 min-w-0">
+							<span className="whitespace-nowrap overflow-hidden text-ellipsis text-xs font-medium leading-tight">
+								Select Model Type
+							</span>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className="ml-1 cursor-pointer inline-flex items-center">
+										<Info className="w-4 h-4 text-gray-400" />
+									</span>
+								</TooltipTrigger>
+								<TooltipContent
+									side="top"
+									className="flex items-center justify-center text-center min-w-[220px] min-h-[40px]"
+								>
+									<span className="w-full flex items-center justify-center">
+										{cloud_model_type === "gpt-4.1-mini"
+											? "GPT-4.1 Mini: Lower cost, faster responses, but reduced output quality."
+											: cloud_model_type === "gpt-4.1"
+											? "GPT-4.1: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "claude-opus-4-1-20250805"
+											? "Claude Opus 4.1: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "claude-sonnet-4-20250514"
+											? "Claude Sonnet 4: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "claude-3-5-haiku-20241022"
+											? "Claude 3.5 Haiku: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "gpt-5"
+											? "GPT-5: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "gpt-5-mini"
+											? "GPT-5 mini: Higher cost, slower responses, but superior quality and reasoning."
+											: cloud_model_type === "gpt-5-nano"
+											? "GPT-5 nano: Higher cost, slower responses, but superior quality and reasoning."
+											: "Gemini 2.5 Pro: Higher cost, slower responses, but superior quality and reasoning."}
+									</span>
+								</TooltipContent>
+							</Tooltip>
+						</div>
+						<div className="flex-shrink-0">
+							<Select
+								value={cloud_model_type}
+								onValueChange={setCloudModelType}
+							>
+								<SelectTrigger className="h-7 min-w-[160px]  px-3 py-1 text-xs">
+									<SelectValue placeholder="Select Model Type" />
+								</SelectTrigger>
+								<SelectContent className="bg-input-bg-default">
+									<SelectItem value="gemini/gemini-2.5-pro">
+										Gemini 2.5 Pro
+									</SelectItem>
+									<SelectItem value="gemini-2.5-flash">
+										Gemini 2.5 Flash
+									</SelectItem>
+									<SelectItem value="gpt-4.1-mini">GPT-4.1 mini</SelectItem>
+									<SelectItem value="gpt-4.1">GPT-4.1</SelectItem>
+									<SelectItem value="gpt-5">GPT-5</SelectItem>
+									<SelectItem value="gpt-5-mini">GPT-5 mini</SelectItem>
+									<SelectItem value="gpt-5-nano">GPT-5 nano</SelectItem>
+									<SelectItem value="claude-opus-4-1-20250805">
+										Claude Opus 4.1
+									</SelectItem>
+									<SelectItem value="claude-sonnet-4-20250514">
+										Claude Sonnet 4
+									</SelectItem>
+									<SelectItem value="claude-3-5-haiku-20241022">
+										Claude 3.5 Haiku
+									</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 			{/* customer models */}
 			<div className="self-stretch pt-4 border-t border-border-disabled inline-flex flex-col justify-start items-start gap-4">
 				<div className="self-stretch inline-flex justify-start items-center gap-2 relative px-6">

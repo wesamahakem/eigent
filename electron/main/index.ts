@@ -11,7 +11,7 @@ import { ChildProcessWithoutNullStreams } from 'node:child_process'
 import fs, { existsSync, readFileSync } from 'node:fs'
 import fsp from 'fs/promises'
 import { addMcp, removeMcp, updateMcp, readMcpConfig } from './utils/mcpConfig'
-import { getEnvPath, updateEnvBlock, removeEnvKey } from './utils/envUtil'
+import { getEnvPath, updateEnvBlock, removeEnvKey, getEmailFolderPath } from './utils/envUtil'
 import { copyBrowserData } from './copy'
 import { findAvailablePort } from './init'
 import kill from 'tree-kill';
@@ -311,28 +311,28 @@ function registerIpcHandlers() {
     return platform === 'win32' ? process.env.USERPROFILE : process.env.HOME;
   });
 
+
   // ==================== command execution handler ====================
+  ipcMain.handle('get-email-folder-path', async (event, email: string) => {
+    return getEmailFolderPath(email);
+  });
   ipcMain.handle('execute-command', async (event, command: string, email: string) => {
     log.info("execute-command", command);
-    const tempEmail = email.split("@")[0].replace(/[\\/*?:"<>|\s]/g, "_").replace(".", "_")
-    const MCP_CONFIG_DIR = path.join(os.homedir(), '.eigent');
-    const MCP_REMOTE_CONFIG_DIR = path.join(MCP_CONFIG_DIR, tempEmail);
-    if (!fs.existsSync(MCP_REMOTE_CONFIG_DIR)) {
-      fs.mkdirSync(MCP_REMOTE_CONFIG_DIR, { recursive: true });
-    }
+    const {MCP_REMOTE_CONFIG_DIR} = getEmailFolderPath(email);
 
     try {
       const { spawn } = await import('child_process');
 
       // Add --host parameter
-      const commandWithHost = `${command} --debug --host "dev.eigent.ai/api/oauth/notion/callback?code=1"`;
+      const commandWithHost = `${command} --debug --host dev.eigent.ai/api/oauth/notion/callback?code=1`;
       // const commandWithHost = `${command}`;
 
       log.info(' start execute command:', commandWithHost);
 
       // Parse command and arguments
       const [cmd, ...args] = commandWithHost.split(' ');
-
+      log.info('start execute command:', commandWithHost.split(' '));
+      console.log(cmd, args)
       return new Promise((resolve) => {
         const child = spawn(cmd, args, {
           cwd: process.cwd(),
@@ -379,7 +379,7 @@ function registerIpcHandlers() {
         // Listen process exit
         child.on('close', (code) => {
           log.info(` command execute complete, exit code: ${code}`);
-          resolve({ success: code === 0, stdout, stderr });
+          resolve({ success: code === null, stdout, stderr });
         });
 
         // Listen process error
@@ -609,9 +609,7 @@ function registerIpcHandlers() {
 
   // ==================== delete folder handler ====================
   ipcMain.handle('delete-folder', async (event, email: string) => {
-    const tempEmail = email.split("@")[0].replace(/[\\/*?:"<>|\s]/g, "_").replace(".", "_")
-    const MCP_CONFIG_DIR = path.join(os.homedir(), '.eigent');
-    const MCP_REMOTE_CONFIG_DIR = path.join(MCP_CONFIG_DIR, tempEmail);
+    const {MCP_REMOTE_CONFIG_DIR} = getEmailFolderPath(email);
     try {
       log.info('Deleting folder:', MCP_REMOTE_CONFIG_DIR);
 
@@ -648,21 +646,13 @@ function registerIpcHandlers() {
   // ==================== get MCP config path handler ====================
   ipcMain.handle('get-mcp-config-path', async (event, email: string) => {
     try {
-      const tempEmail = email.split("@")[0].replace(/[\\/*?:"<>|\s]/g, "_").replace(".", "_");
-      const MCP_CONFIG_DIR = path.join(os.homedir(), '.eigent');
-      const MCP_REMOTE_CONFIG_DIR = path.join(MCP_CONFIG_DIR, tempEmail);
-
+      const {MCP_REMOTE_CONFIG_DIR,tempEmail} = getEmailFolderPath(email);
       log.info('Getting MCP config path for email:', email);
       log.info('MCP config path:', MCP_REMOTE_CONFIG_DIR);
-      // Check if the mcp-remote-0.1.18 directory exists
-      const mcpRemoteDir = path.join(MCP_REMOTE_CONFIG_DIR, 'mcp-remote-0.1.18');
-      const isMcpRemoteDirExists = fs.existsSync(mcpRemoteDir);
-
       return {
-        success: isMcpRemoteDirExists,
+        success: MCP_REMOTE_CONFIG_DIR,
         path: MCP_REMOTE_CONFIG_DIR,
         tempEmail: tempEmail,
-        baseDir: MCP_CONFIG_DIR
       };
     } catch (error: any) {
       log.error('Failed to get MCP config path:', error);
@@ -674,8 +664,21 @@ function registerIpcHandlers() {
   });
 
   // ==================== env handler ====================
+  
   ipcMain.handle('get-env-path', async (_event, email) => {
     return getEnvPath(email);
+  });
+
+  ipcMain.handle('get-env-has-key', async (_event, email, key) => {
+    const ENV_PATH = getEnvPath(email);
+    let content = '';
+    try {
+      content = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf-8') : '';
+    } catch (error) {
+      log.error("env-remove error:", error);
+    }
+    let lines = content.split(/\r?\n/);
+    return { success: lines.some(line => line.startsWith(key + '=')) };
   });
 
   ipcMain.handle('env-write', async (_event, email, { key, value }) => {

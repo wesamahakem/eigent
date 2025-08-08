@@ -9,7 +9,6 @@ import {
 	proxyFetchGet,
 	proxyFetchPost,
 	proxyFetchDelete,
-	fetchGet,
 } from "@/api/http";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
@@ -18,6 +17,7 @@ import { capitalizeFirstLetter } from "@/lib";
 import { MCPEnvDialog } from "./MCPEnvDialog";
 import { useAuthStore } from "@/store/authStore";
 import { OAuth } from "@/lib/oauth";
+import { toast } from "sonner";
 
 interface IntegrationItem {
 	key: string;
@@ -29,7 +29,7 @@ interface IntegrationItem {
 
 const EnvOauthInfoMap = {
 	SLACK_BOT_TOKEN: "access_token",
-	NOTION_TOKEN: "access_token",
+	MCP_REMOTE_CONFIG_DIR: "MCP_REMOTE_CONFIG_DIR",
 };
 
 interface IntegrationListProps {
@@ -128,22 +128,30 @@ export default function IntegrationList({
 			const provider = data.provider.toLowerCase();
 			isLockedRef.current = true;
 			if (provider === "notion") {
-				console.log("callBackUrl", callBackUrl);
-				if (callBackUrl) {
-					console.log("callBackUrl", callBackUrl);
-					fetch(`${callBackUrl}/oauth/callback?code=${data.code}`, {
-						method: "GET",
-					}).then((res) => {
-						console.log("res", res);
+				// toast.error("Notion authorization failed, please try again", {
+				// 	closeButton: true,
+				// });
+				// console.log("activeMcp", activeMcp);
+				// handleUninstall(activeMcp);
+				const { MCP_REMOTE_CONFIG_DIR,hasToken } =
+					await window.electronAPI.getEmailFolderPath(email);
+				console.log("MCP_REMOTE_CONFIG_DIR", MCP_REMOTE_CONFIG_DIR);
+				if(!hasToken){
+					toast.error("Notion authorization failed, please try again", {
+						closeButton: true,
 					});
+					console.log("activeMcp", activeMcp);
+					handleUninstall(activeMcp);
+					return;
 				}
+				
 				try {
-					const tokenResult ={access_token:'1'} 
+					const tokenResult = { MCP_REMOTE_CONFIG_DIR };
 					const currentItem = items.find(
 						(item) => item.key.toLowerCase() === provider
 					);
 					if (
-						tokenResult.access_token &&
+						tokenResult.MCP_REMOTE_CONFIG_DIR &&
 						currentItem &&
 						currentItem.env_vars &&
 						currentItem.env_vars.length > 0
@@ -152,12 +160,12 @@ export default function IntegrationList({
 							currentItem.env_vars.find(
 								(k) =>
 									EnvOauthInfoMap[k as keyof typeof EnvOauthInfoMap] ===
-									"access_token"
+									"MCP_REMOTE_CONFIG_DIR"
 							) || currentItem.env_vars[0];
 						await saveEnvAndConfig(
 							provider,
 							envVarKey,
-							tokenResult.access_token
+							tokenResult.MCP_REMOTE_CONFIG_DIR
 						);
 						fetchInstalled();
 						console.log(
@@ -347,7 +355,6 @@ export default function IntegrationList({
 						window.electronAPI?.envRemove
 					) {
 						if (item.key === "Notion") {
-							
 							window.electronAPI?.deleteFolder(email);
 						}
 						await window.electronAPI.envRemove(email, item.env_vars[0]);
@@ -412,6 +419,7 @@ export default function IntegrationList({
 								"LinkedIn",
 								"Reddit",
 								"Github",
+								"Notion",
 							].includes(item.name)}
 							variant={isInstalled ? "secondary" : "primary"}
 							size="sm"
@@ -425,6 +433,7 @@ export default function IntegrationList({
 								"LinkedIn",
 								"Reddit",
 								"Github",
+								"Notion",
 							].includes(item.name)
 								? "Coming Soon"
 								: isInstalled

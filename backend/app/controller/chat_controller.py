@@ -27,7 +27,7 @@ router = APIRouter(tags=["chat"])
 def post(data: Chat, request: Request):
     load_dotenv(dotenv_path=data.env_path)
 
-    logger.debug(f"start chat: {data.model_dump_json()}")
+    # logger.debug(f"start chat: {data.model_dump_json()}")
 
     os.environ["file_save_path"] = data.file_save_path()
     os.environ["browser_port"] = str(data.browser_port)
