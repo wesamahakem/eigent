@@ -63,7 +63,7 @@ async def step_solve(options: Chat, request: Request):
             break
         try:
             item = await task_lock.get_queue()
-            logger.info(f"item: {dump_class(item)}")
+            # logger.info(f"item: {dump_class(item)}")
         except Exception as e:
             logger.error(f"Error getting item from queue: {e}")
             break
